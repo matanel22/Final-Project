@@ -60,6 +60,7 @@ export default function Home() {
 
       return;
     }
+    //jikjijijhi
     histury.push("/projects");
   };
 
