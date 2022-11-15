@@ -1,0 +1,15 @@
+.allBody{
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    padding: 10px;
+   
+}
+
+.specificProject{
+    margin:0 auto ;
+    width: 50px;
+    background-color: aquamarine;
+}
