@@ -1,9 +1,17 @@
 import { Request,Response } from "express";
 import ModalProject, { validProject } from "../model/ModalProjct";
 import MissionModel from "../model/modelMission";
+import UsersModel from "../model/ModelUser";
 
 export const allProject=async(req:Request,res:Response)=>{
-
+//   let k=0
+// let user = await UsersModel.find({})
+// let projects=await ModalProject.find({});
+// projects.map((item,index)=>{
+//   if(user[k++].name===item.staff){
+//   return  res.send(projects)
+//   }
+// })
     try {
         let projects=await ModalProject.find({});
         res.json(projects);
@@ -24,24 +32,13 @@ export const specificProject =async(req:Request,res:Response)=>{
 
 }
 
-export const deleteSpcificProject=async(req:Request,res:Response)=>{
-  try {
-    let deleteProject=await ModalProject.deleteOne({_id:req.params.id});
-    return res.json(deleteProject);
-  } catch (error) {
-    return res.json(error);
-  }
-  
-}
 export const updateProject=async(req:Request,res:Response)=>{
   try {
-    let updateData=await ModalProject.updateOne({_id:req.body.id},req.body.name);
+    let updateData=await ModalProject.updateOne({_id:req.params.id},req.body);
     return res.send(updateData);
   } catch (error) {
     return res.status(404).send(error);
   }
- 
-
 }
 
 

@@ -11,7 +11,7 @@ const authToken = (req, res, next) => {
     }
     try {
         let decoToken = jsonwebtoken_1.default.verify(token, "matanel");
-        req.body.tokendata = decoToken;
+        // req.tokenData=decoToken
         next();
     }
     catch (error) {

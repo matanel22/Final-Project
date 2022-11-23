@@ -3,11 +3,21 @@ import React from "react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import ProjectList from "./ProjectList";
+import { useRecoilState } from "recoil";
+import { DP } from "../atom/Atom";
+export interface IProps {
+  _id: string;
+  nameProject: string;
+  staff: string;
+  client: string;
+  statusProject: string;
+  amountOfUsers: string;
+}
 
 const AllProjects = () => {
-  const [dataProject, setDataProject] = useState([]);
+  const [dataProject, setDataProject] = useState<IProps[]>([]);
   const [valideta, setValidata] = useState(false);
-
+  const [updateProj, setUpdateProj] = useRecoilState<IProps[]>(DP);
   useEffect(() => {
     const fatch = async () => {
       try {

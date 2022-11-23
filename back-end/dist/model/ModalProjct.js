@@ -11,7 +11,8 @@ const ProjectScama = new mongoose_1.default.Schema({
     nameProject: String,
     client: String,
     staff: String,
-    statusProject: String
+    statusProject: String,
+    amountOfUsers: String
 });
 const PojectModel = mongoose_1.default.model('projects', ProjectScama);
 exports.default = PojectModel;
@@ -20,7 +21,8 @@ const validProject = (_validData) => {
         nameProject: joi_1.default.string().min(2).max(99).required(),
         staff: joi_1.default.string().min(2).max(99).required(),
         client: joi_1.default.string().min(3).max(50).required(),
-        statusProject: joi_1.default.string().min(3).max(50).required()
+        statusProject: joi_1.default.string().min(0).max(50).required(),
+        amountOfUsers: joi_1.default.string().min(0).max(50).required(),
     });
     return joiSchema.validate(_validData);
 };

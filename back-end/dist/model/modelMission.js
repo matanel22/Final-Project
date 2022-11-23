@@ -11,7 +11,7 @@ const MissionScama = new mongoose_1.default.Schema({
     discrption: String,
     missionStatus: String,
     projectId: String,
-    data_created: {
+    date_created: {
         type: Date
     },
     endDate: { type: Date },
@@ -23,9 +23,9 @@ const validTasks = (_validData) => {
     let joiSchema = joi_1.default.object({
         discrption: joi_1.default.string().min(2).max(99),
         missionStatus: joi_1.default.string().min(3).max(50).required(),
-        data_created: joi_1.default.string().required(),
+        date_created: joi_1.default.string().required(),
         projectId: joi_1.default.string().required(),
-        // endDate:Joi.date().r:equired
+        endDate: joi_1.default.date().required(),
     });
     return joiSchema.validate(_validData);
 };

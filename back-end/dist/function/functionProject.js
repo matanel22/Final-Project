@@ -12,10 +12,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.allMissionOfProject = exports.updateProject = exports.deleteSpcificProject = exports.specificProject = exports.allProject = void 0;
+exports.allMissionOfProject = exports.updateProject = exports.specificProject = exports.allProject = void 0;
 const ModalProjct_1 = __importDefault(require("../model/ModalProjct"));
 const modelMission_1 = __importDefault(require("../model/modelMission"));
 const allProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    //   let k=0
+    // let user = await UsersModel.find({})
+    // let projects=await ModalProject.find({});
+    // projects.map((item,index)=>{
+    //   if(user[k++].name===item.staff){
+    //   return  res.send(projects)
+    //   }
+    // })
     try {
         let projects = yield ModalProjct_1.default.find({});
         res.json(projects);
@@ -35,19 +43,9 @@ const specificProject = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.specificProject = specificProject;
-const deleteSpcificProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        let deleteProject = yield ModalProjct_1.default.deleteOne({ _id: req.params.id });
-        return res.json(deleteProject);
-    }
-    catch (error) {
-        return res.json(error);
-    }
-});
-exports.deleteSpcificProject = deleteSpcificProject;
 const updateProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let updateData = yield ModalProjct_1.default.updateOne({ _id: req.body.id }, req.body.name);
+        let updateData = yield ModalProjct_1.default.updateOne({ _id: req.params.id }, req.body);
         return res.send(updateData);
     }
     catch (error) {

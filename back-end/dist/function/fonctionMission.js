@@ -36,7 +36,7 @@ const updateMission = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 exports.updateMission = updateMission;
 const deleteSpcificMission = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let deleteProject = yield modelMission_1.default.deleteOne({ _id: req.body.id });
+        let deleteProject = yield modelMission_1.default.deleteOne({ _id: req.params.id });
         return res.json(deleteProject);
     }
     catch (error) {

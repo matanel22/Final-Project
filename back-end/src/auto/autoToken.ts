@@ -11,7 +11,7 @@ if(!token){
 }
 try {
 let decoToken=jwt.verify(token,"matanel");
-req.body.tokendata=decoToken;
+// req.tokenData=decoToken
 next();
 } catch (error) {
     res.status(401).json({error:"4444"})

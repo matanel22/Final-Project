@@ -11,7 +11,7 @@ const corsOption = {
   origin:'http://localhost:3000', 
   credentials:true,
   method: ["GET","POST","PUT","DELETE"],
-  allowedHeaders: ["Content-Type"],
+  allowedHeaders: ["Content-Type", "x-api-key"],
 };
 
 app.use(cors(corsOption)); 

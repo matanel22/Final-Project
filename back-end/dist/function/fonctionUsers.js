@@ -35,9 +35,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = exports.validatIsUsers = void 0;
+exports.userInfo = exports.login = exports.validatIsUsers = void 0;
 const ModelUser_1 = __importStar(require("../model/ModelUser"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const validatIsUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validata = (0, ModelUser_1.validUser)(req.body);
     if (validata.error) {
@@ -64,13 +65,29 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //  }
     let user = yield ModelUser_1.default.findOne({ email: req.body.email });
     if (!user) {
-        res.status(404).json({ msg: "user not found" });
+        return res.status(404).json({ msg: "user not found" });
     }
     let passValid = yield bcrypt_1.default.compare(req.body.pass, user.pass);
     if (!passValid) {
-        return res.status(404).json({ msg: "Incorrect pasword" });
+        return res.status(404).json({ msg: "Incorrect password" });
     }
-    let newToken = (0, ModelUser_1.genToken)(user._userId);
-    res.json({ token: newToken });
+    let newToken = (0, ModelUser_1.genToken)(user._id);
+    return res.json({ token: newToken });
 });
 exports.login = login;
+const userInfo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let token = req.header("x-api-key");
+    if (!token) {
+        return res.status(404).json("your most connect");
+    }
+    try {
+        let docoToken = jsonwebtoken_1.default.verify(token, "matanel");
+        console.log(docoToken);
+        let user = yield ModelUser_1.default.find({ _id: docoToken });
+        return res.json(user);
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.userInfo = userInfo;

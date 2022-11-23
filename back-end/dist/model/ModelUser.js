@@ -7,7 +7,9 @@ exports.validMustUser = exports.genToken = exports.validUser = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const joi_1 = __importDefault(require("joi"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+// import authToken from "../auto/autoToken";
 const UserSchema = new mongoose_1.default.Schema({
+    // _id:String,
     name: String,
     email: String,
     pass: String,
@@ -30,7 +32,7 @@ const validUser = (_validData) => {
 };
 exports.validUser = validUser;
 const genToken = (_userId) => {
-    const token = jsonwebtoken_1.default.sign({ id: _userId }, "matanel", { expiresIn: "60mins" });
+    const token = jsonwebtoken_1.default.sign({ _id: _userId }, "matanel", { expiresIn: "60mins" });
     return token;
 };
 exports.genToken = genToken;

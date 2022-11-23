@@ -1,10 +1,12 @@
 import mongoose from "mongoose";
 import Joi  from "joi";
 import jwt from 'jsonwebtoken'
+// import authToken from "../auto/autoToken";
 
 
 const UserSchema=new mongoose.Schema({
-    name:String ,
+    // _id:String,
+    name:String,
     email:String,
     pass:String,
 role:{
@@ -25,8 +27,8 @@ export const validUser=(_validData:any)=>{
     })
     return joiSchema.validate(_validData)
 }
-export const genToken =(_userId:string)=>{
-const token=jwt.sign({id:_userId},"matanel",{expiresIn:"60mins"});
+export const genToken =(_userId:Object)=>{
+const token=jwt.sign({_id:_userId},"matanel",{expiresIn:"60mins"});
 return token;
 }
 export const validMustUser=(_validData:any)=>{
@@ -37,5 +39,7 @@ export const validMustUser=(_validData:any)=>{
 return joiSchema.validate(_validData)
 
 }
+
+
 
 

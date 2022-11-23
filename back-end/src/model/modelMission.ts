@@ -7,7 +7,7 @@ const MissionScama=new mongoose.Schema({
     discrption:String,
     missionStatus:String,
     projectId:String,
-    data_created:{
+    date_created:{
         type:Date
     },
     endDate:{type:Date},
@@ -21,9 +21,9 @@ const MissionScama=new mongoose.Schema({
         let joiSchema=Joi.object({
             discrption:Joi.string().min(2).max(99),
             missionStatus:Joi.string().min(3).max(50).required(),
-            data_created:Joi.string().required(),
+            date_created:Joi.string().required(),
             projectId:Joi.string().required(),
-            // endDate:Joi.date().r:equired
+            endDate:Joi.date().required(),
         })
         return joiSchema.validate(_validData)
     }

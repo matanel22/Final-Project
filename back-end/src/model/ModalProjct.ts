@@ -6,7 +6,8 @@ id:String,
 nameProject:String,
 client:String,
 staff:String,
-statusProject:String
+statusProject:String,
+amountOfUsers:String
 
 })
 const PojectModel=mongoose.model('projects',ProjectScama);
@@ -18,7 +19,8 @@ export const validProject=(_validData:any)=>{
         nameProject:Joi.string().min(2).max(99).required(),
         staff:Joi.string().min(2).max(99).required(),
         client:Joi.string().min(3).max(50).required(),
-        statusProject:Joi.string().min(3).max(50).required()
+        statusProject:Joi.string().min(0).max(50).required(),
+        amountOfUsers:Joi.string().min(0).max(50).required(),
     })
     return joiSchema.validate(_validData)
 }

@@ -1,7 +1,7 @@
 import express,{ Request,Response } from 'express';
 import  UsersModel,{validMustUser, validUser,genToken} from '../model/ModelUser';
 import bcrypt from "bcrypt";
-
+import jwt from 'jsonwebtoken'
 
 
 
@@ -35,18 +35,37 @@ export const validatIsUsers=async(req:Request,res:Response)=>{
 
    let user: any=await  UsersModel.findOne({email:req.body.email})
    if(!user){
-      res.status(404).json({msg:"user not found"})
+    return  res.status(404).json({msg:"user not found"})
     }
    
    let passValid=await bcrypt.compare(req.body.pass, user.pass);
    if(!passValid){
-      return res.status(404).json({msg:"Incorrect pasword"})
+      return res.status(404).json({msg:"Incorrect password"})
    }
    
-   let newToken=genToken(user._userId)
-   res.json({token:newToken})
+   let newToken=genToken(user._id)
+  return res.json({token:newToken})
   }
 
+ export const userInfo= async(req:Request,res:Response)=>{
+   let token:any=req.header("x-api-key");
+   
+   if(!token){
+ return  res.status(404).json("your most connect")
+}
+try {
+
+   let docoToken=jwt.verify(token,"matanel")
+   console.log(docoToken);
+   let user = await UsersModel.find({_id:docoToken})
+  
+    return res.json(user)
+  } catch (error) {
+   console.log(error);
+   
+  }
+
+  }
 
 
 
