@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
-import Joi  from "joi";
+import Joi, { string }  from "joi";
 import jwt from 'jsonwebtoken'
 // import authToken from "../auto/autoToken";
 
 
 const UserSchema=new mongoose.Schema({
-    // _id:String,
+    // _id: mongoose.Schema.Types.ObjectId,
+    permissions:String,
     name:String,
     email:String,
     pass:String,
@@ -21,6 +22,8 @@ export default UsersModel
 
 export const validUser=(_validData:any)=>{
     let joiSchema=Joi.object({
+        // _id:string().required(),
+        permissions:Joi.string(),
         name:Joi.string().min(2).max(99).required(),
         email:Joi.string().min(2).max(99).required().email(),
         pass:Joi.string().min(3).max(50).required(),

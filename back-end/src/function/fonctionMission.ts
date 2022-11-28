@@ -21,6 +21,15 @@ export const updateMission=async(req:Request,res:Response)=>{
    
   
   }
+  export const taskOne=async(req:Request,res:Response)=>{
+    try {
+      let task=await MissionModel.findOne({_id:req.body._id})
+      return res.send(task)
+    } catch (error) {
+     return console.log(error);
+      
+    }
+  }
 
 
   export const deleteSpcificMission=async(req:Request,res:Response)=>{

@@ -4,42 +4,45 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import ProjectList from "./ProjectList";
 import { useRecoilState } from "recoil";
-import { DP } from "../atom/Atom";
+import { DP, userId } from "../atom/Atom";
 export interface IProps {
   _id: string;
-  nameProject: string;
+  readonly nameProject: string;
   staff: string;
-  client: string;
+  userId: string;
+  readonly client: string;
   statusProject: string;
   amountOfUsers: string;
 }
 
 const AllProjects = () => {
   const [dataProject, setDataProject] = useState<IProps[]>([]);
-  const [valideta, setValidata] = useState(false);
-  const [updateProj, setUpdateProj] = useRecoilState<IProps[]>(DP);
+  const [validata, setValidata] = useState(false);
+  const [useId, setUseId] = useRecoilState<string>(userId);
+
   useEffect(() => {
-    const fatch = async () => {
+    const fetch = async (id: string) => {
       try {
         let url = "http://localhost:3001/api/routs/router/allProjects";
-        let response = await axios.get(url);
-        console.log(response.data);
-        setDataProject(response.data);
-        setValidata(dataProject.length === 0);
+        await axios.post(url, { id }).then((response) => {
+          console.log(response.data);
+          setValidata(true);
+          setDataProject(response.data);
+        });
       } catch (error) {
         console.log(error);
       }
     };
-    fatch();
-  }, [valideta]);
+    fetch(useId);
+  }, [dataProject && validata]);
 
   let quantityCheck =
     dataProject.length === 0 ? <h1>לא נוצרו פרוייקטים </h1> : "";
 
   return (
     <div>
-      {quantityCheck}
       <ProjectList onProps={dataProject} />
+      {quantityCheck}
     </div>
   );
 };

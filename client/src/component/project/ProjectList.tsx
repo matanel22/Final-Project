@@ -25,6 +25,7 @@ import {
   Typography,
 } from "@mui/material";
 import UpdateProject from "./UpdateProject";
+import { SubmitHandler, useForm } from "react-hook-form";
 // const useStyles = makeStyles({
 //   table: {
 //     minWidth: 650,
@@ -36,31 +37,24 @@ export interface IProps {
   nameProject: string;
   staff: string;
   client: string;
+  userId: string;
   statusProject: string;
   amountOfUsers: string;
 }
 
 const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
   const [projId, setProjId] = useRecoilState(idPrj);
-  const [updateProj, setUpdateProj] = useState<IProps[]>();
+  const [updateProj, setUpdateProj] = useState<IProps>(Object);
   const [isUpdate, setIsUpdate] = useState(false);
-  const updateSpicificProj = (id: string) => {
-    setIsUpdate(true);
-    let url = `http://localhost:3001/api/routs/router/updateProject/${id}`;
-    axios
-      .put(
-        url,
-        props.onProps.filter((item) => {
-          return item._id === id ? props.onProps : "";
-        })
-      )
-      .then((res) => {
-        setUpdateProj(res.data);
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const [isOpen, setIsOpen] = useState(false);
+
+  const showFormOnEdit = async (id: string) => {
+    setIsOpen(!isOpen);
+    let url = "http://localhost:3001/api/routs/router/projSpecific";
+    await axios.post(url, { id }).then((res) => {
+      setUpdateProj(res.data);
+    });
+    return setIsUpdate(true);
   };
 
   return (
@@ -112,7 +106,7 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {props.onProps.map((item) => (
+            {props.onProps.map((item, index) => (
               <TableRow>
                 <TableCell component="th" scope="row">
                   {/* {item.name} */}
@@ -129,7 +123,7 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
                     variant="contained"
                     color="success"
                     onClick={() => {
-                      updateSpicificProj(item._id);
+                      showFormOnEdit(item._id);
                     }}
                   >
                     לעדכון הפרוייקט
@@ -154,9 +148,10 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
           </TableBody>
         </Table>
       </TableContainer>
-      {/* {isUpdate && <UpdateProject UP={updateProj}></UpdateProject>} */}
+      {isOpen && <UpdateProject onUpdate={updateProj}></UpdateProject>}
     </div>
   );
 };
 
 export default ProjectList;
+// editProj={updateProj}

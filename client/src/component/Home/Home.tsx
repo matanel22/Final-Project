@@ -13,6 +13,8 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
+import { userId } from "../atom/Atom";
+import { useRecoilState } from "recoil";
 
 function Copyright(props: any) {
   return (
@@ -39,7 +41,10 @@ export default function Home() {
   const [pass, setIsPass] = useState("");
   const [validEmail, setValidEmail] = useState(false);
   const [validPass, setValidPass] = useState(false);
-  let [validToken, setValidToken] = useState(false);
+  const [validToken, setValidToken] = useState(false);
+  const [useId, setUseId] = useRecoilState<string>(userId);
+  const [validata, setValidata] = useState(false);
+
   let histury = useHistory();
   const sendEmail = (event: any) => {
     setIsEmail(event.target.value);
@@ -47,6 +52,7 @@ export default function Home() {
   const sendPass = (event: any) => {
     setIsPass(event.target.value);
   };
+
   // const onBlorPass = () => {
   //   if (isPass.trim().length === 0) {
   //     setValidPass(true);
@@ -58,37 +64,37 @@ export default function Home() {
   //   //   return;
   //   // }
   // };
-  const handleSubmit = (event: any) => {
+  const handleSubmit = async (event: any) => {
     event.preventDefault();
 
     if (pass.trim().length === 0) {
       setValidPass(true);
       return;
     }
+
     let url = "http://localhost:3001/api/routs/router/login";
     axios
       .post(url, { email, pass })
-      .then((res) => {
+      .then(async (res) => {
         console.log(res.data);
 
         let url = "http://localhost:3001/api/routs/router/userInfo";
-        axios
+        await axios
           .get(url, { headers: { "x-api-key": res.data.token } })
           .then((res) => {
             console.log(res.data);
-
+            setUseId(res.data[0]._id);
             setValidToken(true);
           })
           .catch((err) => {
-            console.log({ msg: err });
+            return console.log({ msg: err });
           });
-
-        // console.log(validToken);
       })
       .catch((err) => {
-        console.log(err);
+        return console.log(err);
       });
   };
+
   useEffect(() => {
     if (validToken) {
       histury.push("/projects");

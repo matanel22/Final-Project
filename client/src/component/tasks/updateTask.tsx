@@ -15,20 +15,17 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import { idPrj } from "../atom/Atom";
 import Card from "../UI/card";
-export interface IProps {
-  _id: string;
-  nameProject: string;
-  staff: string;
-  client: string;
-  userId: string;
-  statusProject: string;
-  amountOfUsers: string;
-}
-interface IUsers {
-  _id: string;
-  name: string;
-  email: string;
-  pass: string;
+interface IFormMission {
+  _id: String;
+  discrption: String;
+  missionStatus: String;
+  projectId: String;
+  // dayjs: () => {};
+  data_created: {
+    type: Date;
+  };
+  endDate: { type: Date };
+  remarks: String;
 }
 // interface IFormInputs {
 //   _id: string;
@@ -39,10 +36,10 @@ interface IUsers {
 //   statusProject: string;
 //   amountOfUsers: string;
 // }
-const UpdateProject: React.FC<{ onUpdate: IProps }> = (props) => {
+const UpdateTask: React.FC<{ onMission: IFormMission }> = (props) => {
   const [projId, setProjId] = useRecoilState(idPrj);
+  const [updateProj, setUpdateProj] = useState({});
   const [isUpdate, setIsUpdate] = useState(false);
-  const [isUser, setIsUser] = useState(false);
 
   const option = ["פעיל ", "לא פעיל", "תחזוקה"];
   const {
@@ -51,56 +48,32 @@ const UpdateProject: React.FC<{ onUpdate: IProps }> = (props) => {
     formState: { errors, isDirty, isValid },
     handleSubmit,
     reset,
-  } = useForm<IProps>({
+  } = useForm<IFormMission>({
     mode: "onChange",
   });
 
   useEffect(() => {
     reset({
-      _id: props.onUpdate._id,
-      userId: props.onUpdate.userId,
-      staff: props.onUpdate.staff,
-      statusProject: props.onUpdate.statusProject,
-      amountOfUsers: props.onUpdate.amountOfUsers,
-      nameProject: props.onUpdate.nameProject,
-      client: props.onUpdate.client,
+      _id: props.onMission._id,
+      discrption: props.onMission.discrption,
+      missionStatus: props.onMission.missionStatus,
+      projectId: props.onMission.projectId,
+      data_created: props.onMission.data_created,
+      endDate: props.onMission.endDate,
+      remarks: props.onMission.remarks,
     });
   }, []);
-  const editRejister: SubmitHandler<IProps> = async (data) => {
-    let flag = false;
-    setIsUpdate(!isUpdate);
-    console.log(data);
-    let u = "http://localhost:3001/api/routs/router/allUsers";
+  const editRejister: SubmitHandler<IFormMission> = async (data) => {
+    let url = `http://localhost:3001/api/routs/router/updateProject`;
     await axios
-      .get(u)
+      .put(url, data)
       .then((res) => {
-        console.log(res.data[0]);
-        res.data.map((item: any) => {
-          if (item.name === data.staff) {
-            data.userId = item._id;
-            flag = true;
-          }
-        });
+        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
-    setIsUpdate(!isUpdate);
-
-    if (flag) {
-      let url = `http://localhost:3001/api/routs/router/updateProject`;
-      await axios
-        .put(url, data)
-        .then((res) => {
-          console.log(res.data);
-          setIsUser(true);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
   };
-  let valideDev = !isUser ? <p>שם המפתח לא נמצא</p> : "";
   return (
     <Box
       sx={{
@@ -116,64 +89,76 @@ const UpdateProject: React.FC<{ onUpdate: IProps }> = (props) => {
     >
       <Card>
         <form onSubmit={handleSubmit(editRejister)}>
-          <InputLabel htmlFor="my-input">שם פרוייקט </InputLabel>
+          <InputLabel htmlFor="my-input"> תיאור המשימה </InputLabel>
           <Input
             id="my-input"
             aria-describedby="my-helper-text"
             type="text"
             // value={props.onUpdate.nameProject}
-            {...register("nameProject", { required: true })}
+            {...register("discrption", { required: true })}
           />
           <FormHelperText id="my-helper-text">
             We'll never share your nameProject.
           </FormHelperText>
-          <InputLabel htmlFor="my-input">שם המפתח</InputLabel>
+          <InputLabel htmlFor="my-input"> סטטוס משימה</InputLabel>
           <Input
             id="my-input"
             aria-describedby="my-helper-text"
             type="text"
             // value={props.onUpdate.staff}
-            {...register("staff", { required: true })}
+            {...register("missionStatus", { required: true })}
           />
-          {valideDev}
           <FormHelperText id="my-helper-text">
             We'll never share your developer.
           </FormHelperText>
-          <InputLabel htmlFor="my-input">לקוח מוביל </InputLabel>
+          <InputLabel htmlFor="my-input">תאריך התחלה </InputLabel>
           <Input
             id="my-input"
             aria-describedby="my-helper-text"
-            type="text"
+            type="date"
             // value={props.onUpdate.client}
-            {...register("client", { required: true })}
+            {...register("data_created", { required: true })}
           />
           <FormHelperText id="my-helper-text">
             We'll never share your client.
           </FormHelperText>
-          <InputLabel htmlFor="my-input"> האם יש משתמשים </InputLabel>
+          <InputLabel htmlFor="my-input"> תאריך סיום </InputLabel>
+          <Input
+            id="my-input"
+            aria-describedby="my-helper-text"
+            type="date"
+            {...register("endDate", { required: true })}
+          />
+          <FormHelperText id="my-helper-text">
+            We'll never share your amountOfUsers.
+          </FormHelperText>
+          {/* <FormHelperText id="my-helper-text">
+            We'll never share your client.
+          </FormHelperText> */}
+          <InputLabel htmlFor="my-input"> הערות </InputLabel>
           <Input
             id="my-input"
             aria-describedby="my-helper-text"
             type="text"
-            {...register("amountOfUsers", { required: true })}
+            {...register("remarks", { required: true })}
           />
           <FormHelperText id="my-helper-text">
             We'll never share your amountOfUsers.
           </FormHelperText>
           {/* <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            type="text"
-            {...register("statusProject", { required: true })}
-          >
-            {errors.statusProject && "חובה  לבחור "}
-            <MenuItem>פעיל</MenuItem>
-            <MenuItem>לא פעיל</MenuItem>
-            <MenuItem>תחזוקה</MenuItem>
-          </Select>
-          <FormHelperText id="my-helper-text">
-            We'll never share your statusProject.
-          </FormHelperText> */}
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              type="text"
+              {...register("statusProject", { required: true })}
+            >
+              {errors.statusProject && "חובה  לבחור "}
+              <MenuItem>פעיל</MenuItem>
+              <MenuItem>לא פעיל</MenuItem>
+              <MenuItem>תחזוקה</MenuItem>
+            </Select>
+            <FormHelperText id="my-helper-text">
+              We'll never share your statusProject.
+            </FormHelperText> */}
 
           <Button variant="contained" type="submit" color="success">
             {" "}
@@ -184,5 +169,4 @@ const UpdateProject: React.FC<{ onUpdate: IProps }> = (props) => {
     </Box>
   );
 };
-export default UpdateProject;
-// : React.FC<{ editProj: IProps }>
+export default UpdateTask;

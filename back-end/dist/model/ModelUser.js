@@ -9,7 +9,8 @@ const joi_1 = __importDefault(require("joi"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 // import authToken from "../auto/autoToken";
 const UserSchema = new mongoose_1.default.Schema({
-    // _id:String,
+    // _id: mongoose.Schema.Types.ObjectId,
+    permissions: String,
     name: String,
     email: String,
     pass: String,
@@ -24,6 +25,8 @@ const UsersModel = mongoose_1.default.model('users', UserSchema);
 exports.default = UsersModel;
 const validUser = (_validData) => {
     let joiSchema = joi_1.default.object({
+        // _id:string().required(),
+        permissions: joi_1.default.string(),
         name: joi_1.default.string().min(2).max(99).required(),
         email: joi_1.default.string().min(2).max(99).required().email(),
         pass: joi_1.default.string().min(3).max(50).required(),

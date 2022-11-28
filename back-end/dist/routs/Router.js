@@ -14,15 +14,18 @@ const router = express_1.default.Router();
 // routers of users
 router.post('/login', fonctionUsers_1.login);
 router.get("/userInfo", fonctionUsers_2.userInfo);
-router.post('/validatIsUsers', fonctionUsers_1.validatIsUsers);
+router.get("/allUsers", fonctionUsers_1.allUsers);
+router.post('/signUp', fonctionUsers_1.signUp);
 //routers of project
-router.get('/allProjects', functionProject_1.allProject);
+router.post('/allProjects', functionProject_1.allProject);
 router.post("/addCreatProject", addNewProject_1.addCreatProject);
+router.post("/projSpecific", functionProject_1.projSpecific);
 router.post('/allMissionOfProject', functionProject_1.allMissionOfProject);
 router.get('/specificProject ', functionProject_1.specificProject);
 // router.delete('/deleteSpcificProject/:id',deleteSpcificProject)
-router.put('/updateProject/:id', functionProject_1.updateProject);
+router.put('/updateProject', functionProject_1.updateProject);
 //routers of tasks;
+router.post("/taskOne", fonctionMission_1.taskOne);
 router.post('/creatMission', createMission_1.createMission);
 router.get('/specificMission', fonctionMission_1.specificMission);
 router.put('/updateMission', fonctionMission_1.updateMission);

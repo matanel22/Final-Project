@@ -1,28 +1,30 @@
 
 import express from 'express';
 import { createMission } from '../function/createMission';
-import {login,validatIsUsers} from '../function/fonctionUsers'
-import {  allMissionOfProject, allProject, specificProject, updateProject } from '../function/functionProject';
+import {allUsers, login,signUp} from '../function/fonctionUsers'
+import {  allMissionOfProject, allProject, projSpecific, specificProject, updateProject } from '../function/functionProject';
 import { addCreatProject } from '../function/addNewProject';
-import { deleteSpcificMission, specificMission, updateMission } from '../function/fonctionMission';
+import { deleteSpcificMission, specificMission, taskOne, updateMission } from '../function/fonctionMission';
 import { userInfo } from '../function/fonctionUsers';
-import authToken from '../auto/autoToken';
+
 
 const router = express.Router();
 // routers of users
 router.post('/login',login);
 router.get("/userInfo",userInfo)
-
-router.post('/validatIsUsers',validatIsUsers);
+router.get("/allUsers",allUsers);
+router.post('/signUp',signUp);
 
 //routers of project
-router.get('/allProjects',allProject)
+router.post('/allProjects',allProject)
 router.post("/addCreatProject",addCreatProject)
+router.post("/projSpecific",projSpecific)
 router.post('/allMissionOfProject',allMissionOfProject)
 router.get('/specificProject ',specificProject);
 // router.delete('/deleteSpcificProject/:id',deleteSpcificProject)
-router.put('/updateProject/:id',updateProject);
+router.put('/updateProject',updateProject);
 //routers of tasks;
+router.post("/taskOne",taskOne)
 router.post('/creatMission',createMission);
 router.get('/specificMission',specificMission);
 router.put('/updateMission',updateMission);

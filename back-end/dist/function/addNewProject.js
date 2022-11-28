@@ -31,10 +31,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addCreatProject = void 0;
 const ModalProjct_1 = __importStar(require("../model/ModalProjct"));
+const ModelUser_1 = __importDefault(require("../model/ModelUser"));
 const addCreatProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let flag = false;
     let validata = (0, ModalProjct_1.validProject)(req.body);
     if (validata.error) {
         return res.status(404).json(validata.error.details);
@@ -45,8 +50,22 @@ const addCreatProject = (req, res) => __awaiter(void 0, void 0, void 0, function
             if (!project) {
                 return res.json({ msg: "please try again" });
             }
-            project.save();
-            res.json(project);
+            let user = yield ModelUser_1.default.find({});
+            user.map((item, index) => {
+                var _a;
+                if (((_a = item.name) === null || _a === void 0 ? void 0 : _a.trim()) === project.staff) {
+                    project.userId = item._id.toString();
+                    flag = true;
+                }
+            });
+            if (flag) {
+                project.save();
+                console.log(project.userId);
+                return res.json(project);
+            }
+            else {
+                return res.status(404).json("dont found is developer");
+            }
         }
         catch (error) {
             return res.json({ msg: error });

@@ -35,29 +35,38 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userInfo = exports.login = exports.validatIsUsers = void 0;
+exports.userInfo = exports.login = exports.signUp = exports.allUsers = void 0;
 const ModelUser_1 = __importStar(require("../model/ModelUser"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const validatIsUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let validata = (0, ModelUser_1.validUser)(req.body);
-    if (validata.error) {
-        return res.status(404).json(validata.error.details);
+const allUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const users = yield ModelUser_1.default.find({});
+        return res.json(users);
     }
-    else {
-        try {
-            let user = yield new ModelUser_1.default(req.body);
-            user.pass = yield bcrypt_1.default.hash(user.pass, 10);
-            user.save();
-            res.json(user);
-        }
-        catch (err) {
-            console.log(err);
-            res.status(400).json({ err: "email Illegal" });
-        }
+    catch (error) {
+        return res.status(404).json(error);
     }
 });
-exports.validatIsUsers = validatIsUsers;
+exports.allUsers = allUsers;
+const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // let validata=validUser(req.body);
+    // if(validata.error){
+    //  return res.status(404).json(validata.error.details)
+    // }
+    // else{
+    try {
+        let user = yield new ModelUser_1.default(req.body);
+        user.pass = yield bcrypt_1.default.hash(user.pass, 10);
+        user.save();
+        res.json(user);
+    }
+    catch (err) {
+        console.log(err);
+        res.status(400).json({ err: "email Illegal" });
+    }
+});
+exports.signUp = signUp;
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //  let validata=validMustUser(req.body);
     // if(validata.error){
@@ -84,6 +93,7 @@ const userInfo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         let docoToken = jsonwebtoken_1.default.verify(token, "matanel");
         console.log(docoToken);
         let user = yield ModelUser_1.default.find({ _id: docoToken });
+        console.log(user);
         return res.json(user);
     }
     catch (error) {

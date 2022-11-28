@@ -23,9 +23,10 @@ import TasksData, { idPrj } from "../atom/Atom";
 import Card from "../UI/card";
 import CreateTasks from "./createTasks";
 import { Box } from "@mui/system";
+import UpdateTask from "./updateTask";
 
 interface IFormMission {
-  id: String;
+  _id: String;
   discrption: String;
   missionStatus: String;
   projectId: String;
@@ -42,11 +43,19 @@ const TasksList = () => {
   const [ID, setId] = useRecoilState(idPrj);
   const [mis, setMis] = useRecoilState(TasksData);
   const [isOpen, setIsOpen] = useState(false);
-  const [isDel, setIsDel] = useState(false);
+  const [taskOne, setTaskOne] = useState<IFormMission>(Object);
+  const [isOpenEditTask, setIsOpenEditTask] = useState(false);
   const sendingToTheCreation = () => {
     setIsOpen(!isOpen);
   };
-
+  const showEditTask = async (id: string) => {
+    let url = "http://localhost:3001/api/routs/router/taskOne";
+    await axios.post(url, { id }).then((res) => {
+      console.log(res.data);
+      setTaskOne(res.data);
+    });
+    setIsOpenEditTask(!isOpenEditTask);
+  };
   const removeMission = (id: string) => {
     let url = `http://localhost:3001/api/routs/router/deleteSpcificMission/${id}`;
     axios
@@ -156,9 +165,9 @@ const TasksList = () => {
                       <Button
                         variant="outlined"
                         color="success"
-                        // onClick={() => {
-                        //   removeMission(item._id);
-                        // }}
+                        onClick={() => {
+                          showEditTask(item._id);
+                        }}
                       >
                         עדכון משימה
                       </Button>
@@ -180,6 +189,7 @@ const TasksList = () => {
         </Link>
         {isOpen && <CreateTasks></CreateTasks>}
       </TableHead>
+      {isOpenEditTask && <UpdateTask onMission={taskOne}></UpdateTask>}
     </div>
   );
 };

@@ -4,13 +4,24 @@ import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken'
 
 
+export const allUsers=async(req:Request,res:Response)=>{
+  try {
+    const users=await UsersModel.find({})
+    return res.json(users)
+  } catch (error) {
+    return res.status(404).json(error);
+  }
+ 
 
-export const validatIsUsers=async(req:Request,res:Response)=>{
-    let validata=validUser(req.body);
-    if(validata.error){
-     return res.status(404).json(validata.error.details)
-    }
-    else{
+}
+
+
+export const signUp=async(req:Request,res:Response)=>{
+    // let validata=validUser(req.body);
+    // if(validata.error){
+    //  return res.status(404).json(validata.error.details)
+    // }
+    // else{
       try {
          let user: any=await new UsersModel(req.body);
          user.pass=await bcrypt.hash(user.pass,10);
@@ -23,7 +34,7 @@ export const validatIsUsers=async(req:Request,res:Response)=>{
     }
   
     
- }
+
 
 
  export const login = async(req:Request,res:Response)=>{
@@ -33,7 +44,7 @@ export const validatIsUsers=async(req:Request,res:Response)=>{
    //   return res.status(404).json(validata.error.details)
    //  }
 
-   let user: any=await  UsersModel.findOne({email:req.body.email})
+   let user: any=await UsersModel.findOne({email:req.body.email})
    if(!user){
     return  res.status(404).json({msg:"user not found"})
     }
@@ -58,6 +69,7 @@ try {
    let docoToken=jwt.verify(token,"matanel")
    console.log(docoToken);
    let user = await UsersModel.find({_id:docoToken})
+  console.log(user);
   
     return res.json(user)
   } catch (error) {

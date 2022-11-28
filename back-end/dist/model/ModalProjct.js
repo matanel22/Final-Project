@@ -8,6 +8,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const joi_1 = __importDefault(require("joi"));
 const ProjectScama = new mongoose_1.default.Schema({
     id: String,
+    userId: String,
     nameProject: String,
     client: String,
     staff: String,
@@ -18,6 +19,7 @@ const PojectModel = mongoose_1.default.model('projects', ProjectScama);
 exports.default = PojectModel;
 const validProject = (_validData) => {
     let joiSchema = joi_1.default.object({
+        userId: joi_1.default.string(),
         nameProject: joi_1.default.string().min(2).max(99).required(),
         staff: joi_1.default.string().min(2).max(99).required(),
         client: joi_1.default.string().min(3).max(50).required(),

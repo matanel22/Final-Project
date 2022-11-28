@@ -77,7 +77,7 @@ export default function SignUp() {
       setValidPass(true);
       return;
     }
-    let url = "http://localhost:3001/api/routs/router/validatIsUsers";
+    let url = "http://localhost:3001/api/routs/router/signUp";
     axios
       .post(url, { name, email, pass })
       .then((res) => {

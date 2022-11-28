@@ -16,20 +16,32 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import { useRecoilState } from "recoil";
+import { userId } from "../atom/Atom";
 // "name": "בטיחות",
 // "developer": "ליאל",
 // "client": "מלמ",
 // "maintenaceMode
+export interface IUsers {
+  _id: string;
+  name: string;
+  email: string;
+  pass: string;
+}
 interface IFormInputs {
   nameProject: string;
   client: string;
   staff: string;
+  userId: string;
   statusProject: string;
   amountOfUsers: string;
 }
 const option = ["פעיל ", "לא פעיל", "תחזוקה"];
 
 const AddNewProject: React.FC = (props) => {
+  // const [useId, setUseId] = useRecoilState<string>(userId);
+  const [usersData, setUsersData] = useState<IUsers[]>([]);
+  const [validata, setValidata] = useState("");
   const {
     register,
     formState,
@@ -41,23 +53,50 @@ const AddNewProject: React.FC = (props) => {
       nameProject: "",
       client: "",
       staff: "",
+      userId: "",
+      statusProject: "",
+      amountOfUsers: "",
     },
   });
   console.log("isValid", isValid);
-  // useEffect(() => {
-  //   let h1 = <h1>הפרוייקט נוצר בהצלחה</h1>;
-  // }, [isValid]);
+
   const registerPrj: SubmitHandler<IFormInputs> = async (data) => {
-    let url = "http://localhost:3001/api/routs/router/addCreatProject";
-    axios
-      .post(url, data)
-      .then(({ data }) => {
-        console.log(data);
+    let flag = false;
+    let url = "http://localhost:3001/api/routs/router/allUsers";
+    await axios
+      .get(url)
+      .then((res) => {
+        console.log(res.data);
+        res.data.map((item: any, index: any) => {
+          if (item.name.trim() === data.staff.trim()) {
+            data.userId = item._id;
+            flag = true;
+          }
+        });
+
+        setUsersData(res.data);
       })
-      .catch((res) => {
-        console.log("res", res);
+      .catch((err) => {
+        console.log(err);
       });
+    if (flag) {
+      try {
+        let url = "http://localhost:3001/api/routs/router/addCreatProject";
+        axios.post(url, data).then(({ data }) => {
+          console.log(data);
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      setValidata("developer not found ");
+    }
   };
+
+  useEffect(() => {
+    console.log(usersData);
+  }, [usersData]);
+
   return (
     <div>
       <Box sx={{ flexGrow: 1, minHeight: 150 }}>
@@ -109,6 +148,14 @@ const AddNewProject: React.FC = (props) => {
           {errors.staff && "חובה למלא שם צוות"}
           <TextField
             id="outlined-basic"
+            value={userId}
+            {...register("userId")}
+            variant="outlined"
+            type="hidden"
+          />
+
+          <TextField
+            id="outlined-basic"
             {...register("client", { required: true })}
             label="שם לקוח"
             variant="outlined"
@@ -130,15 +177,12 @@ const AddNewProject: React.FC = (props) => {
             type="text"
             {...register("statusProject", { required: true })}
           >
+            {errors.statusProject && "חובה  לבחור "}
             {option.map((item, index) => {
               return <MenuItem value={item[0]}>{item[0]}</MenuItem>;
             })}
-            {/* <MenuItem>יש לבחור</MenuItem>
-          <MenuItem>פעיל</MenuItem>
-          <MenuItem>לא פעיל</MenuItem>
-          <MenuItem>תחזוקה</MenuItem> */}
           </Select>
-          {errors.client && "חובה לבחור סטטוס ח"}
+          {errors.client && "חובה לבחור סטטוס"}
 
           <Button
             type="submit"
@@ -152,6 +196,7 @@ const AddNewProject: React.FC = (props) => {
             <Button >כל פרוייקטים</Button>
           </Link> */}
         </form>
+        {validata}
       </Card>
     </div>
   );
@@ -163,3 +208,11 @@ export default AddNewProject;
 //   <MenuItem key={option.value} value={option.value}>
 //   {option.label}
 // </MenuItem>
+// if (usersData) {
+//   for (let i = 0; i < usersData.length; i++) {
+//     if (usersData[i].name.trim() === data.staff.trim()) {
+//       data.userId = usersData[i]._id;
+//       flag = true;
+//     }
+//   }
+// }

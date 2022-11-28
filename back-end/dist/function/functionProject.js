@@ -12,21 +12,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.allMissionOfProject = exports.updateProject = exports.specificProject = exports.allProject = void 0;
+exports.allMissionOfProject = exports.updateProject = exports.projSpecific = exports.specificProject = exports.allProject = void 0;
 const ModalProjct_1 = __importDefault(require("../model/ModalProjct"));
 const modelMission_1 = __importDefault(require("../model/modelMission"));
+const ModelUser_1 = __importDefault(require("../model/ModelUser"));
 const allProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    //   let k=0
-    // let user = await UsersModel.find({})
-    // let projects=await ModalProject.find({});
-    // projects.map((item,index)=>{
-    //   if(user[k++].name===item.staff){
-    //   return  res.send(projects)
-    //   }
-    // })
     try {
-        let projects = yield ModalProjct_1.default.find({});
-        res.json(projects);
+        let user = yield ModelUser_1.default.findOne({ _id: req.body.id });
+        if ((user === null || user === void 0 ? void 0 : user.permissions) === "admin") {
+            let projects = yield ModalProjct_1.default.find({});
+            return res.json(projects);
+        }
+        else {
+            let projects = yield ModalProjct_1.default.find({ userId: req.body.id });
+            return res.json(projects);
+        }
     }
     catch (error) {
         res.json(error);
@@ -43,10 +43,36 @@ const specificProject = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.specificProject = specificProject;
-const updateProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const projSpecific = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let updateData = yield ModalProjct_1.default.updateOne({ _id: req.params.id }, req.body);
-        return res.send(updateData);
+        let project = yield ModalProjct_1.default.findOne({ _id: req.body.id });
+        return res.send(project);
+    }
+    catch (error) {
+        return res.status(404).send(error);
+    }
+});
+exports.projSpecific = projSpecific;
+const updateProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let flag = false;
+    try {
+        let updateData = yield ModalProjct_1.default.updateOne({ _id: req.body._id }, req.body);
+        let proj = yield ModalProjct_1.default.findOne(req.body);
+        let user = yield ModelUser_1.default.find({});
+        // console.log(user);
+        user.map((item) => {
+            if (item.name === proj.staff) {
+                proj.userId = item._id;
+                flag = true;
+            }
+        });
+        console.log(proj);
+        if (flag) {
+            return res.send(updateData);
+        }
+        else {
+            return res.send("dont found developer");
+        }
     }
     catch (error) {
         return res.status(404).send(error);

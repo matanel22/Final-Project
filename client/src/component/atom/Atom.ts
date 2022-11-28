@@ -35,8 +35,13 @@ export default TasksData
         key:"refresh"
     })
 
-  export  const  DP=atom<IProps[]>({
+  export const DP=atom<IProps[]>({
     default:[],
     key:""
+
+  })
+  export const userId=atom<string>({
+    default:"",
+    key:"_id"
 
   })
