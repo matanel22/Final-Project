@@ -9,12 +9,17 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
+
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import { idPrj } from "../atom/Atom";
 import Card from "../UI/card";
+import { useHistory } from "react-router-dom";
+import classes from "./update.module.css";
 export interface IProps {
   _id: string;
   nameProject: string;
@@ -24,12 +29,7 @@ export interface IProps {
   statusProject: string;
   amountOfUsers: string;
 }
-interface IUsers {
-  _id: string;
-  name: string;
-  email: string;
-  pass: string;
-}
+
 // interface IFormInputs {
 //   _id: string;
 //   nameProject: string;
@@ -40,11 +40,18 @@ interface IUsers {
 //   amountOfUsers: string;
 // }
 const UpdateProject: React.FC<{ onUpdate: IProps }> = (props) => {
-  const [projId, setProjId] = useRecoilState(idPrj);
+  // const [projId, setProjId] = useRecoilState(idPrj);
   const [isUpdate, setIsUpdate] = useState(false);
   const [isUser, setIsUser] = useState(false);
+  const [isClick, setIsClick] = useState(false);
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const [isSucceed, setIsSucced] = useState(false);
 
-  const option = ["פעיל ", "לא פעיל", "תחזוקה"];
+  let histury = useHistory();
+
+  const option = ["פעיל ", "לא פעיל"];
   const {
     register,
     formState,
@@ -54,6 +61,17 @@ const UpdateProject: React.FC<{ onUpdate: IProps }> = (props) => {
   } = useForm<IProps>({
     mode: "onChange",
   });
+  const style = {
+    position: "absolute" as "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,
+  };
 
   useEffect(() => {
     reset({
@@ -65,8 +83,10 @@ const UpdateProject: React.FC<{ onUpdate: IProps }> = (props) => {
       nameProject: props.onUpdate.nameProject,
       client: props.onUpdate.client,
     });
+    console.log(props.onUpdate.statusProject);
   }, []);
   const editRejister: SubmitHandler<IProps> = async (data) => {
+    setIsClick(true);
     let flag = false;
     setIsUpdate(!isUpdate);
     console.log(data);
@@ -74,7 +94,6 @@ const UpdateProject: React.FC<{ onUpdate: IProps }> = (props) => {
     await axios
       .get(u)
       .then((res) => {
-        console.log(res.data[0]);
         res.data.map((item: any) => {
           if (item.name === data.staff) {
             data.userId = item._id;
@@ -88,100 +107,102 @@ const UpdateProject: React.FC<{ onUpdate: IProps }> = (props) => {
     setIsUpdate(!isUpdate);
 
     if (flag) {
+      setIsUser(true);
       let url = `http://localhost:3001/api/routs/router/updateProject`;
       await axios
         .put(url, data)
         .then((res) => {
+          setIsSucced(true);
           console.log(res.data);
-          setIsUser(true);
         })
         .catch((err) => {
           console.log(err);
         });
     }
   };
-  let valideDev = !isUser ? <p>שם המפתח לא נמצא</p> : "";
+  useEffect(() => {
+    if (isSucceed) {
+      histury.push("/projects");
+    }
+  }, [isSucceed]);
+  let valideDev = isClick && !isUser ? <p>שם המפתח לא נמצא</p> : "";
   return (
-    <Box
-      sx={{
-        position: "fixed",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        p: 1,
-        m: 1,
-        bgcolor: "background.paper",
-        borderRadius: 1,
-      }}
-    >
-      <Card>
-        <form onSubmit={handleSubmit(editRejister)}>
-          <InputLabel htmlFor="my-input">שם פרוייקט </InputLabel>
-          <Input
-            id="my-input"
-            aria-describedby="my-helper-text"
-            type="text"
-            // value={props.onUpdate.nameProject}
-            {...register("nameProject", { required: true })}
-          />
-          <FormHelperText id="my-helper-text">
-            We'll never share your nameProject.
-          </FormHelperText>
-          <InputLabel htmlFor="my-input">שם המפתח</InputLabel>
-          <Input
-            id="my-input"
-            aria-describedby="my-helper-text"
-            type="text"
-            // value={props.onUpdate.staff}
-            {...register("staff", { required: true })}
-          />
-          {valideDev}
-          <FormHelperText id="my-helper-text">
-            We'll never share your developer.
-          </FormHelperText>
-          <InputLabel htmlFor="my-input">לקוח מוביל </InputLabel>
-          <Input
-            id="my-input"
-            aria-describedby="my-helper-text"
-            type="text"
-            // value={props.onUpdate.client}
-            {...register("client", { required: true })}
-          />
-          <FormHelperText id="my-helper-text">
-            We'll never share your client.
-          </FormHelperText>
-          <InputLabel htmlFor="my-input"> האם יש משתמשים </InputLabel>
-          <Input
-            id="my-input"
-            aria-describedby="my-helper-text"
-            type="text"
-            {...register("amountOfUsers", { required: true })}
-          />
-          <FormHelperText id="my-helper-text">
-            We'll never share your amountOfUsers.
-          </FormHelperText>
-          {/* <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            type="text"
-            {...register("statusProject", { required: true })}
-          >
-            {errors.statusProject && "חובה  לבחור "}
-            <MenuItem>פעיל</MenuItem>
-            <MenuItem>לא פעיל</MenuItem>
-            <MenuItem>תחזוקה</MenuItem>
-          </Select>
-          <FormHelperText id="my-helper-text">
-            We'll never share your statusProject.
-          </FormHelperText> */}
+    <Card>
+      <Button className={classes.btn} onClick={handleOpen}>
+        {" "}
+        aaa
+      </Button>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            <form onSubmit={handleSubmit(editRejister)}>
+              <InputLabel htmlFor="my-input">שם פרוייקט </InputLabel>
+              <Input
+                id="my-input"
+                aria-describedby="my-helper-text"
+                type="text"
+                // value={props.onUpdate.nameProject}
+                {...register("nameProject", { required: true })}
+              />
 
-          <Button variant="contained" type="submit" color="success">
-            {" "}
-            עדכן
-          </Button>
-        </form>
-      </Card>
-    </Box>
+              <InputLabel htmlFor="my-input">שם המפתח</InputLabel>
+              <Input
+                id="my-input"
+                aria-describedby="my-helper-text"
+                type="text"
+                // value={props.onUpdate.staff}
+                {...register("staff", { required: true })}
+              />
+              {valideDev}
+
+              <InputLabel htmlFor="my-input">לקוח מוביל </InputLabel>
+              <Input
+                id="my-input"
+                aria-describedby="my-helper-text"
+                type="text"
+                // value={props.onUpdate.client}
+                {...register("client", { required: true })}
+              />
+
+              <InputLabel htmlFor="my-input"> האם יש משתמשים </InputLabel>
+              <Input
+                id="my-input"
+                aria-describedby="my-helper-text"
+                type="text"
+                {...register("amountOfUsers", { required: true })}
+              />
+
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                label="סטטוס"
+                type="text"
+                // placeholder="סטטוס"
+                {...register("statusProject", { required: true })}
+              >
+                {option.map((item, index) => {
+                  return (
+                    <MenuItem value={props.onUpdate.statusProject}>
+                      {item}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+
+              <Button variant="contained" type="submit" color="success">
+                {" "}
+                עדכן
+              </Button>
+            </form>
+          </Typography>
+        </Box>
+      </Modal>
+    </Card>
   );
 };
 export default UpdateProject;
