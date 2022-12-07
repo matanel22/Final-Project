@@ -1,4 +1,5 @@
 import { Request,Response } from "express";
+import ProjectModel from "../model/ModalProjct";
 import ModalProject, { validProject } from "../model/ModalProjct";
 import MissionModel from "../model/modelMission";
 import UsersModel from "../model/ModelUser";
@@ -17,7 +18,7 @@ export const allProject=async(req:Request,res:Response)=>{
 
     try {
      let user=await UsersModel.findOne({_id:req.body.id})
-     if(user?.permissions==="admin"){
+     if(user?.permissions){
       let projects=await ModalProject.find({});
       return res.json(projects);
      }else{
@@ -43,7 +44,7 @@ export const specificProject =async(req:Request,res:Response)=>{
 }
 export const projSpecific=async(req:Request,res:Response)=>{
 try {
-  let project=await ModalProject.findOne({_id:req.body.id})
+  let project=await ProjectModel.findOne({_id:req.body.id})
  return res.send(project)
 } catch (error) {
  return res.status(404).send(error)
@@ -52,8 +53,8 @@ try {
 export const updateProject=async(req:Request,res:Response)=>{
   let flag=false
   try {
-    let updateData=await ModalProject.updateOne({_id:req.body._id},req.body);
-    let proj:any=await ModalProject.findOne(req.body)
+    let updateData=await ProjectModel.updateOne({_id:req.body._id},req.body);
+    let proj:any=await ProjectModel.findOne(req.body)
     
     let user=await UsersModel.find({})
     // console.log(user);

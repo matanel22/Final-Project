@@ -83,7 +83,6 @@ const UpdateProject: React.FC<{ onUpdate: IProps }> = (props) => {
       nameProject: props.onUpdate.nameProject,
       client: props.onUpdate.client,
     });
-    console.log(props.onUpdate.statusProject);
   }, []);
   const editRejister: SubmitHandler<IProps> = async (data) => {
     setIsClick(true);

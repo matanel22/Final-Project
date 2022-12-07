@@ -26,7 +26,7 @@ const specificMission = (req, res) => __awaiter(void 0, void 0, void 0, function
 exports.specificMission = specificMission;
 const updateMission = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let updateData = yield modelMission_1.default.updateOne({ _id: req.body.id }, req.body);
+        let updateData = yield modelMission_1.default.updateOne({ _id: req.body._id }, req.body);
         return res.send(updateData);
     }
     catch (error) {

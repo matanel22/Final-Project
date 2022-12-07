@@ -10,7 +10,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 // import authToken from "../auto/autoToken";
 const UserSchema = new mongoose_1.default.Schema({
     // _id: mongoose.Schema.Types.ObjectId,
-    permissions: String,
+    permissions: Boolean,
     name: String,
     email: String,
     pass: String,

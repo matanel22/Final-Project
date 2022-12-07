@@ -14,6 +14,15 @@ export const allUsers=async(req:Request,res:Response)=>{
  
 
 }
+export const usersSpecific=async(req:Request,res:Response)=>{
+  try {
+    const user=await UsersModel.findOne({_id:req.body._id})
+   return res.send(user)
+  } catch (error) {
+    return res.status(404).send(error)
+  }
+
+}
 
 
 export const signUp=async(req:Request,res:Response)=>{

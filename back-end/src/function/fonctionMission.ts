@@ -13,7 +13,7 @@ export const specificMission =async (req:Request,res:Response)=>{
 }
 export const updateMission=async(req:Request,res:Response)=>{
     try {
-      let updateData=await MissionModel.updateOne({_id:req.body.id},req.body);
+      let updateData=await MissionModel.updateOne({_id:req.body._id},req.body);
       return res.send(updateData);
     } catch (error) {
       return res.status(404).send(error);

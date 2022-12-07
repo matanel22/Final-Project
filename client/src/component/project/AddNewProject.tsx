@@ -4,7 +4,7 @@ import classes from "./AddNewProject.module.css";
 import Card from "../UI/card";
 import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import {
   AppBar,
   Box,
@@ -17,7 +17,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useRecoilState } from "recoil";
-import { userId } from "../atom/Atom";
+import { userId, userName } from "../atom/Atom";
 // "name": "בטיחות",
 // "developer": "ליאל",
 // "client": "מלמ",
@@ -36,12 +36,17 @@ interface IFormInputs {
   statusProject: string;
   amountOfUsers: string;
 }
-const option = ["פעיל ", "לא פעיל", "תחזוקה"];
+const option = ["פעיל ", "לא פעיל"];
+const statusP = ["פיתוח", "תחזוקה"];
 
 const AddNewProject: React.FC = (props) => {
   // const [useId, setUseId] = useRecoilState<string>(userId);
   const [usersData, setUsersData] = useState<IUsers[]>([]);
   const [validata, setValidata] = useState("");
+  const [NY, setNameUser] = useRecoilState<string>(userName);
+  const [isSucceed, setIsSucced] = useState(false);
+
+  let histury = useHistory();
   const {
     register,
     formState,
@@ -83,19 +88,22 @@ const AddNewProject: React.FC = (props) => {
       try {
         let url = "http://localhost:3001/api/routs/router/addCreatProject";
         axios.post(url, data).then(({ data }) => {
+          setIsSucced(true);
           console.log(data);
         });
       } catch (error) {
         console.log(error);
       }
     } else {
-      setValidata("developer not found ");
+      setValidata("שם המשתמש לא נמצא");
     }
   };
 
   useEffect(() => {
-    console.log(usersData);
-  }, [usersData]);
+    if (isSucceed) {
+      histury.push("/projects");
+    }
+  }, [isSucceed]);
 
   return (
     <div>
@@ -110,21 +118,8 @@ const AddNewProject: React.FC = (props) => {
               sx={{ mr: 2 }}
             ></IconButton>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              News
+              {NY}
             </Typography>
-            <Link to="/projects">
-              <Button
-                color="secondary"
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                {/* <Icon color="primary">add_circle</Icon> */}
-                לפרוייקטים
-              </Button>
-            </Link>
-            ;{/* <Button color="inherit">Login</Button> */}
           </Toolbar>
         </AppBar>
       </Box>
@@ -174,15 +169,17 @@ const AddNewProject: React.FC = (props) => {
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
+            label="סטטוס"
             type="text"
+            // placeholder="סטטוס"
             {...register("statusProject", { required: true })}
           >
             {errors.statusProject && "חובה  לבחור "}
             {option.map((item, index) => {
-              return <MenuItem value={item[0]}>{item[0]}</MenuItem>;
+              return <MenuItem value={item}>{item}</MenuItem>;
             })}
           </Select>
-          {errors.client && "חובה לבחור סטטוס"}
+          {errors.statusProject && " חובה לבחור סטטוס פרןייקט "}
 
           <Button
             type="submit"

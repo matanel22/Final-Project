@@ -15,8 +15,8 @@ const ProjectScama = new mongoose_1.default.Schema({
     statusProject: String,
     amountOfUsers: String
 });
-const PojectModel = mongoose_1.default.model('projects', ProjectScama);
-exports.default = PojectModel;
+const ProjectModel = mongoose_1.default.model('projects', ProjectScama);
+exports.default = ProjectModel;
 const validProject = (_validData) => {
     let joiSchema = joi_1.default.object({
         userId: joi_1.default.string(),

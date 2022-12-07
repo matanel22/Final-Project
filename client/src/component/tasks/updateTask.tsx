@@ -41,7 +41,7 @@ const UpdateTask: React.FC<{ onMission: IFormMission }> = (props) => {
   const [updateProj, setUpdateProj] = useState({});
   const [isUpdate, setIsUpdate] = useState(false);
 
-  const option = ["פעיל ", "לא פעיל", "תחזוקה"];
+  const option = ["פעיל ", "לא פעיל"];
   const {
     register,
     formState,
@@ -62,9 +62,10 @@ const UpdateTask: React.FC<{ onMission: IFormMission }> = (props) => {
       endDate: props.onMission.endDate,
       remarks: props.onMission.remarks,
     });
+    console.log(props.onMission.discrption);
   }, []);
   const editRejister: SubmitHandler<IFormMission> = async (data) => {
-    let url = `http://localhost:3001/api/routs/router/updateProject`;
+    let url = `http://localhost:3001/api/routs/router/updateMission`;
     await axios
       .put(url, data)
       .then((res) => {
@@ -94,34 +95,22 @@ const UpdateTask: React.FC<{ onMission: IFormMission }> = (props) => {
             id="my-input"
             aria-describedby="my-helper-text"
             type="text"
-            // value={props.onUpdate.nameProject}
             {...register("discrption", { required: true })}
           />
-          <FormHelperText id="my-helper-text">
-            We'll never share your nameProject.
-          </FormHelperText>
           <InputLabel htmlFor="my-input"> סטטוס משימה</InputLabel>
           <Input
             id="my-input"
             aria-describedby="my-helper-text"
             type="text"
-            // value={props.onUpdate.staff}
             {...register("missionStatus", { required: true })}
           />
-          <FormHelperText id="my-helper-text">
-            We'll never share your developer.
-          </FormHelperText>
           <InputLabel htmlFor="my-input">תאריך התחלה </InputLabel>
           <Input
             id="my-input"
             aria-describedby="my-helper-text"
             type="date"
-            // value={props.onUpdate.client}
             {...register("data_created", { required: true })}
           />
-          <FormHelperText id="my-helper-text">
-            We'll never share your client.
-          </FormHelperText>
           <InputLabel htmlFor="my-input"> תאריך סיום </InputLabel>
           <Input
             id="my-input"
@@ -129,9 +118,6 @@ const UpdateTask: React.FC<{ onMission: IFormMission }> = (props) => {
             type="date"
             {...register("endDate", { required: true })}
           />
-          <FormHelperText id="my-helper-text">
-            We'll never share your amountOfUsers.
-          </FormHelperText>
           {/* <FormHelperText id="my-helper-text">
             We'll never share your client.
           </FormHelperText> */}
@@ -142,23 +128,6 @@ const UpdateTask: React.FC<{ onMission: IFormMission }> = (props) => {
             type="text"
             {...register("remarks", { required: true })}
           />
-          <FormHelperText id="my-helper-text">
-            We'll never share your amountOfUsers.
-          </FormHelperText>
-          {/* <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              type="text"
-              {...register("statusProject", { required: true })}
-            >
-              {errors.statusProject && "חובה  לבחור "}
-              <MenuItem>פעיל</MenuItem>
-              <MenuItem>לא פעיל</MenuItem>
-              <MenuItem>תחזוקה</MenuItem>
-            </Select>
-            <FormHelperText id="my-helper-text">
-              We'll never share your statusProject.
-            </FormHelperText> */}
 
           <Button variant="contained" type="submit" color="success">
             {" "}

@@ -1,4 +1,5 @@
 import { Request,Response } from "express";
+import ProjectModel from "../model/ModalProjct";
 import ModalProject, { validProject } from "../model/ModalProjct";
 import UsersModel from "../model/ModelUser";
 
@@ -10,7 +11,7 @@ export const addCreatProject = async (req:Request,res:Response)=>{
      }
      else{
         try {
-            let project=await new ModalProject(req.body);
+            let project=await new ProjectModel(req.body);
 
             if(!project){
                 return res.json({msg:"please try again"})

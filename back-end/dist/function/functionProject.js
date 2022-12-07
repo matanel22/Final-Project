@@ -14,17 +14,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.allMissionOfProject = exports.updateProject = exports.projSpecific = exports.specificProject = exports.allProject = void 0;
 const ModalProjct_1 = __importDefault(require("../model/ModalProjct"));
+const ModalProjct_2 = __importDefault(require("../model/ModalProjct"));
 const modelMission_1 = __importDefault(require("../model/modelMission"));
 const ModelUser_1 = __importDefault(require("../model/ModelUser"));
 const allProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let user = yield ModelUser_1.default.findOne({ _id: req.body.id });
-        if ((user === null || user === void 0 ? void 0 : user.permissions) === "admin") {
-            let projects = yield ModalProjct_1.default.find({});
+        if (user === null || user === void 0 ? void 0 : user.permissions) {
+            let projects = yield ModalProjct_2.default.find({});
             return res.json(projects);
         }
         else {
-            let projects = yield ModalProjct_1.default.find({ userId: req.body.id });
+            let projects = yield ModalProjct_2.default.find({ userId: req.body.id });
             return res.json(projects);
         }
     }
@@ -35,7 +36,7 @@ const allProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 exports.allProject = allProject;
 const specificProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let project = yield ModalProjct_1.default.find({ id: req.body.id });
+        let project = yield ModalProjct_2.default.find({ id: req.body.id });
         return res.json(project);
     }
     catch (error) {

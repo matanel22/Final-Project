@@ -34,16 +34,16 @@ const AllProjects = () => {
       }
     };
     fetch(useId);
-  }, [dataProject && validata]);
+  }, []);
 
   let quantityCheck =
     dataProject.length === 0 ? <h1>לא נוצרו פרוייקטים </h1> : "";
 
   return (
-    <div>
+    <>
       <ProjectList onProps={dataProject} />
       {quantityCheck}
-    </div>
+    </>
   );
 };
 

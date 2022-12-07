@@ -16,6 +16,7 @@ router.post('/login', fonctionUsers_1.login);
 router.get("/userInfo", fonctionUsers_2.userInfo);
 router.get("/allUsers", fonctionUsers_1.allUsers);
 router.post('/signUp', fonctionUsers_1.signUp);
+router.post('/usersSpecific', fonctionUsers_1.usersSpecific);
 //routers of project
 router.post('/allProjects', functionProject_1.allProject);
 router.post("/addCreatProject", addNewProject_1.addCreatProject);

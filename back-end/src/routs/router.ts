@@ -1,7 +1,7 @@
 
 import express from 'express';
 import { createMission } from '../function/createMission';
-import {allUsers, login,signUp} from '../function/fonctionUsers'
+import {allUsers, login,signUp, usersSpecific} from '../function/fonctionUsers'
 import {  allMissionOfProject, allProject, projSpecific, specificProject, updateProject } from '../function/functionProject';
 import { addCreatProject } from '../function/addNewProject';
 import { deleteSpcificMission, specificMission, taskOne, updateMission } from '../function/fonctionMission';
@@ -14,6 +14,7 @@ router.post('/login',login);
 router.get("/userInfo",userInfo)
 router.get("/allUsers",allUsers);
 router.post('/signUp',signUp);
+router.post('/usersSpecific',usersSpecific)
 
 //routers of project
 router.post('/allProjects',allProject)

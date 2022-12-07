@@ -11,8 +11,8 @@ statusProject:String,
 amountOfUsers:String
 
 })
-const PojectModel=mongoose.model('projects',ProjectScama);
-export default PojectModel
+const ProjectModel=mongoose.model('projects',ProjectScama);
+export default ProjectModel
 
 
 export const validProject=(_validData:any)=>{

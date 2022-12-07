@@ -22,7 +22,10 @@ interface IFormMission {
     key:'todo'
 })
 export default TasksData
-
+export const userName=atom<string>({
+  default :"",
+  key:"name"
+})
 
     export const idPrj=atom({
         default:'',

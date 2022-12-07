@@ -13,8 +13,15 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
-import { userId } from "../atom/Atom";
+import { IProps, userId, userName } from "../atom/Atom";
 import { useRecoilState } from "recoil";
+interface IUsers {
+  _id: string;
+  permissions: String;
+  name: string;
+  email: string;
+  pass: string;
+}
 
 function Copyright(props: any) {
   return (
@@ -43,9 +50,10 @@ export default function Home() {
   const [validPass, setValidPass] = useState(false);
   const [validToken, setValidToken] = useState(false);
   const [useId, setUseId] = useRecoilState<string>(userId);
-  const [validata, setValidata] = useState(false);
-
+  const [NY, setNameUser] = useRecoilState<string>(userName);
+  const [stateId, setStateId] = useState<string>("");
   let histury = useHistory();
+
   const sendEmail = (event: any) => {
     setIsEmail(event.target.value);
   };
@@ -77,13 +85,17 @@ export default function Home() {
       .post(url, { email, pass })
       .then(async (res) => {
         console.log(res.data);
+        localStorage.setItem("tok", res.data.token);
 
         let url = "http://localhost:3001/api/routs/router/userInfo";
         await axios
-          .get(url, { headers: { "x-api-key": res.data.token } })
+          .get(url, { headers: { "x-api-key": localStorage["tok"] } })
           .then((res) => {
             console.log(res.data);
+
             setUseId(res.data[0]._id);
+            setStateId(res.data[0]._id);
+            setNameUser(res.data[0].name);
             setValidToken(true);
           })
           .catch((err) => {

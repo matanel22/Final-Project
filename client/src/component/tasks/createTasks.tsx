@@ -11,9 +11,9 @@ import { Box } from "@mui/system";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import TasksData, { idPrj, missionProj } from "../atom/Atom";
+import TasksData, { idPrj, missionProj, userName } from "../atom/Atom";
 // import ButtonMisson from "../UI/Button";
 import Card from "../UI/card";
 import classes from "./CreateTasks.module.css";
@@ -33,6 +33,8 @@ const CreateTasks = () => {
   const [dataMission, setDataMission] = useRecoilState(missionProj);
   const [isMission, setIsMission] = useRecoilState(TasksData);
   const [isSucceed, setIsSucced] = useState(false);
+  const [NY, setNameUser] = useRecoilState<string>(userName);
+  let histury = useHistory();
   const {
     register,
     formState,
@@ -51,12 +53,17 @@ const CreateTasks = () => {
 
       .then((res) => {
         setDataMission(res.data);
+        setIsSucced(true);
       })
       .catch((res) => {
         console.log("res", res);
       });
   };
-
+  useEffect(() => {
+    if (isSucceed) {
+      histury.push("tasks");
+    }
+  }, [isSucceed]);
   return (
     <div>
       <Box sx={{ flexGrow: 1, minHeight: 150 }}>
@@ -70,7 +77,7 @@ const CreateTasks = () => {
               sx={{ mr: 2 }}
             ></IconButton>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              News
+              {NY}
             </Typography>
             <Link to="/projects">
               <Button
@@ -149,17 +156,6 @@ const CreateTasks = () => {
             סיום{" "}
           </Button>
         </form>
-        <Link to="tasks">
-          <Button
-            id="cr"
-            variant="contained"
-            // onClick={() => {
-            //   sendProjectID(ID);
-            // }}
-          >
-            למשימות לחץ כאן
-          </Button>
-        </Link>
       </Card>
     </div>
   );
