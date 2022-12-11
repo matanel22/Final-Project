@@ -10,7 +10,9 @@ import {
   Box,
   Button,
   IconButton,
+  InputLabel,
   MenuItem,
+  NativeSelect,
   Select,
   TextField,
   Toolbar,
@@ -117,6 +119,9 @@ const AddNewProject: React.FC = (props) => {
               aria-label="menu"
               sx={{ mr: 2 }}
             ></IconButton>
+            {/* <Link to={"/projects"}>
+              <Button>לפרוייקטים</Button>
+            </Link> */}
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               {NY}
             </Typography>
@@ -180,7 +185,19 @@ const AddNewProject: React.FC = (props) => {
             })}
           </Select>
           {errors.statusProject && " חובה לבחור סטטוס פרןייקט "}
-
+          <InputLabel variant="standard" htmlFor="uncontrolled-native">
+            סטטוס פרוייקט
+          </InputLabel>
+          <NativeSelect
+            inputProps={{
+              name: "age",
+              id: "uncontrolled-native",
+            }}
+          >
+            <option>Ten</option>
+            <option>Twenty</option>
+            <option>Thirty</option>
+          </NativeSelect>
           <Button
             type="submit"
             variant="contained"

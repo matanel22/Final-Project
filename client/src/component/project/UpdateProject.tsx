@@ -129,7 +129,7 @@ const UpdateProject: React.FC<{ onUpdate: IProps }> = (props) => {
     <Card>
       <Button className={classes.btn} onClick={handleOpen}>
         {" "}
-        aaa
+        עדכון
       </Button>
       <Modal
         open={open}

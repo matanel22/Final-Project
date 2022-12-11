@@ -37,10 +37,6 @@ interface IFormMission {
 //   amountOfUsers: string;
 // }
 const UpdateTask: React.FC<{ onMission: IFormMission }> = (props) => {
-  const [projId, setProjId] = useRecoilState(idPrj);
-  const [updateProj, setUpdateProj] = useState({});
-  const [isUpdate, setIsUpdate] = useState(false);
-
   const option = ["פעיל ", "לא פעיל"];
   const {
     register,
@@ -65,6 +61,9 @@ const UpdateTask: React.FC<{ onMission: IFormMission }> = (props) => {
     console.log(props.onMission.discrption);
   }, []);
   const editRejister: SubmitHandler<IFormMission> = async (data) => {
+    data._id = props.onMission._id;
+    data.projectId = props.onMission.projectId;
+
     let url = `http://localhost:3001/api/routs/router/updateMission`;
     await axios
       .put(url, data)
