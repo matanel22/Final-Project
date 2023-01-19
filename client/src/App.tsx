@@ -9,8 +9,9 @@ import { Route, Switch, Redirect, BrowserRouter } from "react-router-dom";
 import TasksList from "./component/tasks/TasksList";
 import TasksData from "./component/atom/Atom";
 import { useRecoilState } from "recoil";
+import CreateTasks from "./component/tasks/createTasks";
+import SignUp from "./component/signUp/SignUp";
 function App() {
-  const [n, setN] = useRecoilState(TasksData);
   return (
     <BrowserRouter>
       <Switch>
@@ -26,11 +27,14 @@ function App() {
         <Route path="/createProject" exact>
           <AddNewProject />
         </Route>
-        <Route path="/login" exact>
-          <Home />
+        <Route path="/signUp" exact>
+          <SignUp />
         </Route>
         <Route path="/tasks" exact>
           <TasksList></TasksList>
+        </Route>
+        <Route path="/createTasks" exact>
+          <CreateTasks></CreateTasks>
         </Route>
       </Switch>
     </BrowserRouter>

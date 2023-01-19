@@ -1,118 +1,220 @@
-// import { Button } from "@mui/material";
-import classes from "./ProjectList.module.css";
 import React, { useEffect, useState } from "react";
+import { Avatar, Box, Icon, makeStyles } from "@mui/material";
 import { useRecoilState, useRecoilValue } from "recoil";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import ButtonMission from "../UI/Button";
-import TasksData from "../atom/Atom";
+import TasksData, { userId, userName } from "../atom/Atom";
 import { idPrj } from "../atom/Atom";
 import Card from "../UI/card";
-import { Button } from "@mui/material";
 
+import {
+  AppBar,
+  Button,
+  createStyles,
+  IconButton,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Theme,
+  Toolbar,
+  Typography,
+} from "@mui/material";
+import UpdateProject from "./UpdateProject";
+import { SubmitHandler, useForm } from "react-hook-form";
+// const useStyles = makeStyles({
+//   table: {
+//     minWidth: 650,
+//   },
+// });
+interface IUsers {
+  _id: string;
+  permissions: String;
+  name: string;
+  email: string;
+  pass: string;
+}
 export interface IProps {
   _id: string;
   nameProject: string;
   staff: string;
   client: string;
+  userId: string;
   statusProject: string;
+  amountOfUsers: string;
 }
+
 const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
-  const [missionData, SetMissionData] = useState([]);
-  const [isOpenMission, setIsOpenMission] = useState(false);
-  const [isMission, setIsMission] = useRecoilState(TasksData);
+  const [useId, setUseId] = useRecoilState<string>(userId);
   const [projId, setProjId] = useRecoilState(idPrj);
-  // const [isValideDel, setIsValideDel] = useState(false);
-  // const [isMasseg, setMessege] = useState<string>("");
-  const removeProject = (id: string) => {
-    let url = `http://localhost:3001/api/routs/router/deleteSpcificProject/${id}`;
-    axios
-      .delete(url)
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  const [updateProj, setUpdateProj] = useState<IProps>(Object);
+  const [isopenUpdate, setIsUpdate] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenUpdate, setIsOpenUpdate] = useState(false);
+  const [isUsersPrem, setIsUsersPrem] = useState<IUsers>();
+  const [NY, setNameUser] = useRecoilState<string>(userName);
+  // const [open, setOpen] = React.useState(false);
+  const [validPremissionUsers, setValidPremissionUsers] = useState(false);
+  useEffect(() => {
+    const userS = (_id: string) => {
+      let url = "http://localhost:3001/api/routs/router/usersSpecific";
+      axios
+        .post(url, { _id })
+        .then((res) => {
+          setIsUsersPrem(res.data);
+          if (res.data.permissions) {
+            setValidPremissionUsers(true);
+          }
+          // console.log("useId", useId);
+          // console.log("resData", res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      console.log(validPremissionUsers);
+    };
+    userS(useId);
+  }, [validPremissionUsers]);
 
-  const sendProjectID = (id: string) => {
-    let url = "http://localhost:3001/api/routs/router/allMissionOfProject";
-    axios
-      .post(url, { id })
-      .then((res) => {
-        console.log(res.data);
-        SetMissionData(res.data);
-        setIsMission(res.data);
-        setIsOpenMission(!isOpenMission);
-      })
-      .catch((res) => {
-        console.log(res);
-      });
+  const showFormOnEdit = async (id: string) => {
+    setIsOpen(!isOpen);
+    setIsOpenUpdate(isOpenUpdate);
+    let url = "http://localhost:3001/api/routs/router/projSpecific";
+    await axios.post(url, { id }).then((res) => {
+      setUpdateProj(res.data);
+      console.log(res.data);
+    });
+    return setIsUpdate(true);
   };
-  // useEffect(()=>{
-  //   props.onProps.map((item)=>{
-  //     setProjId(item._id)
-  //   })
-  // })
-
+  // useEffect(() => {
+  //   if (isUsersPrem?.permissions) {
+  //     setValidPremissionUsers(true);
+  //   }
+  // }, [validPremissionUsers]);
   return (
-    <div>
-      <ul>
-        {props.onProps.map((item, index) => {
-          console.log(typeof item._id);
-
-          return (
-            <Card className={classes.specificproject} key={index}>
-              <li
-                className={classes.allBody}
-                onClick={() => {
-                  sendProjectID(item._id);
-                }}
+    <Box
+      sx={{
+        flexGrow: 1,
+        minHeight: 300,
+        // width: {
+        //   xs: 100,
+        //   sm: 200,
+        //   md: 300,
+        //   lg: 400,
+        //   xl: 500,
+        // },
+      }}
+    >
+      <AppBar position="static">
+        <Toolbar>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+          ></IconButton>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}></Avatar>
+            {`ברוך הבא ${NY}`}{" "}
+          </Typography>
+          <Link to="/createProject">
+            {validPremissionUsers && (
+              <Button
+                color="secondary"
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
               >
-                {`שם:${item.nameProject}`}
-                <br />
-                {`מפתח:${item.staff}`}
-                <br />
-                {`לקוח:${item.client}`}
-                <br />
-                {`סטטוס:${item.statusProject}`}
-                <br />
+                הוספת פרוייקט
+              </Button>
+            )}
+          </Link>
+        </Toolbar>
+      </AppBar>
 
-                <ButtonMission
-                  onClick={() => {
-                    removeProject(item._id);
-                  }}
-                >
-                  למחיקה לחץ כאן
-                </ButtonMission>
+      {/* c
+       */}
+      {/* className={classes.table} aria-label="simple table" */}
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell align="right">Protein&nbsp;(g)</TableCell>
+              <TableCell align="right">שם הפרוייקט</TableCell>
+              <TableCell align="right">שם הצוות</TableCell>
+              <TableCell align="right">שם הלקוח</TableCell>
+              <TableCell align="right">סטטוס הפרוייקט</TableCell>
+              <TableCell align="right"> האם יש משתמשים</TableCell>
 
-                <Link to="/tasks">
-                  <ButtonMission
-                    onClick={() => {
-                      setProjId(item._id);
-                    }}
-                  >
-                    למשימות לחץ כאן
-                  </ButtonMission>
-                </Link>
-              </li>
-            </Card>
-          );
-        })}
-      </ul>
-      <Link to="/createProject">
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          יצירת פרוייקט
-        </Button>
-      </Link>
-    </div>
+              <TableCell align="right">למשימות הפרוייקט</TableCell>
+              {validPremissionUsers && (
+                <TableCell align="right">לעדכון הפרוייקט</TableCell>
+              )}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {props.onProps.length &&
+              props.onProps.map((item, index) => (
+                <TableRow>
+                  <TableCell component="th" scope="row">
+                    {/* {item.name} */}
+                  </TableCell>
+                  <TableCell align="right"> {`${item.nameProject}`}</TableCell>
+                  <TableCell align="right">{`${item.staff}`}</TableCell>
+                  <TableCell align="right">{`${item.client}`}</TableCell>
+                  <TableCell align="right">{`${item.statusProject}`}</TableCell>
+                  <TableCell align="right">
+                    {" "}
+                    {`${item.amountOfUsers}`}
+                  </TableCell>
+                  <TableCell align="right">
+                    {" "}
+                    <Link to="/tasks">
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => {
+                          setProjId(item._id);
+                        }}
+                      >
+                        למשימות לחץ כאן
+                      </Button>
+                    </Link>
+                  </TableCell>
+                  <TableCell align="right">
+                    {" "}
+                    {validPremissionUsers && (
+                      <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => {
+                          showFormOnEdit(item._id);
+                        }}
+                      >
+                        לעדכון הפרוייקט
+                      </Button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      {isOpen && (
+        <UpdateProject
+          onUpdate={updateProj}
+          openUpdate={isOpen}
+        ></UpdateProject>
+      )}
+    </Box>
   );
 };
 
 export default ProjectList;
+// editProj={updateProj}

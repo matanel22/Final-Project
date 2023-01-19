@@ -13,12 +13,8 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
-import { IProps, userId, userName } from "../atom/Atom";
-import { useRecoilState } from "recoil";
-import { Alert } from "@mui/material";
-interface IUsers {
-  _id: string;
-  permissions: String;
+
+export interface IUsers {
   name: string;
   email: string;
   pass: string;
@@ -44,25 +40,25 @@ function Copyright(props: any) {
 
 const theme = createTheme();
 
-export default function Home() {
+export default function SignUp() {
   const [email, setIsEmail] = useState("");
   const [pass, setIsPass] = useState("");
+  const [name, setIsName] = useState("");
   const [validEmail, setValidEmail] = useState(false);
   const [validPass, setValidPass] = useState(false);
-  const [validToken, setValidToken] = useState(false);
-  const [useId, setUseId] = useRecoilState<string>(userId);
-  const [NY, setNameUser] = useRecoilState<string>(userName);
-  const [stateId, setStateId] = useState<string>("");
-  const [isNotUserFlag, setIsNotUserFlag] = useState(false);
-  let histury = useHistory();
+  const [validName, setValideName] = useState(false);
+  const [valideSaveUser, setValideSaveUser] = useState(false);
 
+  let histury = useHistory();
   const sendEmail = (event: any) => {
     setIsEmail(event.target.value);
   };
   const sendPass = (event: any) => {
     setIsPass(event.target.value);
   };
-
+  const sendName = (event: any) => {
+    setIsName(event.target.value);
+  };
   // const onBlorPass = () => {
   //   if (isPass.trim().length === 0) {
   //     setValidPass(true);
@@ -74,52 +70,30 @@ export default function Home() {
   //   //   return;
   //   // }
   // };
-  const handleSubmit = async (event: any) => {
+  const handleSubmit = (event: any) => {
     event.preventDefault();
 
     if (pass.trim().length === 0) {
       setValidPass(true);
       return;
     }
-
-    let url = "http://localhost:3001/api/routs/router/login";
+    let url = "http://localhost:3001/api/routs/router/signUp";
     axios
-      .post(url, { email, pass })
-      .then(async (res) => {
+      .post(url, { name, email, pass })
+      .then((res) => {
         console.log(res.data);
-        localStorage.setItem("tok", res.data.token);
-
-        let url = "http://localhost:3001/api/routs/router/userInfo";
-        await axios
-          .get(url, { headers: { "x-api-key": localStorage["tok"] } })
-          .then((res) => {
-            console.log(res.data);
-
-            setUseId(res.data[0]._id);
-            setStateId(res.data[0]._id);
-            setNameUser(res.data[0].name);
-            setValidToken(true);
-            histury.push("/projects");
-          })
-          .catch((err) => {
-            console.log("err1");
-
-            return console.log({ msg: err });
-          });
+        setValideSaveUser(true);
+        // console.log(validToken);
       })
       .catch((err) => {
-        setIsNotUserFlag(true);
-        return console.log(err);
+        console.log(err);
       });
-    setIsEmail("");
-    setIsPass("");
   };
-
-  // useEffect(() => {
-  //   if (validToken) {
-  //     histury.push("/projects");
-  //   }
-  // }, [validToken]);
+  useEffect(() => {
+    if (valideSaveUser) {
+      histury.push("/login");
+    }
+  }, [valideSaveUser]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -132,21 +106,27 @@ export default function Home() {
             flexDirection: "column",
           }}
         >
-          {isNotUserFlag && (
-            <Alert severity="error">
-              אינך מחובר <L to="/signUp">התחברות</L>
-            </Alert>
-          )}
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}></Avatar>
-          <Typography component="h1" variant="h5">
-            הפרוייקטים של המדור
-          </Typography>
+          <Typography component="h1" variant="h5"></Typography>
           <Box
             component="form"
             onSubmit={handleSubmit}
             noValidate
             sx={{ mt: 1 }}
           >
+            <TextField
+              onChange={sendName}
+              value={name}
+              margin="normal"
+              required
+              fullWidth
+              id="name"
+              label="שם מלא"
+              name="name"
+              autoComplete="name"
+              autoFocus
+              // onBlur={onBlorPass}
+            />
             <TextField
               onChange={sendEmail}
               value={email}
@@ -185,16 +165,13 @@ export default function Home() {
               כניסה
             </Button>
 
-            <Grid container>
+            {/* <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
                   שכחת סיסמא
                 </Link>
               </Grid>
-              <Grid item>
-                <L to="/signUp">{"Don't have an account? Sign Up"}</L>
-              </Grid>
-            </Grid>
+            </Grid> */}
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
