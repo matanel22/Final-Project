@@ -56,6 +56,7 @@ const TasksList = () => {
   const [isOpenEditTask, setIsOpenEditTask] = useState(false);
   const [NU, setNameUser] = useRecoilState<string>(userName);
   const [isOpenApi, setIsOpenApi] = useState(false);
+  let flag = true;
   const sendingToTheCreation = () => {
     setIsOpen(!isOpen);
   };
@@ -73,19 +74,15 @@ const TasksList = () => {
       .delete(url)
       .then((response) => {
         console.log(response);
-        let url = "http://localhost:3001/api/routs/router/allMissionOfProject";
-        axios.post(url, ID).then((res) => {
-          setMis(res.data);
-        });
       })
       .catch((err) => {
         console.log(err);
       });
   };
   useEffect(() => {
-    const sendProjectID = (id: string) => {
+    const sendProjectID = async (id: string) => {
       let url = "http://localhost:3001/api/routs/router/allMissionOfProject";
-      axios
+      await axios
         .post(url, { id })
         .then((res) => {
           console.log(res.data);
@@ -101,46 +98,56 @@ const TasksList = () => {
   let validtasks =
     mis.length === 0 ? <h1>אין משימות בפרוייקט זה</h1> : <h1>משימות</h1>;
   return (
-    <div>
-      <Box sx={{ flexGrow: 1, minHeight: 150 }}>
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              sx={{ mr: 2 }}
-            ></IconButton>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              {NU}
-            </Typography>
-            <Link to="/projects">
-              <Button
-                color="secondary"
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                {/* <Icon color="primary">add_circle</Icon> */}
-                הפרוייקטים של המדור
-              </Button>
-            </Link>
-            <Link to="createTasks">
-              <Button
-                variant="contained"
-                color="secondary"
-                sx={{ mt: 3, mb: 2 }}
-                onClick={sendingToTheCreation}
-              >
-                ליצירת משימה חדשה
-              </Button>
-            </Link>
-            ;{/* <Button color="inherit">Login</Button> */}
-          </Toolbar>
-        </AppBar>
-      </Box>
+    <Box
+      sx={{
+        flexGrow: 1,
+        minHeight: 150,
+        // width: {
+        //   xs: 100,
+        //   sm: 200,
+        //   md: 300,
+        //   lg: 400,
+        //   xl: 500,
+        // },
+      }}
+    >
+      <AppBar position="static">
+        <Toolbar>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+          ></IconButton>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            {NU}
+          </Typography>
+          <Link to="/projects">
+            <Button
+              color="secondary"
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              {/* <Icon color="primary">add_circle</Icon> */}
+              הפרוייקטים של המדור
+            </Button>
+          </Link>
+          <Link to="createTasks">
+            <Button
+              variant="contained"
+              color="secondary"
+              sx={{ mt: 3, mb: 2 }}
+              onClick={sendingToTheCreation}
+            >
+              ליצירת משימה חדשה
+            </Button>
+          </Link>
+          ;{/* <Button color="inherit">Login</Button> */}
+        </Toolbar>
+      </AppBar>
 
       <TableHead>
         {validtasks}
@@ -173,7 +180,9 @@ const TasksList = () => {
                         .toString()}
                     </TableCell>
                     <TableCell align="right">
-                      {dayjs(item.endDate).format("DD/MM/YYYY")}
+                      {dayjs(item.endDate)
+                        .format("DD/MM/YYYY")
+                        .toString()}
                     </TableCell>
                     <TableCell align="right">{item.remarks}</TableCell>
                     <TableCell align="right">
@@ -210,7 +219,7 @@ const TasksList = () => {
       </TableHead>
       {isOpenEditTask && <UpdateTask onMission={taskOne}></UpdateTask>}
       <UrlTask />
-    </div>
+    </Box>
   );
 };
 export default TasksList;

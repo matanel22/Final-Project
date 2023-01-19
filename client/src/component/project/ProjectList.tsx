@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Icon, makeStyles } from "@mui/material";
+import { Avatar, Box, Icon, makeStyles } from "@mui/material";
 import { useRecoilState, useRecoilValue } from "recoil";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -52,8 +52,9 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
   const [useId, setUseId] = useRecoilState<string>(userId);
   const [projId, setProjId] = useRecoilState(idPrj);
   const [updateProj, setUpdateProj] = useState<IProps>(Object);
-  const [isUpdate, setIsUpdate] = useState(false);
+  const [isopenUpdate, setIsUpdate] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenUpdate, setIsOpenUpdate] = useState(false);
   const [isUsersPrem, setIsUsersPrem] = useState<IUsers>();
   const [NY, setNameUser] = useRecoilState<string>(userName);
   // const [open, setOpen] = React.useState(false);
@@ -68,8 +69,8 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
           if (res.data.permissions) {
             setValidPremissionUsers(true);
           }
-          console.log("useId", useId);
-          console.log("resData", res.data);
+          // console.log("useId", useId);
+          // console.log("resData", res.data);
         })
         .catch((err) => {
           console.log(err);
@@ -81,6 +82,7 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
 
   const showFormOnEdit = async (id: string) => {
     setIsOpen(!isOpen);
+    setIsOpenUpdate(isOpenUpdate);
     let url = "http://localhost:3001/api/routs/router/projSpecific";
     await axios.post(url, { id }).then((res) => {
       setUpdateProj(res.data);
@@ -94,36 +96,48 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
   //   }
   // }, [validPremissionUsers]);
   return (
-    <div>
-      <Box sx={{ flexGrow: 1, minHeight: 150 }}>
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              sx={{ mr: 2 }}
-            ></IconButton>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              {`ברוך הבא ${NY}`}
-            </Typography>
-            <Link to="/createProject">
-              {validPremissionUsers && (
-                <Button
-                  color="secondary"
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{ mt: 3, mb: 2 }}
-                >
-                  הוספת פרוייקט
-                </Button>
-              )}
-            </Link>
-          </Toolbar>
-        </AppBar>
-      </Box>
+    <Box
+      sx={{
+        flexGrow: 1,
+        minHeight: 300,
+        // width: {
+        //   xs: 100,
+        //   sm: 200,
+        //   md: 300,
+        //   lg: 400,
+        //   xl: 500,
+        // },
+      }}
+    >
+      <AppBar position="static">
+        <Toolbar>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+          ></IconButton>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}></Avatar>
+            {`ברוך הבא ${NY}`}{" "}
+          </Typography>
+          <Link to="/createProject">
+            {validPremissionUsers && (
+              <Button
+                color="secondary"
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                הוספת פרוייקט
+              </Button>
+            )}
+          </Link>
+        </Toolbar>
+      </AppBar>
+
       {/* c
        */}
       {/* className={classes.table} aria-label="simple table" */}
@@ -192,8 +206,13 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
           </TableBody>
         </Table>
       </TableContainer>
-      {isOpen && <UpdateProject onUpdate={updateProj}></UpdateProject>}
-    </div>
+      {isOpen && (
+        <UpdateProject
+          onUpdate={updateProj}
+          openUpdate={isOpen}
+        ></UpdateProject>
+      )}
+    </Box>
   );
 };
 

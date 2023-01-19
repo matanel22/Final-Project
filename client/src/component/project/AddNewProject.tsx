@@ -6,6 +6,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
 import { Link, useHistory } from "react-router-dom";
 import {
+  Alert,
   AppBar,
   Box,
   Button,
@@ -47,6 +48,7 @@ const AddNewProject: React.FC = (props) => {
   const [validata, setValidata] = useState("");
   const [NY, setNameUser] = useRecoilState<string>(userName);
   const [isSucceed, setIsSucced] = useState(false);
+  const [iseCreatProject, setIsCreateProject] = useState<string>("");
 
   let histury = useHistory();
   const {
@@ -92,6 +94,7 @@ const AddNewProject: React.FC = (props) => {
         axios.post(url, data).then(({ data }) => {
           setIsSucced(true);
           console.log(data);
+          histury.push("/projects");
         });
       } catch (error) {
         console.log(error);
@@ -100,12 +103,6 @@ const AddNewProject: React.FC = (props) => {
       setValidata("שם המשתמש לא נמצא");
     }
   };
-
-  useEffect(() => {
-    if (isSucceed) {
-      histury.push("/projects");
-    }
-  }, [isSucceed]);
 
   return (
     <div>
@@ -128,6 +125,14 @@ const AddNewProject: React.FC = (props) => {
           </Toolbar>
         </AppBar>
       </Box>
+      {/* {isSucceed && (
+        <Alert severity="success">
+          !!!!! הפרוייקט נוצר בהצלחה
+          <Link to={"/projects"}>
+            <Button>לפרוייקטים</Button>
+          </Link>
+        </Alert>
+      )} */}
       <Card className={classes.AddNewProject}>
         <form onSubmit={handleSubmit(registerPrj)}>
           <TextField
@@ -188,16 +193,8 @@ const AddNewProject: React.FC = (props) => {
           <InputLabel variant="standard" htmlFor="uncontrolled-native">
             סטטוס פרוייקט
           </InputLabel>
-          <NativeSelect
-            inputProps={{
-              name: "age",
-              id: "uncontrolled-native",
-            }}
-          >
-            <option>Ten</option>
-            <option>Twenty</option>
-            <option>Thirty</option>
-          </NativeSelect>
+
+          {/* {iseCreatProject} */}
           <Button
             type="submit"
             variant="contained"

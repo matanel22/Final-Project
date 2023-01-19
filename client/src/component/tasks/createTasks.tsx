@@ -55,17 +55,17 @@ const CreateTasks = () => {
 
       .then((res) => {
         setDataMission(res.data);
-        setIsSucced(true);
+        histury.push("tasks");
       })
       .catch((res) => {
         console.log("res", res);
       });
   };
-  useEffect(() => {
-    if (isSucceed) {
-      histury.push("tasks");
-    }
-  }, [isSucceed]);
+  // useEffect(() => {
+  //   if (isSucceed) {
+  //     histury.push("tasks");
+  //   }
+  // }, [isSucceed]);
   return (
     <div>
       <Box sx={{ flexGrow: 1, minHeight: 150 }}>

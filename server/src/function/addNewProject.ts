@@ -23,17 +23,14 @@ export const addCreatProject = async (req:Request,res:Response)=>{
                   flag=true
                }
            })
-       
            if(flag){
             project.save();
             console.log(project.userId);
-            
               return res.json(project)
            }
            else{
           return  res.status(404).json("dont found is developer")
            }
-           
         } catch (error) {
             return res.json({msg:error})
         }

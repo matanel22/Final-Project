@@ -39,18 +39,23 @@ export interface IProps {
 //   statusProject: string;
 //   amountOfUsers: string;
 // }
-const UpdateProject: React.FC<{ onUpdate: IProps }> = (props) => {
+const UpdateProject: React.FC<{ onUpdate: IProps; openUpdate: boolean }> = (
+  props
+) => {
   // const [projId, setProjId] = useRecoilState(idPrj);
   const [isUpdate, setIsUpdate] = useState(false);
   const [isUser, setIsUser] = useState(false);
   const [isClick, setIsClick] = useState(false);
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [isSucceed, setIsSucced] = useState(false);
+  // const [isClose, setIsOpen] = useState<boolean>(props.openUpdate);
 
   let histury = useHistory();
-
+  // const closeToUpdate = () => {
+  //   return setIsClose(!props.openUpdate);
+  // };
   const option = ["פעיל ", "לא פעיל"];
   const {
     register,
@@ -119,23 +124,23 @@ const UpdateProject: React.FC<{ onUpdate: IProps }> = (props) => {
         });
     }
   };
-  useEffect(() => {
-    if (isSucceed) {
-      histury.push("/projects");
-    }
-  }, [isSucceed]);
+  // useEffect(() => {
+  //   if (isSucceed) {
+  //     histury.push("/projects");
+  //   }
+  // }, [isSucceed]);
   let valideDev = isClick && !isUser ? <p>שם המפתח לא נמצא</p> : "";
   return (
     <Card>
-      <Button className={classes.btn} onClick={handleOpen}>
+      {/* <Button className={classes.btn} onClick={handleOpen}>
         {" "}
         עדכון
-      </Button>
+      </Button> */}
       <Modal
-        open={open}
-        onClose={handleClose}
+        open={props.openUpdate}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
+        onClose={handleClose}
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
@@ -185,18 +190,22 @@ const UpdateProject: React.FC<{ onUpdate: IProps }> = (props) => {
                 {...register("statusProject", { required: true })}
               >
                 {option.map((item, index) => {
-                  return (
-                    <MenuItem value={props.onUpdate.statusProject}>
-                      {item}
-                    </MenuItem>
-                  );
+                  return <MenuItem>{item}</MenuItem>;
                 })}
               </Select>
 
               <Button variant="contained" type="submit" color="success">
                 {" "}
-                עדכן
+                שמירה
               </Button>
+              {/* <Button
+                variant="contained"
+                type="submit"
+                color="success"
+                onClick={closeToUpdate}
+              >
+                סגור
+              </Button> */}
             </form>
           </Typography>
         </Box>

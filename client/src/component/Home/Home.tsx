@@ -15,6 +15,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import { IProps, userId, userName } from "../atom/Atom";
 import { useRecoilState } from "recoil";
+import { Alert } from "@mui/material";
 interface IUsers {
   _id: string;
   permissions: String;
@@ -52,6 +53,7 @@ export default function Home() {
   const [useId, setUseId] = useRecoilState<string>(userId);
   const [NY, setNameUser] = useRecoilState<string>(userName);
   const [stateId, setStateId] = useState<string>("");
+  const [isNotUserFlag, setIsNotUserFlag] = useState(false);
   let histury = useHistory();
 
   const sendEmail = (event: any) => {
@@ -97,21 +99,27 @@ export default function Home() {
             setStateId(res.data[0]._id);
             setNameUser(res.data[0].name);
             setValidToken(true);
+            histury.push("/projects");
           })
           .catch((err) => {
+            console.log("err1");
+
             return console.log({ msg: err });
           });
       })
       .catch((err) => {
+        setIsNotUserFlag(true);
         return console.log(err);
       });
+    setIsEmail("");
+    setIsPass("");
   };
 
-  useEffect(() => {
-    if (validToken) {
-      histury.push("/projects");
-    }
-  }, [validToken]);
+  // useEffect(() => {
+  //   if (validToken) {
+  //     histury.push("/projects");
+  //   }
+  // }, [validToken]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -124,6 +132,11 @@ export default function Home() {
             flexDirection: "column",
           }}
         >
+          {isNotUserFlag && (
+            <Alert severity="error">
+              אינך מחובר <L to="/signUp">התחברות</L>
+            </Alert>
+          )}
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}></Avatar>
           <Typography component="h1" variant="h5">
             הפרוייקטים של המדור

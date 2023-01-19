@@ -19,7 +19,7 @@ const AllProjects = () => {
   const [dataProject, setDataProject] = useState<IProps[]>([]);
   const [validata, setValidata] = useState(false);
   const [useId, setUseId] = useRecoilState<string>(userId);
-
+  let flag = false;
   useEffect(() => {
     const fetch = async (id: string) => {
       try {
@@ -27,14 +27,17 @@ const AllProjects = () => {
         await axios.post(url, { id }).then((response) => {
           console.log(response.data);
           setValidata(true);
-          setDataProject(response.data);
+          if (!flag) {
+            setDataProject(response.data);
+            flag = true;
+          }
         });
       } catch (error) {
         console.log(error);
       }
     };
     fetch(useId);
-  }, []);
+  }, [!dataProject]);
 
   let quantityCheck =
     dataProject.length === 0 ? <h1>לא נוצרו פרוייקטים </h1> : "";
