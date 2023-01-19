@@ -1,6 +1,8 @@
 import {
   AppBar,
   Button,
+  Container,
+  CssBaseline,
   IconButton,
   TextareaAutosize,
   TextField,
@@ -95,68 +97,70 @@ const CreateTasks = () => {
           </Toolbar>
         </AppBar>
       </Box>
+      <CssBaseline />
+      <Container fixed>
+        <Box sx={{ bgcolor: "#cfe8fc", height: "70vh" }}>
+          <form onSubmit={handleSubmit(registerPrj)}>
+            <label> תיאור המשימה </label>
+            <TextareaAutosize
+              {...register("discrption", { required: true })}
+              placeholder="תיאור המשימה "
+              style={{ width: 250, height: 100 }}
+            />
+            <br />
+            {errors.discrption && " זהו שדה חובה  "}
+            <br />
+            <TextField
+              size="small"
+              {...(register("projectId"), { required: true })}
+              type="hidden"
+              value={ID}
+            />
+            <label> סטטוס משימה </label>
+            <TextField
+              size="small"
+              {...register("missionStatus", { required: true })}
+              type="text"
+              placeholder="סטטוס משימה "
+            />
+            <br />
+            {errors.missionStatus && "זהו שדה חובה "}
+            <br />
+            <label> תאריך התחלה </label>
+            <TextField
+              id="date_created"
+              size="small"
+              {...register("date_created", { required: true })}
+              type="date"
+              placeholder="תאריך התחלה "
+            />
+            <br />
+            {errors.date_created && "זהו שדה חובה "}
+            <br />
+            <label>תאריך סיום </label>
+            <TextField
+              id="endDate"
+              size="small"
+              {...register("endDate", { required: true })}
+              type="date"
+              placeholder="תאריך סיום "
+            />
+            <br />
+            {errors.endDate && "זהו שדה חובה "}
+            <br />
+            <label> הערות </label>
+            <TextareaAutosize
+              {...register("remarks")}
+              placeholder="תיאור המשימה "
+              style={{ width: 250, height: 100 }}
+            />
 
-      <Card className={classes.container}>
-        <form onSubmit={handleSubmit(registerPrj)}>
-          <label> תיאור המשימה </label>
-          <TextareaAutosize
-            {...register("discrption", { required: true })}
-            placeholder="תיאור המשימה "
-            style={{ width: 250, height: 100 }}
-          />
-          <br />
-          {errors.discrption && " זהו שדה חובה  "}
-          <br />
-          <TextField
-            size="small"
-            {...(register("projectId"), { required: true })}
-            type="hidden"
-            value={ID}
-          />
-          <label> סטטוס משימה </label>
-          <TextField
-            size="small"
-            {...register("missionStatus", { required: true })}
-            type="text"
-            placeholder="סטטוס משימה "
-          />
-          <br />
-          {errors.missionStatus && "זהו שדה חובה "}
-          <br />
-          <label> תאריך התחלה </label>
-          <TextField
-            id="date_created"
-            size="small"
-            {...register("date_created", { required: true })}
-            type="date"
-            placeholder="תאריך התחלה "
-          />
-          <br />
-          {errors.date_created && "זהו שדה חובה "}
-          <br />
-          <label>תאריך סיום </label>
-          <TextField
-            id="endDate"
-            size="small"
-            {...register("endDate", { required: true })}
-            type="date"
-            placeholder="תאריך סיום "
-          />
-          <br />
-          {errors.endDate && "זהו שדה חובה "}
-          <br />
-          <label> הערות </label>
-          <TextareaAutosize
-            {...register("remarks")}
-            placeholder="תיאור המשימה "
-            style={{ width: 250, height: 100 }}
-          />
-
-          <Button variant="contained" type="submit">
-            סיום{" "}
-          </Button>
-        </form>
-      </Card>
+            <Button variant="contained" type="submit">
+              סיום{" "}
+            </Button>
+          </form>
+        </Box>
+      </Container>
     </div>
   );
 };
