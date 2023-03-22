@@ -34,8 +34,8 @@ export const updateMission=async(req:Request,res:Response)=>{
 
   export const deleteSpcificMission=async(req:Request,res:Response)=>{
     try {
-      let deleteProject=await MissionModel.deleteOne({_id:req.params.id});
-      return res.json(deleteProject);
+      let deleteMission=await MissionModel.deleteOne({_id:req.params.id});
+      return res.json(deleteMission);
     } catch (error) {
       return res.json(error);
     }

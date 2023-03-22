@@ -48,3 +48,9 @@ export const userName=atom<string>({
     key:"_id"
 
   })
+  export const token=atom<object>({
+    default:{},
+    key:"token"
+
+  })
+

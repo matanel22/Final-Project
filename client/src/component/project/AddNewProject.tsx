@@ -1,30 +1,19 @@
+//
+import styled from "styled-components";
+
 import React, { useState, useRef, useEffect, FormEvent } from "react";
-// import Button from "../UI/Button";
 import classes from "./AddNewProject.module.css";
 import Card from "../UI/card";
 import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
+
 import { Link, useHistory } from "react-router-dom";
-import {
-  Alert,
-  AppBar,
-  Box,
-  Button,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  NativeSelect,
-  Select,
-  TextField,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+
 import { useRecoilState } from "recoil";
 import { userId, userName } from "../atom/Atom";
-// "name": "בטיחות",
-// "developer": "ליאל",
-// "client": "מלמ",
-// "maintenaceMode
+import { AppBar, Button, Toolbar } from "@mui/material";
+import { NavButton } from "../UI/NavButton";
+
 export interface IUsers {
   _id: string;
   name: string;
@@ -39,11 +28,9 @@ interface IFormInputs {
   statusProject: string;
   amountOfUsers: string;
 }
-const option = ["פעיל ", "לא פעיל"];
-const statusP = ["פיתוח", "תחזוקה"];
 
 const AddNewProject: React.FC = (props) => {
-  // const [useId, setUseId] = useRecoilState<string>(userId);
+  const [useId, setUseId] = useRecoilState<string>(userId);
   const [usersData, setUsersData] = useState<IUsers[]>([]);
   const [validata, setValidata] = useState("");
   const [NY, setNameUser] = useRecoilState<string>(userName);
@@ -70,7 +57,6 @@ const AddNewProject: React.FC = (props) => {
   console.log("isValid", isValid);
 
   const registerPrj: SubmitHandler<IFormInputs> = async (data) => {
-    let flag = false;
     let url = "http://localhost:3001/api/routs/router/allUsers";
     await axios
       .get(url)
@@ -79,151 +65,131 @@ const AddNewProject: React.FC = (props) => {
         res.data.map((item: any, index: any) => {
           if (item.name.trim() === data.staff.trim()) {
             data.userId = item._id;
-            flag = true;
+            try {
+              let url =
+                "http://localhost:3001/api/routs/router/addCreatProject";
+              axios.post(url, data).then(({ data }) => {
+                setIsSucced(true);
+                console.log(data);
+              });
+            } catch (error) {
+              console.log(error);
+            }
           }
         });
-
         setUsersData(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
-    if (flag) {
-      try {
-        let url = "http://localhost:3001/api/routs/router/addCreatProject";
-        axios.post(url, data).then(({ data }) => {
-          setIsSucced(true);
-          console.log(data);
-          histury.push("/projects");
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      setValidata("שם המשתמש לא נמצא");
-    }
   };
-
+  useEffect(() => {
+    if (isSucceed) {
+      histury.push("/projects");
+    }
+  }, [isSucceed]);
   return (
-    <div>
-      <Box sx={{ flexGrow: 1, minHeight: 150 }}>
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              sx={{ mr: 2 }}
-            ></IconButton>
-            {/* <Link to={"/projects"}>
-              <Button>לפרוייקטים</Button>
-            </Link> */}
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              {NY}
-            </Typography>
-          </Toolbar>
-        </AppBar>
-      </Box>
-      {/* {isSucceed && (
-        <Alert severity="success">
-          !!!!! הפרוייקט נוצר בהצלחה
-          <Link to={"/projects"}>
-            <Button>לפרוייקטים</Button>
-          </Link>
-        </Alert>
-      )} */}
-      <Card className={classes.AddNewProject}>
-        <form onSubmit={handleSubmit(registerPrj)}>
-          <TextField
-            id="outlined-basic"
-            {...register("nameProject", { required: true })}
-            label="שם פרוייקט"
-            variant="outlined"
-            type="text"
-          />
-          {errors.nameProject && "חובה למלא שם פרוייקט"}
-          <TextField
-            id="outlined-basic"
-            {...register("staff", { required: true })}
-            label=">שם הצוות "
-            variant="outlined"
-            type="text"
-          />
-          {errors.staff && "חובה למלא שם צוות"}
-          <TextField
-            id="outlined-basic"
-            value={userId}
-            {...register("userId")}
-            variant="outlined"
-            type="hidden"
-          />
-
-          <TextField
-            id="outlined-basic"
-            {...register("client", { required: true })}
-            label="שם לקוח"
-            variant="outlined"
-            type="text"
-          />
-          {errors.client && "חובה למלא שם לקוח"}
-          <TextField
-            id="outlined-basic"
-            {...register("amountOfUsers", { required: true })}
-            label="כמות משתמשים "
-            variant="outlined"
-            type="text"
-          />
-          {errors.amountOfUsers && "חובה למלא האם יש משתמשים"}
-
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="סטטוס"
-            type="text"
-            // placeholder="סטטוס"
-            {...register("statusProject", { required: true })}
-          >
-            {errors.statusProject && "חובה  לבחור "}
-            {option.map((item, index) => {
-              return <MenuItem value={item}>{item}</MenuItem>;
-            })}
-          </Select>
-          {errors.statusProject && " חובה לבחור סטטוס פרןייקט "}
-          <InputLabel variant="standard" htmlFor="uncontrolled-native">
-            סטטוס פרוייקט
-          </InputLabel>
-
-          {/* {iseCreatProject} */}
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disableElevation
-          >
-            יצירת פרוייקט
-          </Button>
-          {/* <Link to="/projects">
-            <Button >כל פרוייקטים</Button>
-          </Link> */}
-        </form>
-        {validata}
-      </Card>
-    </div>
+    <FormContainer onSubmit={handleSubmit(registerPrj)}>
+      <h2> יצירת פרוייקט</h2>
+      <label htmlFor="name">שם פרוייקט</label>
+      <input
+        type="text"
+        id="name"
+        {...register("nameProject", { required: true })}
+      />
+      {errors.nameProject && "חובה למלא שם פרוייקט"}
+      <label htmlFor="name">שם הצוות</label>
+      <input type="text" {...register("staff", { required: true })} />
+      {errors.staff && "חובה למלא שם הצוות"}
+      <label>שם הלקוח</label>
+      <input type="text" {...register("client", { required: true })} />
+      {errors.client && "חובה למלא שם לקוח"}
+      <input type="hidden" value={useId} />
+      <label>משתמשים </label>
+      <input
+        placeholder="משתמשים"
+        type="text"
+        {...register("amountOfUsers", { required: true })}
+      />
+      {errors.amountOfUsers && " שדה חובה  "}
+      <Label htmlFor="fruit-select">סטטוס פרוייקט </Label>
+      <Select
+        placeholder="סטטוס פרוייקט"
+        id="select"
+        {...register("statusProject", { required: true })}
+      >
+        <Option>פעיל</Option>
+        <Option>לא פעיל</Option>
+      </Select>
+      {errors.statusProject && "  שדה חובה "}
+      <button type="submit">יצירת פרוייקט </button>
+    </FormContainer>
   );
 };
-
 export default AddNewProject;
 
-// /// {currencies.map((option) => (
-//   <MenuItem key={option.value} value={option.value}>
-//   {option.label}
-// </MenuItem>
-// if (usersData) {
-//   for (let i = 0; i < usersData.length; i++) {
-//     if (usersData[i].name.trim() === data.staff.trim()) {
-//       data.userId = usersData[i]._id;
-//       flag = true;
-//     }
-//   }
-// }
+const Select = styled.select`
+  font-size: 1rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
+const Label = styled.label`
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+`;
+const Option = styled.option`
+  font-size: 1rem;
+`;
+const FormContainer = styled.form`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  // margin: 20px;
+  padding: 40px;
+  background-color: #f2f2f2;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+  margin-top: 20px;
+  max-width: 50%;
+  h2 {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #e0e0e0;
+
+    &:focus {
+      outline: none;
+      background-color: #fff;
+    }
+  }
+
+  button[type="submit"] {
+    padding: 10px 20px;
+    background-color: #5cb85c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 2%;
+    &:hover {
+      background-color: #449d44;
+    }
+  }
+`;

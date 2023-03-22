@@ -1,15 +1,37 @@
-.allBody{
+
+
+/* display:flex ;
+justify-content: center;
+align-items: center; */
+.container{
+    margin:0 auto ;
+
+ 
+    font-size: 30px;
+    width: 67%;
+    height: 67%; 
     
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-    padding: 10px;
+    background: linear-gradient(
+        0deg,
+        rgb(215, 196, 157) 0%,
+        rgba(34, 193, 195, 1) 100%
+      ); 
    
 }
+/* @media only screen and (max-width: 600px) {
+  body {
+    background-color: lightblue;
+    overflow-y: auto;
+    width: 100%;
+    height: 100vh;
+    
+  }
+ 
 
-.specificProject{
-    margin:0 auto ;
-    width: 50px;
-    background-color: aquamarine;
-}
+} */
+  /* .btn{
+cursor: pointer;
+  } */
+
+
+  

@@ -7,7 +7,9 @@ import {
   Input,
   InputLabel,
   MenuItem,
+  Modal,
   Select,
+  Typography,
 } from "@mui/material";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
@@ -38,6 +40,9 @@ interface IFormMission {
 // }
 const UpdateTask: React.FC<{ onMission: IFormMission }> = (props) => {
   const option = ["פעיל ", "לא פעיל"];
+  const [open, setOpen] = React.useState(true);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   const {
     register,
     formState,
@@ -47,7 +52,17 @@ const UpdateTask: React.FC<{ onMission: IFormMission }> = (props) => {
   } = useForm<IFormMission>({
     mode: "onChange",
   });
-
+  const style = {
+    position: "absolute" as "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,
+  };
   useEffect(() => {
     reset({
       _id: props.onMission._id,
@@ -73,68 +88,69 @@ const UpdateTask: React.FC<{ onMission: IFormMission }> = (props) => {
       .catch((err) => {
         console.log(err);
       });
+    setOpen(false);
   };
   return (
-    <Box
-      sx={{
-        position: "fixed",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        p: 1,
-        m: 1,
-        bgcolor: "background.paper",
-        borderRadius: 1,
-      }}
+    <Modal
+      open={open}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+      onClose={handleClose}
     >
-      <Card>
-        <form onSubmit={handleSubmit(editRejister)}>
-          <InputLabel htmlFor="my-input"> תיאור המשימה </InputLabel>
-          <Input
-            id="my-input"
-            aria-describedby="my-helper-text"
-            type="text"
-            {...register("discrption", { required: true })}
-          />
-          <InputLabel htmlFor="my-input"> סטטוס משימה</InputLabel>
-          <Input
-            id="my-input"
-            aria-describedby="my-helper-text"
-            type="text"
-            {...register("missionStatus", { required: true })}
-          />
-          <InputLabel htmlFor="my-input">תאריך התחלה </InputLabel>
-          <Input
-            id="my-input"
-            aria-describedby="my-helper-text"
-            type="date"
-            {...register("data_created", { required: true })}
-          />
-          <InputLabel htmlFor="my-input"> תאריך סיום </InputLabel>
-          <Input
-            id="my-input"
-            aria-describedby="my-helper-text"
-            type="date"
-            {...register("endDate", { required: true })}
-          />
-          {/* <FormHelperText id="my-helper-text">
+      <Box sx={style}>
+        <Typography id="modal-modal-title" variant="h6" component="h2">
+          <form onSubmit={handleSubmit(editRejister)}>
+            <InputLabel htmlFor="my-input"> תיאור המשימה </InputLabel>
+            <Input
+              id="my-input"
+              aria-describedby="my-helper-text"
+              type="text"
+              {...register("discrption", { required: true })}
+            />
+            {errors.discrption && "שדה חובה"}
+            <InputLabel htmlFor="my-input"> סטטוס משימה</InputLabel>
+            <Input
+              id="my-input"
+              aria-describedby="my-helper-text"
+              type="text"
+              {...register("missionStatus", { required: true })}
+            />
+            {errors.missionStatus && "שדה חובה"}
+            <InputLabel htmlFor="my-input">תאריך התחלה </InputLabel>
+            <Input
+              id="my-input"
+              aria-describedby="my-helper-text"
+              type="date"
+              {...register("data_created", { required: true })}
+            />
+            {errors.data_created && "שדה חובה"}
+            <InputLabel htmlFor="my-input"> תאריך סיום </InputLabel>
+            <Input
+              id="my-input"
+              aria-describedby="my-helper-text"
+              type="date"
+              {...register("endDate", { required: true })}
+            />
+            {errors.endDate && "שדה חובה"}
+            {/* <FormHelperText id="my-helper-text">
             We'll never share your client.
           </FormHelperText> */}
-          <InputLabel htmlFor="my-input"> הערות </InputLabel>
-          <Input
-            id="my-input"
-            aria-describedby="my-helper-text"
-            type="text"
-            {...register("remarks", { required: true })}
-          />
+            <InputLabel htmlFor="my-input"> הערות </InputLabel>
+            <Input
+              id="my-input"
+              aria-describedby="my-helper-text"
+              type="text"
+              {...register("remarks", { required: true })}
+            />
 
-          <Button variant="contained" type="submit" color="success">
-            {" "}
-            עדכן
-          </Button>
-        </form>
-      </Card>
-    </Box>
+            <Button variant="contained" type="submit" color="success">
+              {" "}
+              עדכן
+            </Button>
+          </form>
+        </Typography>
+      </Box>
+    </Modal>
   );
 };
 export default UpdateTask;

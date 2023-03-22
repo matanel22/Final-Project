@@ -29,10 +29,10 @@ export const addCreatProject = async (req:Request,res:Response)=>{
               return res.json(project)
            }
            else{
-          return  res.status(404).json("dont found is developer")
+          return  res.json("dont found is developer")
            }
         } catch (error) {
-            return res.json({msg:error})
+            return res.status(404).json({msg:error})
         }
      }
    

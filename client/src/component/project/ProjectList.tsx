@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Box, Icon, makeStyles } from "@mui/material";
+import { Avatar, Box, TextField } from "@mui/material";
 import { useRecoilState, useRecoilValue } from "recoil";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import ButtonMission from "../UI/Button";
-import TasksData, { userId, userName } from "../atom/Atom";
+// import ButtonMission from "../UI/Button";
+import TasksData, { token, userId, userName } from "../atom/Atom";
 import { idPrj } from "../atom/Atom";
-import Card from "../UI/card";
+import classes from "./ProjectList.module.css";
+import { useHistory } from "react-router-dom";
+import styled, { css } from "styled-components";
+import { blue } from "@mui/material/colors";
 
 import {
   AppBar,
@@ -26,6 +29,9 @@ import {
 } from "@mui/material";
 import UpdateProject from "./UpdateProject";
 import { SubmitHandler, useForm } from "react-hook-form";
+import Tooltip from "@mui/material/Tooltip";
+import OvalButton from "../UI/ButtonStyle";
+import PageLoader from "../Loading/Loading";
 // const useStyles = makeStyles({
 //   table: {
 //     minWidth: 650,
@@ -49,6 +55,7 @@ export interface IProps {
 }
 
 const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
+  const [loading, setLoading] = useState("");
   const [useId, setUseId] = useRecoilState<string>(userId);
   const [projId, setProjId] = useRecoilState(idPrj);
   const [updateProj, setUpdateProj] = useState<IProps>(Object);
@@ -56,9 +63,12 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenUpdate, setIsOpenUpdate] = useState(false);
   const [isUsersPrem, setIsUsersPrem] = useState<IUsers>();
-  const [NY, setNameUser] = useRecoilState<string>(userName);
+
+  const [isLogout, setIsLogout] = useState(false);
+  const [dataToken, setDataToken] = useRecoilState(token);
   // const [open, setOpen] = React.useState(false);
   const [validPremissionUsers, setValidPremissionUsers] = useState(false);
+  let histury = useHistory();
   useEffect(() => {
     const userS = (_id: string) => {
       let url = "http://localhost:3001/api/routs/router/usersSpecific";
@@ -78,7 +88,7 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
       console.log(validPremissionUsers);
     };
     userS(useId);
-  }, [validPremissionUsers]);
+  }, []);
 
   const showFormOnEdit = async (id: string) => {
     setIsOpen(!isOpen);
@@ -90,68 +100,28 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
     });
     return setIsUpdate(true);
   };
+
   // useEffect(() => {
   //   if (isUsersPrem?.permissions) {
   //     setValidPremissionUsers(true);
   //   }
   // }, [validPremissionUsers]);
+  const color = blue[100];
   return (
-    <Box
-      sx={{
-        flexGrow: 1,
-        minHeight: 300,
-        // width: {
-        //   xs: 100,
-        //   sm: 200,
-        //   md: 300,
-        //   lg: 400,
-        //   xl: 500,
-        // },
-      }}
-    >
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          ></IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}></Avatar>
-            {`ברוך הבא ${NY}`}{" "}
-          </Typography>
-          <Link to="/createProject">
-            {validPremissionUsers && (
-              <Button
-                color="secondary"
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                הוספת פרוייקט
-              </Button>
-            )}
-          </Link>
-        </Toolbar>
-      </AppBar>
+    <Container>
+      <PageLoader>{loading}</PageLoader>
 
-      {/* c
-       */}
-      {/* className={classes.table} aria-label="simple table" */}
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <TableContainer>
+        <Table aria-label="simple table">
           <TableHead>
-            <TableRow>
-              <TableCell align="right">Protein&nbsp;(g)</TableCell>
+            <TableRow sx={{ bgcolor: color }}>
+              {/* <TableCell align="right">Protein&nbsp;(g)</TableCell> */}
+
               <TableCell align="right">שם הפרוייקט</TableCell>
               <TableCell align="right">שם הצוות</TableCell>
               <TableCell align="right">שם הלקוח</TableCell>
               <TableCell align="right">סטטוס הפרוייקט</TableCell>
               <TableCell align="right"> האם יש משתמשים</TableCell>
-
               <TableCell align="right">למשימות הפרוייקט</TableCell>
               {validPremissionUsers && (
                 <TableCell align="right">לעדכון הפרוייקט</TableCell>
@@ -162,19 +132,13 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
             {props.onProps.length &&
               props.onProps.map((item, index) => (
                 <TableRow>
-                  <TableCell component="th" scope="row">
-                    {/* {item.name} */}
-                  </TableCell>
-                  <TableCell align="right"> {`${item.nameProject}`}</TableCell>
+                  <TableCell align="right">{`${item.nameProject}`}</TableCell>
                   <TableCell align="right">{`${item.staff}`}</TableCell>
                   <TableCell align="right">{`${item.client}`}</TableCell>
                   <TableCell align="right">{`${item.statusProject}`}</TableCell>
+                  <TableCell align="right">{`${item.amountOfUsers}`}</TableCell>
+
                   <TableCell align="right">
-                    {" "}
-                    {`${item.amountOfUsers}`}
-                  </TableCell>
-                  <TableCell align="right">
-                    {" "}
                     <Link to="/tasks">
                       <Button
                         variant="contained"
@@ -205,16 +169,33 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
               ))}
           </TableBody>
         </Table>
+        {/* </div> */}
       </TableContainer>
+
       {isOpen && (
         <UpdateProject
           onUpdate={updateProj}
           openUpdate={isOpen}
         ></UpdateProject>
       )}
-    </Box>
+    </Container>
   );
 };
 
 export default ProjectList;
 // editProj={updateProj}
+
+const Container = styled.div`
+  padding: 10px;
+  width: 100vw;
+  ${css`
+    @media (max-width: 768px) {
+      padding: 5px;
+
+      overflow: hidden;
+    }
+  `}
+`;
+const WidthTable = styled.div`
+  width: 20vw;
+`;

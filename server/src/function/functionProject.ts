@@ -51,29 +51,26 @@ try {
 }
 }
 export const updateProject=async(req:Request,res:Response)=>{
-  let flag=false
+
+  let proj:any=await ProjectModel.findOne({_id:req.body._id})
+  console.log("56",proj);
+  
   try {
-    let updateData=await ProjectModel.updateOne({_id:req.body._id},req.body);
-    let proj:any=await ProjectModel.findOne(req.body)
-    
     let user=await UsersModel.find({})
     // console.log(user);
-    user.map((item)=>{
+    user.map(async(item)=>{
       if(item.name===proj.staff){
         proj.userId=item._id;
-        flag=true
-
+       
+        let updateData=await ProjectModel.updateOne({_id:req.body._id},req.body);
+        return res.send(updateData)
       }
     })
     console.log(proj);
-    if(flag){
-      return res.send(updateData);
-    }
-    else {
-      return res.send("dont found developer")
-    }
 
   } catch (error) {
+    console.log(error);
+    
     return res.status(404).send(error);
   }
 }

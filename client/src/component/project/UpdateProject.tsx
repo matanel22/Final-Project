@@ -91,38 +91,46 @@ const UpdateProject: React.FC<{ onUpdate: IProps; openUpdate: boolean }> = (
   }, []);
   const editRejister: SubmitHandler<IProps> = async (data) => {
     setIsClick(true);
-    let flag = false;
     setIsUpdate(!isUpdate);
     console.log(data);
-    let u = "http://localhost:3001/api/routs/router/allUsers";
+    // let user = "http://localhost:3001/api/routs/router/allUsers";
+    // await axios
+    //   .get(user)
+    //   .then((res) => {
+    //     console.log("njnjnjnj");
+
+    //     res.data.map((item: any) => {
+    //       if (item.name === data.staff) {
+    //         data.userId = item._id;
+    //         console.log(data._id);
+
+    //         setIsUser(true);
+    //       }
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+
+    let url = `http://localhost:3001/api/routs/router/updateProject`;
     await axios
-      .get(u)
+      .put(url, data)
       .then((res) => {
         res.data.map((item: any) => {
           if (item.name === data.staff) {
             data.userId = item._id;
-            flag = true;
+            console.log(data._id);
+            setIsUser(true);
           }
         });
+        setIsSucced(true);
+        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
-    setIsUpdate(!isUpdate);
 
-    if (flag) {
-      setIsUser(true);
-      let url = `http://localhost:3001/api/routs/router/updateProject`;
-      await axios
-        .put(url, data)
-        .then((res) => {
-          setIsSucced(true);
-          console.log(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+    setOpen(false);
   };
   // useEffect(() => {
   //   if (isSucceed) {
@@ -131,86 +139,75 @@ const UpdateProject: React.FC<{ onUpdate: IProps; openUpdate: boolean }> = (
   // }, [isSucceed]);
   let valideDev = isClick && !isUser ? <p>שם המפתח לא נמצא</p> : "";
   return (
-    <Card>
-      {/* <Button className={classes.btn} onClick={handleOpen}>
-        {" "}
-        עדכון
-      </Button> */}
-      <Modal
-        open={props.openUpdate}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-        onClose={handleClose}
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            <form onSubmit={handleSubmit(editRejister)}>
-              <InputLabel htmlFor="my-input">שם פרוייקט </InputLabel>
-              <Input
-                id="my-input"
-                aria-describedby="my-helper-text"
-                type="text"
-                // value={props.onUpdate.nameProject}
-                {...register("nameProject", { required: true })}
-              />
+    <Modal
+      open={open}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+      onClose={handleClose}
+    >
+      <Box sx={style}>
+        <Typography id="modal-modal-title" variant="h6" component="h2">
+          <form onSubmit={handleSubmit(editRejister)}>
+            <InputLabel htmlFor="my-input">שם פרוייקט </InputLabel>
+            <Input
+              id="my-input"
+              aria-describedby="my-helper-text"
+              type="text"
+              // value={props.onUpdate.nameProject}
+              {...register("nameProject", { required: true })}
+            />
+            {errors.nameProject && "שדה חובה"}
+            <InputLabel htmlFor="my-input">שם המפתח</InputLabel>
+            <Input
+              id="my-input"
+              aria-describedby="my-helper-text"
+              type="text"
+              // value={props.onUpdate.staff}
+              {...register("staff", { required: true })}
+            />
+            {errors.staff && valideDev}
 
-              <InputLabel htmlFor="my-input">שם המפתח</InputLabel>
-              <Input
-                id="my-input"
-                aria-describedby="my-helper-text"
-                type="text"
-                // value={props.onUpdate.staff}
-                {...register("staff", { required: true })}
-              />
-              {valideDev}
-
-              <InputLabel htmlFor="my-input">לקוח מוביל </InputLabel>
-              <Input
-                id="my-input"
-                aria-describedby="my-helper-text"
-                type="text"
-                // value={props.onUpdate.client}
-                {...register("client", { required: true })}
-              />
-
-              <InputLabel htmlFor="my-input"> האם יש משתמשים </InputLabel>
-              <Input
-                id="my-input"
-                aria-describedby="my-helper-text"
-                type="text"
-                {...register("amountOfUsers", { required: true })}
-              />
-
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                label="סטטוס"
-                type="text"
-                // placeholder="סטטוס"
-                {...register("statusProject", { required: true })}
-              >
-                {option.map((item, index) => {
-                  return <MenuItem>{item}</MenuItem>;
-                })}
-              </Select>
-
-              <Button variant="contained" type="submit" color="success">
-                {" "}
-                שמירה
-              </Button>
-              {/* <Button
-                variant="contained"
-                type="submit"
-                color="success"
-                onClick={closeToUpdate}
-              >
-                סגור
-              </Button> */}
-            </form>
-          </Typography>
-        </Box>
-      </Modal>
-    </Card>
+            <InputLabel htmlFor="my-input">לקוח מוביל </InputLabel>
+            <Input
+              id="my-input"
+              aria-describedby="my-helper-text"
+              type="text"
+              // value={props.onUpdate.client}
+              {...register("client", { required: true })}
+            />
+            {errors.client && "שדה חובה"}
+            <InputLabel htmlFor="my-input"> האם יש משתמשים </InputLabel>
+            <Input
+              id="my-input"
+              aria-describedby="my-helper-text"
+              type="text"
+              {...register("amountOfUsers", { required: true })}
+            />
+            {errors.amountOfUsers && "שדה חובה"}
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              label="סטטוס"
+              type="text"
+              // placeholder="סטטוס"
+              {...register("statusProject", { required: true })}
+            >
+              {option.map((item, index) => {
+                return (
+                  <MenuItem value={props.onUpdate.statusProject}>
+                    {item}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+            {errors.statusProject && "שדה חובה"}
+            <Button variant="contained" type="submit" color="success">
+              שמירה
+            </Button>
+          </form>
+        </Typography>
+      </Box>
+    </Modal>
   );
 };
 export default UpdateProject;

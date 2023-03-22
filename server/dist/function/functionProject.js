@@ -55,27 +55,22 @@ const projSpecific = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.projSpecific = projSpecific;
 const updateProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let flag = false;
+    let proj = yield ModalProjct_1.default.findOne({ _id: req.body._id });
+    console.log("56", proj);
     try {
-        let updateData = yield ModalProjct_1.default.updateOne({ _id: req.body._id }, req.body);
-        let proj = yield ModalProjct_1.default.findOne(req.body);
         let user = yield ModelUser_1.default.find({});
         // console.log(user);
-        user.map((item) => {
+        user.map((item) => __awaiter(void 0, void 0, void 0, function* () {
             if (item.name === proj.staff) {
                 proj.userId = item._id;
-                flag = true;
+                let updateData = yield ModalProjct_1.default.updateOne({ _id: req.body._id }, req.body);
+                return res.send(updateData);
             }
-        });
+        }));
         console.log(proj);
-        if (flag) {
-            return res.send(updateData);
-        }
-        else {
-            return res.send("dont found developer");
-        }
     }
     catch (error) {
+        console.log(error);
         return res.status(404).send(error);
     }
 });

@@ -46,8 +46,8 @@ const taskOne = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.taskOne = taskOne;
 const deleteSpcificMission = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let deleteProject = yield modelMission_1.default.deleteOne({ _id: req.params.id });
-        return res.json(deleteProject);
+        let deleteMission = yield modelMission_1.default.deleteOne({ _id: req.params.id });
+        return res.json(deleteMission);
     }
     catch (error) {
         return res.json(error);

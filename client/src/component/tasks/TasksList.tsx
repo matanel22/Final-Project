@@ -25,7 +25,9 @@ import CreateTasks from "./createTasks";
 import { Box } from "@mui/system";
 import UpdateTask from "./updateTask";
 import UrlTask from "./urlTask";
-
+import PageLoader from "../Loading/Loading";
+import styled, { css } from "styled-components";
+import { blue } from "@mui/material/colors";
 interface IFormMission {
   _id: String;
   discrption: String;
@@ -97,35 +99,30 @@ const TasksList = () => {
 
   let validtasks =
     mis.length === 0 ? <h1>אין משימות בפרוייקט זה</h1> : <h1>משימות</h1>;
+  const color = blue[100];
   return (
-    <Box
-      sx={{
-        flexGrow: 1,
-        minHeight: 150,
-        // width: {
-        //   xs: 100,
-        //   sm: 200,
-        //   md: 300,
-        //   lg: 400,
-        //   xl: 500,
-        // },
-      }}
-    >
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          ></IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            {NU}
-          </Typography>
+    <>
+      <AppBar
+        sx={{
+          flexGrow: 1,
+          minHeight: 100,
+        }}
+        position="static"
+      >
+        {/* <IconButton
+          size="large"
+          edge="start"
+          color="inherit"
+          aria-label="menu"
+          sx={{ mr: 2 }}
+        ></IconButton> */}
+        {/* <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          {NU}
+        </Typography> */}
+        <ButoonNav>
           <Link to="/projects">
             <Button
-              color="secondary"
+              color="success"
               type="submit"
               fullWidth
               variant="contained"
@@ -135,27 +132,25 @@ const TasksList = () => {
               הפרוייקטים של המדור
             </Button>
           </Link>
-          <Link to="createTasks">
+          <Link to="/createTasks">
             <Button
               variant="contained"
-              color="secondary"
+              color="success"
               sx={{ mt: 3, mb: 2 }}
               onClick={sendingToTheCreation}
             >
               ליצירת משימה חדשה
             </Button>
           </Link>
-          ;{/* <Button color="inherit">Login</Button> */}
-        </Toolbar>
+        </ButoonNav>
+        {/* <Button color="inherit">Login</Button> */}
       </AppBar>
-
-      <TableHead>
-        {validtasks}
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 700 }} aria-label="customized table">
+      <PageLoader>{}</PageLoader>
+      <WidthTable>
+        <TableContainer>
+          <Table aria-label="simple table">
             <TableHead>
-              <TableRow>
-                <TableCell>Dessert (100g serving)</TableCell>
+              <TableRow sx={{ bgcolor: color }}>
                 <TableCell align="right">תיאור המשימה</TableCell>
                 <TableCell align="right">סטטוס משימה</TableCell>
                 <TableCell align="right">תאריך התחלה</TableCell>
@@ -169,9 +164,6 @@ const TasksList = () => {
               {mis.length > 0 &&
                 mis.map((item: any, index) => (
                   <TableRow key={index}>
-                    <TableCell component="th" scope="row">
-                      {/* {item.name} */}
-                    </TableCell>
                     <TableCell align="right">{`תיאור:${item.discrption}`}</TableCell>
                     <TableCell align="right">{item.missionStatus}</TableCell>
                     <TableCell align="right">
@@ -216,13 +208,24 @@ const TasksList = () => {
         </TableContainer>
 
         {isOpen && <CreateTasks></CreateTasks>}
-      </TableHead>
-      {isOpenEditTask && <UpdateTask onMission={taskOne}></UpdateTask>}
-      <UrlTask />
-    </Box>
+
+        {isOpenEditTask && <UpdateTask onMission={taskOne}></UpdateTask>}
+      </WidthTable>
+      {/* <UrlTask /> */}
+    </>
   );
 };
 export default TasksList;
 
-// {`שם:${item.nameProject}`}
-// {`מפתח:${item.staff}`}
+export const ButoonNav = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+`;
+
+const WidthTable = styled.div`
+  margin: 0 auto;
+  margin-top: 1%;
+  width: 90vw;
+`;

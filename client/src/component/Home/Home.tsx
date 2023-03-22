@@ -13,9 +13,11 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
-import { IProps, userId, userName } from "../atom/Atom";
+import { IProps, token, userId, userName } from "../atom/Atom";
 import { useRecoilState } from "recoil";
 import { Alert } from "@mui/material";
+import hompage from "../image/homepage.png";
+import { log } from "console";
 interface IUsers {
   _id: string;
   permissions: String;
@@ -54,6 +56,8 @@ export default function Home() {
   const [NY, setNameUser] = useRecoilState<string>(userName);
   const [stateId, setStateId] = useState<string>("");
   const [isNotUserFlag, setIsNotUserFlag] = useState(false);
+  const [data, setData] = useState<string>("");
+  const [dataToken, setDataToken] = useRecoilState(token);
   let histury = useHistory();
 
   const sendEmail = (event: any) => {
@@ -88,13 +92,17 @@ export default function Home() {
       .then(async (res) => {
         console.log(res.data);
         localStorage.setItem("tok", res.data.token);
-
+        setDataToken(res.data);
         let url = "http://localhost:3001/api/routs/router/userInfo";
         await axios
           .get(url, { headers: { "x-api-key": localStorage["tok"] } })
           .then((res) => {
             console.log(res.data);
-
+            // const storedData = localStorage.getItem("data");
+            // console.log(storedData);
+            // if (storedData) {
+            //   setData(JSON.parse(storedData));
+            // }
             setUseId(res.data[0]._id);
             setStateId(res.data[0]._id);
             setNameUser(res.data[0].name);
@@ -114,6 +122,16 @@ export default function Home() {
     setIsEmail("");
     setIsPass("");
   };
+  // useEffect(() => {
+  //   const storedData = localStorage.getItem("data");
+  //   if (storedData) {
+  //     setData(JSON.parse(storedData));
+  //   }
+  // }, []);
+
+  // useEffect(() => {
+  //   localStorage.setItem("data", JSON.stringify(data));
+  // }, [data]);
 
   // useEffect(() => {
   //   if (validToken) {
@@ -122,83 +140,97 @@ export default function Home() {
   // }, [validToken]);
 
   return (
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          {isNotUserFlag && (
-            <Alert severity="error">
-              אינך מחובר <L to="/signUp">התחברות</L>
-            </Alert>
-          )}
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}></Avatar>
-          <Typography component="h1" variant="h5">
-            הפרוייקטים של המדור
-          </Typography>
+    <div
+      style={{
+        display: "flex",
+        backgroundImage: `url(${hompage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        height: "100vh",
+      }}
+    >
+      <ThemeProvider theme={theme}>
+        <Container component="main" maxWidth="xs">
+          {/* <div>
+          {data && <p>Data from local storage: {data}</p>}
+          <button onClick={() => setData("example data")}>Save data</button>
+        </div> */}
+          <CssBaseline />
           <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1 }}
+            sx={{
+              marginTop: 8,
+              display: "flex",
+              flexDirection: "column",
+            }}
           >
-            <TextField
-              onChange={sendEmail}
-              value={email}
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="אימייל "
-              name="email"
-              autoComplete="email"
-              autoFocus
-              // onBlur={onBlorPass}
-            />
-            {validEmail && <p>nkndsknkn</p>}
-            <TextField
-              onChange={sendPass}
-              value={pass}
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="סיסמא"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            {validPass && <p>nkndsknkn</p>}
+            {isNotUserFlag && (
+              <Alert severity="error">
+                אינך מחובר <L to="/signUp">התחברות</L>
+              </Alert>
+            )}
 
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              // onClick={userInfo}
+            <Typography component="h1" variant="h5">
+              ברוכים הבאים לפרוייקטים של המערכת
+            </Typography>
+            <Box
+              component="form"
+              onSubmit={handleSubmit}
+              noValidate
+              sx={{ mt: 1 }}
             >
-              כניסה
-            </Button>
+              <TextField
+                onChange={sendEmail}
+                value={email}
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="אימייל "
+                name="email"
+                autoComplete="email"
+                autoFocus
+                // onBlur={onBlorPass}
+              />
+              {validEmail && <p>nkndsknkn</p>}
+              <TextField
+                onChange={sendPass}
+                value={pass}
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="סיסמא"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+              />
+              {validPass && <p>nkndsknkn</p>}
 
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  שכחת סיסמא
-                </Link>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                // onClick={userInfo}
+              >
+                כניסה
+              </Button>
+
+              <Grid container>
+                <Grid item xs>
+                  <Link href="#" variant="body2">
+                    שכחת סיסמא
+                  </Link>
+                </Grid>
+                <Grid item>
+                  <L to="/signUp">{"Don't have an account? Sign Up"}</L>
+                </Grid>
               </Grid>
-              <Grid item>
-                <L to="/signUp">{"Don't have an account? Sign Up"}</L>
-              </Grid>
-            </Grid>
+            </Box>
           </Box>
-        </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
-      </Container>
-    </ThemeProvider>
+          <Copyright sx={{ mt: 8, mb: 4 }} />
+        </Container>
+      </ThemeProvider>
+    </div>
   );
 }
