@@ -63,7 +63,7 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenUpdate, setIsOpenUpdate] = useState(false);
   const [isUsersPrem, setIsUsersPrem] = useState<IUsers>();
-
+  const [indexProjData, setIndexProjData] = useState(0);
   const [isLogout, setIsLogout] = useState(false);
   const [dataToken, setDataToken] = useRecoilState(token);
   // const [open, setOpen] = React.useState(false);
@@ -90,8 +90,9 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
     userS(useId);
   }, []);
 
-  const showFormOnEdit = async (id: string) => {
+  const showFormOnEdit = async (id: string, index: number) => {
     setIsOpen(!isOpen);
+    setIndexProjData(index);
     setIsOpenUpdate(isOpenUpdate);
     let url = "http://localhost:3001/api/routs/router/projSpecific";
     await axios.post(url, { id }).then((res) => {
@@ -158,7 +159,7 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
                         variant="contained"
                         color="success"
                         onClick={() => {
-                          showFormOnEdit(item._id);
+                          showFormOnEdit(item._id, index);
                         }}
                       >
                         לעדכון הפרוייקט
@@ -174,6 +175,7 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
 
       {isOpen && (
         <UpdateProject
+          projIndex={indexProjData}
           onUpdate={updateProj}
           openUpdate={isOpen}
         ></UpdateProject>

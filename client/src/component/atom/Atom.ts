@@ -12,11 +12,13 @@ interface IFormMission {
   export interface IProps {
     _id: string;
     nameProject: string;
+    userId:string
     staff: string;
     client: string;
     statusProject: string;
     amountOfUsers: string;
   }
+
  const TasksData= atom<IFormMission[]>({
     default: [],
     key:'todo'
@@ -33,14 +35,14 @@ export const userName=atom<string>({
 
     })
 
-    export const  missionProj=atom({
+    export const missionProj=atom({
         default:[],
         key:"refresh"
     })
 
-  export const DP=atom<IProps[]>({
+  export const AllProjectData=atom<IProps[]>({
     default:[],
-    key:""
+    key:"projectData"
 
   })
   export const userId=atom<string>({
@@ -53,4 +55,5 @@ export const userName=atom<string>({
     key:"token"
 
   })
+  
 

@@ -34,10 +34,8 @@ interface IFormMission {
   missionStatus: String;
   projectId: String;
   // dayjs: () => {};
-  data_created: {
-    type: Date;
-  };
-  endDate: { type: Date };
+  date_created: string;
+  endDate: string;
   remarks: String;
 }
 // useEffect(() => {
@@ -56,13 +54,13 @@ const TasksList = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [taskOne, setTaskOne] = useState<IFormMission>(Object);
   const [isOpenEditTask, setIsOpenEditTask] = useState(false);
-  const [NU, setNameUser] = useRecoilState<string>(userName);
-  const [isOpenApi, setIsOpenApi] = useState(false);
+  const [isIndex, setIsIndex] = useState(0);
   let flag = true;
   const sendingToTheCreation = () => {
     setIsOpen(!isOpen);
   };
-  const showEditTask = async (_id: string) => {
+  const showEditTask = async (_id: string, index: number) => {
+    setIsIndex(index);
     let url = "http://localhost:3001/api/routs/router/taskOne";
     await axios.post(url, { _id }).then((res) => {
       console.log(res.data);
@@ -70,9 +68,13 @@ const TasksList = () => {
     });
     setIsOpenEditTask(!isOpenEditTask);
   };
-  const removeMission = (id: string) => {
+  const removeMission = async (id: string) => {
     let url = `http://localhost:3001/api/routs/router/deleteSpcificMission/${id}`;
-    axios
+    const missionDelete = mis.filter((item) => {
+      return item._id !== id;
+    });
+    setMis(missionDelete);
+    await axios
       .delete(url)
       .then((response) => {
         console.log(response);
@@ -195,7 +197,7 @@ const TasksList = () => {
                         variant="outlined"
                         color="success"
                         onClick={() => {
-                          showEditTask(item._id);
+                          showEditTask(item._id, index);
                         }}
                       >
                         עדכון משימה
@@ -209,7 +211,9 @@ const TasksList = () => {
 
         {isOpen && <CreateTasks></CreateTasks>}
 
-        {isOpenEditTask && <UpdateTask onMission={taskOne}></UpdateTask>}
+        {isOpenEditTask && (
+          <UpdateTask onMission={taskOne} indexMission={isIndex}></UpdateTask>
+        )}
       </WidthTable>
       {/* <UrlTask /> */}
     </>

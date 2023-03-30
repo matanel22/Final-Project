@@ -53,15 +53,12 @@ try {
 export const updateProject=async(req:Request,res:Response)=>{
 
   let proj:any=await ProjectModel.findOne({_id:req.body._id})
-  console.log("56",proj);
-  
   try {
     let user=await UsersModel.find({})
     // console.log(user);
     user.map(async(item)=>{
       if(item.name===proj.staff){
         proj.userId=item._id;
-       
         let updateData=await ProjectModel.updateOne({_id:req.body._id},req.body);
         return res.send(updateData)
       }

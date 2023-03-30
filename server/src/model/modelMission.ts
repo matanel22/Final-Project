@@ -19,11 +19,13 @@ const MissionScama=new mongoose.Schema({
     
     export const validTasks=(_validData:any)=>{
         let joiSchema=Joi.object({
+            _id:Joi.string().required(),
             discrption:Joi.string().min(2).max(99),
             missionStatus:Joi.string().min(3).max(50).required(),
-            date_created:Joi.string().required(),
+            date_created:Joi.date().required(),
             projectId:Joi.string().required(),
             endDate:Joi.date().required(),
+            remarks:Joi.string()
         })
         return joiSchema.validate(_validData)
     }

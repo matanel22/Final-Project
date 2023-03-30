@@ -56,7 +56,6 @@ const projSpecific = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 exports.projSpecific = projSpecific;
 const updateProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let proj = yield ModalProjct_1.default.findOne({ _id: req.body._id });
-    console.log("56", proj);
     try {
         let user = yield ModelUser_1.default.find({});
         // console.log(user);

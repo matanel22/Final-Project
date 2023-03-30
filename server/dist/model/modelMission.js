@@ -21,11 +21,13 @@ const MissionModel = mongoose_1.default.model('tesks', MissionScama);
 exports.default = MissionModel;
 const validTasks = (_validData) => {
     let joiSchema = joi_1.default.object({
+        _id: joi_1.default.string().required(),
         discrption: joi_1.default.string().min(2).max(99),
         missionStatus: joi_1.default.string().min(3).max(50).required(),
-        date_created: joi_1.default.string().required(),
+        date_created: joi_1.default.date().required(),
         projectId: joi_1.default.string().required(),
         endDate: joi_1.default.date().required(),
+        remarks: joi_1.default.string()
     });
     return joiSchema.validate(_validData);
 };

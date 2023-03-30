@@ -20,18 +20,19 @@ export const addCreatProject = async (req:Request,res:Response)=>{
              user.map((item,index)=>{
              if(item.name?.trim()===project.staff){
                  project.userId=item._id.toString();
-                  flag=true
+                 project.save();
+                 console.log(project.userId);
+                 flag=true
+                   return res.json(project)
                }
            })
-           if(flag){
-            project.save();
-            console.log(project.userId);
-              return res.json(project)
-           }
-           else{
-          return  res.json("dont found is developer")
-           }
-        } catch (error) {
+          
+           
+           if(!flag){ 
+            return  res.json("dont found is developer")
+             }}
+          
+        catch (error) {
             return res.status(404).json({msg:error})
         }
      }

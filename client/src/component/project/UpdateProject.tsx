@@ -16,7 +16,7 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
-import { idPrj } from "../atom/Atom";
+import { AllProjectData, idPrj } from "../atom/Atom";
 import Card from "../UI/card";
 import { useHistory } from "react-router-dom";
 import classes from "./update.module.css";
@@ -39,24 +39,29 @@ export interface IProps {
 //   statusProject: string;
 //   amountOfUsers: string;
 // }
-const UpdateProject: React.FC<{ onUpdate: IProps; openUpdate: boolean }> = (
-  props
-) => {
+const UpdateProject: React.FC<{
+  onUpdate: IProps;
+  openUpdate: boolean;
+  projIndex: number;
+}> = (props) => {
   // const [projId, setProjId] = useRecoilState(idPrj);
   const [isUpdate, setIsUpdate] = useState(false);
   const [isUser, setIsUser] = useState(false);
   const [isClick, setIsClick] = useState(false);
+
   const [open, setOpen] = React.useState(true);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [isSucceed, setIsSucced] = useState(false);
+  const [a, b] = useState<IProps[]>([]);
+  const [dataProject, setDataProject] = useRecoilState(AllProjectData);
   // const [isClose, setIsOpen] = useState<boolean>(props.openUpdate);
 
   let histury = useHistory();
   // const closeToUpdate = () => {
   //   return setIsClose(!props.openUpdate);
   // };
-  const option = ["פעיל ", "לא פעיל"];
+
   const {
     register,
     formState,
@@ -71,7 +76,7 @@ const UpdateProject: React.FC<{ onUpdate: IProps; openUpdate: boolean }> = (
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: 400,
+
     bgcolor: "background.paper",
     border: "2px solid #000",
     boxShadow: 24,
@@ -80,57 +85,65 @@ const UpdateProject: React.FC<{ onUpdate: IProps; openUpdate: boolean }> = (
 
   useEffect(() => {
     reset({
-      _id: props.onUpdate._id,
-      userId: props.onUpdate.userId,
-      staff: props.onUpdate.staff,
-      statusProject: props.onUpdate.statusProject,
-      amountOfUsers: props.onUpdate.amountOfUsers,
-      nameProject: props.onUpdate.nameProject,
-      client: props.onUpdate.client,
+      _id: dataProject[props.projIndex]._id,
+      userId: dataProject[props.projIndex].userId,
+      staff: dataProject[props.projIndex].staff,
+      statusProject: dataProject[props.projIndex].statusProject,
+      amountOfUsers: dataProject[props.projIndex].amountOfUsers,
+      nameProject: dataProject[props.projIndex].nameProject,
+      client: dataProject[props.projIndex].client,
     });
   }, []);
   const editRejister: SubmitHandler<IProps> = async (data) => {
     setIsClick(true);
     setIsUpdate(!isUpdate);
     console.log(data);
-    // let user = "http://localhost:3001/api/routs/router/allUsers";
-    // await axios
-    //   .get(user)
-    //   .then((res) => {
-    //     console.log("njnjnjnj");
-
-    //     res.data.map((item: any) => {
-    //       if (item.name === data.staff) {
-    //         data.userId = item._id;
-    //         console.log(data._id);
-
-    //         setIsUser(true);
-    //       }
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-
-    let url = `http://localhost:3001/api/routs/router/updateProject`;
+    let user = "http://localhost:3001/api/routs/router/allUsers";
     await axios
-      .put(url, data)
+      .get(user)
       .then((res) => {
-        res.data.map((item: any) => {
+        res.data.map(async (item: any) => {
           if (item.name === data.staff) {
             data.userId = item._id;
-            console.log(data._id);
+            let url = `http://localhost:3001/api/routs/router/updateProject`;
+            await axios
+              .put(url, data)
+              .then((res) => {
+                console.log(res.data);
+                const index = dataProject.findIndex(
+                  (obj) => obj._id === data._id
+                );
+                const updatedObject = {
+                  ...dataProject[index],
+                  amountOfUsers: data.amountOfUsers,
+                  client: data.client,
+                  _id: data._id,
+                  nameProject: data.nameProject,
+                  staff: data.staff,
+                  statusProject: data.statusProject,
+                  userId: data.userId,
+                };
+
+                const newArray: any = [
+                  ...dataProject.slice(0, index),
+                  updatedObject,
+                  ...dataProject.slice(index + 1),
+                ];
+
+                setDataProject(newArray);
+                setIsSucced(true);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
             setIsUser(true);
+            setOpen(false);
           }
         });
-        setIsSucced(true);
-        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
-
-    setOpen(false);
   };
   // useEffect(() => {
   //   if (isSucceed) {
@@ -192,13 +205,9 @@ const UpdateProject: React.FC<{ onUpdate: IProps; openUpdate: boolean }> = (
               // placeholder="סטטוס"
               {...register("statusProject", { required: true })}
             >
-              {option.map((item, index) => {
-                return (
-                  <MenuItem value={props.onUpdate.statusProject}>
-                    {item}
-                  </MenuItem>
-                );
-              })}
+              <MenuItem value="פעיל">{"פעיל"}</MenuItem>
+
+              <MenuItem value="לא פעיל">{"לא פעיל"}</MenuItem>
             </Select>
             {errors.statusProject && "שדה חובה"}
             <Button variant="contained" type="submit" color="success">
@@ -211,4 +220,3 @@ const UpdateProject: React.FC<{ onUpdate: IProps; openUpdate: boolean }> = (
   );
 };
 export default UpdateProject;
-// : React.FC<{ editProj: IProps }>

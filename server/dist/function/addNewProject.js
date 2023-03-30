@@ -33,15 +33,13 @@ const addCreatProject = (req, res) => __awaiter(void 0, void 0, void 0, function
                 var _a;
                 if (((_a = item.name) === null || _a === void 0 ? void 0 : _a.trim()) === project.staff) {
                     project.userId = item._id.toString();
+                    project.save();
+                    console.log(project.userId);
                     flag = true;
+                    return res.json(project);
                 }
             });
-            if (flag) {
-                project.save();
-                console.log(project.userId);
-                return res.json(project);
-            }
-            else {
+            if (!flag) {
                 return res.json("dont found is developer");
             }
         }

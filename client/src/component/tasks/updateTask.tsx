@@ -12,21 +12,19 @@ import {
   Typography,
 } from "@mui/material";
 import axios from "axios";
+import dayjs from "dayjs";
 import React, { useState, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
-import { idPrj } from "../atom/Atom";
+import TasksData, { idPrj } from "../atom/Atom";
 import Card from "../UI/card";
 interface IFormMission {
   _id: String;
   discrption: String;
   missionStatus: String;
   projectId: String;
-  // dayjs: () => {};
-  data_created: {
-    type: Date;
-  };
-  endDate: { type: Date };
+  date_created: string;
+  endDate: string;
   remarks: String;
 }
 // interface IFormInputs {
@@ -38,8 +36,11 @@ interface IFormMission {
 //   statusProject: string;
 //   amountOfUsers: string;
 // }
-const UpdateTask: React.FC<{ onMission: IFormMission }> = (props) => {
-  const option = ["פעיל ", "לא פעיל"];
+const UpdateTask: React.FC<{
+  onMission: IFormMission;
+  indexMission: number;
+}> = (props) => {
+  const [mis, setMis] = useRecoilState(TasksData);
   const [open, setOpen] = React.useState(true);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -57,7 +58,7 @@ const UpdateTask: React.FC<{ onMission: IFormMission }> = (props) => {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: 400,
+
     bgcolor: "background.paper",
     border: "2px solid #000",
     boxShadow: 24,
@@ -65,25 +66,49 @@ const UpdateTask: React.FC<{ onMission: IFormMission }> = (props) => {
   };
   useEffect(() => {
     reset({
-      _id: props.onMission._id,
-      discrption: props.onMission.discrption,
-      missionStatus: props.onMission.missionStatus,
-      projectId: props.onMission.projectId,
-      data_created: props.onMission.data_created,
-      endDate: props.onMission.endDate,
-      remarks: props.onMission.remarks,
+      _id: mis[props.indexMission]._id,
+      discrption: mis[props.indexMission].discrption,
+      missionStatus: mis[props.indexMission].missionStatus,
+      projectId: mis[props.indexMission].projectId,
+      date_created: dayjs(mis[props.indexMission].date_created)
+        .format("DD/MM/YYYY")
+        .toString(),
+      endDate: dayjs(mis[props.indexMission].endDate)
+        .format("DD/MM/YYYY")
+        .toString(),
+      remarks: mis[props.indexMission].remarks,
     });
-    console.log(props.onMission.discrption);
+    console.log(dayjs(mis[props.indexMission].endDate));
   }, []);
   const editRejister: SubmitHandler<IFormMission> = async (data) => {
-    data._id = props.onMission._id;
-    data.projectId = props.onMission.projectId;
+    data._id = mis[props.indexMission]._id;
+    data.projectId = mis[props.indexMission].projectId;
 
     let url = `http://localhost:3001/api/routs/router/updateMission`;
+
     await axios
       .put(url, data)
       .then((res) => {
         console.log(res.data);
+        const index = mis.findIndex((obj) => obj._id === data._id);
+        const updatedObject = {
+          ...mis[index],
+          discrption: data.discrption,
+          missionStatus: data.missionStatus,
+          _id: data._id,
+          projectId: data.projectId,
+          date_created: data.date_created,
+          endDate: data.endDate,
+          remarks: data.remarks,
+        };
+
+        const newArray: any = [
+          ...mis.slice(0, index),
+          updatedObject,
+          ...mis.slice(index + 1),
+        ];
+
+        setMis(newArray);
       })
       .catch((err) => {
         console.log(err);
@@ -121,9 +146,9 @@ const UpdateTask: React.FC<{ onMission: IFormMission }> = (props) => {
               id="my-input"
               aria-describedby="my-helper-text"
               type="date"
-              {...register("data_created", { required: true })}
+              {...register("date_created", { required: true })}
             />
-            {errors.data_created && "שדה חובה"}
+            {errors.date_created && "שדה חובה"}
             <InputLabel htmlFor="my-input"> תאריך סיום </InputLabel>
             <Input
               id="my-input"

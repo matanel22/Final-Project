@@ -4,7 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import ProjectList from "./ProjectList";
 import { useRecoilState } from "recoil";
-import { DP, userId, userName } from "../atom/Atom";
+import { AllProjectData, userId, userName } from "../atom/Atom";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import OvalButton from "../UI/ButtonStyle";
@@ -22,7 +22,7 @@ export interface IProps {
 }
 
 const AllProjects = () => {
-  const [dataProject, setDataProject] = useState<IProps[]>([]);
+  const [dataProject, setDataProject] = useRecoilState(AllProjectData);
   const [validata, setValidata] = useState(false);
   const [useId, setUseId] = useRecoilState<string>(userId);
   const [NY, setNameUser] = useRecoilState<string>(userName);
@@ -39,7 +39,6 @@ const AllProjects = () => {
         await axios.post(url, { id }).then((response) => {
           console.log(response.data);
           setValidata(true);
-
           setDataProject(response.data);
         });
       } catch (error) {
