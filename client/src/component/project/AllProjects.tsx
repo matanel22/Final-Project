@@ -123,7 +123,7 @@ const AllProjects = () => {
               </WrapperModal>
             </Modal>
           )}
-          {`ברוך הבא ${NY}`}
+          <UserWelcome> {`ברוך הבא ${NY}`}</UserWelcome>
           <OvalButton
             onClick={() => {
               histury.push("/createProject");
@@ -157,4 +157,8 @@ const WidthTable = styled.div`
 
 const StyleHome = styled.div`
   background-color: blue;
+`;
+
+const UserWelcome = styled.div`
+  font-size: 2rem;
 `;

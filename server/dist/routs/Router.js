@@ -31,4 +31,5 @@ router.post('/creatMission', createMission_1.createMission);
 router.get('/specificMission', fonctionMission_1.specificMission);
 router.put('/updateMission', fonctionMission_1.updateMission);
 router.delete('/deleteSpcificMission/:id', fonctionMission_1.deleteSpcificMission);
+router.get('/status', fonctionMission_1.allStatusMission);
 exports.default = router;

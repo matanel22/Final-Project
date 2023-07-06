@@ -27,6 +27,7 @@
     "express": "^4.18.2",
     "joi": "^17.6.4",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.6.7"
+    "mongoose": "^6.6.7",
+    "pdf-lib": "^1.17.1"
   }
 }

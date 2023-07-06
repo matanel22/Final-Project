@@ -2,6 +2,7 @@ import {
   AppBar,
   Button,
   IconButton,
+  Modal,
   Paper,
   Table,
   TableBody,
@@ -28,6 +29,7 @@ import UrlTask from "./urlTask";
 import PageLoader from "../Loading/Loading";
 import styled, { css } from "styled-components";
 import { blue } from "@mui/material/colors";
+import { NavButton } from "../UI/NavButton";
 interface IFormMission {
   _id: String;
   discrption: String;
@@ -55,6 +57,11 @@ const TasksList = () => {
   const [taskOne, setTaskOne] = useState<IFormMission>(Object);
   const [isOpenEditTask, setIsOpenEditTask] = useState(false);
   const [isIndex, setIsIndex] = useState(0);
+
+  const [modalRemoveTask, setModalRemoveTask] = useState(false);
+  const [open, setOpen] = React.useState(true);
+  const handleClose = () => setOpen(false);
+  const [openModal, setOpenModal] = useState(false);
   let flag = true;
   const sendingToTheCreation = () => {
     setIsOpen(!isOpen);
@@ -185,11 +192,51 @@ const TasksList = () => {
                         variant="outlined"
                         color="error"
                         onClick={() => {
-                          removeMission(item._id);
+                          setOpenModal(true);
                         }}
                       >
                         מחיקת משימה
                       </Button>
+                      {openModal && (
+                        <Modal
+                          open={openModal}
+                          aria-labelledby="modal-modal-title"
+                          aria-describedby="modal-modal-description"
+                          onClose={handleClose}
+                        >
+                          <div>
+                            <p> ברצונך להתנתק</p>
+                            <Button
+                              variant="outlined"
+                              color="success"
+                              onClick={() => {
+                                removeMission(item._id);
+                                setOpenModal(false);
+                              }}
+                            >
+                              כן
+                            </Button>
+                            <Button
+                              variant="outlined"
+                              color="error"
+                              onClick={() => {
+                                setOpenModal(false);
+                              }}
+                            >
+                              לא
+                            </Button>
+                          </div>
+                        </Modal>
+                      )}
+                      {/* <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={() => {
+                          removeMission(item._id);
+                        }}
+                      >
+                       כן
+                      </Button> */}
                     </TableCell>
                     <TableCell align="right">
                       {" "}
@@ -209,7 +256,7 @@ const TasksList = () => {
           </Table>
         </TableContainer>
 
-        {isOpen && <CreateTasks></CreateTasks>}
+        {isOpen && <CreateTasks />}
 
         {isOpenEditTask && (
           <UpdateTask onMission={taskOne} indexMission={isIndex}></UpdateTask>

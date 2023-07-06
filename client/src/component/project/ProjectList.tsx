@@ -115,9 +115,15 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
       <TableContainer>
         <Table aria-label="simple table">
           <TableHead>
-            <TableRow sx={{ bgcolor: color }}>
-              {/* <TableCell align="right">Protein&nbsp;(g)</TableCell> */}
-
+            <TableRow
+              sx={{
+                bgcolor: color,
+                "& th": {
+                  fontSize: "1.25rem",
+                  color: "rgba(96, 96, 96)",
+                },
+              }}
+            >
               <TableCell align="right">שם הפרוייקט</TableCell>
               <TableCell align="right">שם הצוות</TableCell>
               <TableCell align="right">שם הלקוח</TableCell>
@@ -133,11 +139,26 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
             {props.onProps.length &&
               props.onProps.map((item, index) => (
                 <TableRow>
-                  <TableCell align="right">{`${item.nameProject}`}</TableCell>
-                  <TableCell align="right">{`${item.staff}`}</TableCell>
-                  <TableCell align="right">{`${item.client}`}</TableCell>
-                  <TableCell align="right">{`${item.statusProject}`}</TableCell>
-                  <TableCell align="right">{`${item.amountOfUsers}`}</TableCell>
+                  <TableCell
+                    sx={{ fontSize: "1.5rem" }}
+                    align="right"
+                  >{`${item.nameProject}`}</TableCell>
+                  <TableCell
+                    sx={{ fontSize: "1.5rem" }}
+                    align="right"
+                  >{`${item.staff}`}</TableCell>
+                  <TableCell
+                    sx={{ fontSize: "1.5rem" }}
+                    align="right"
+                  >{`${item.client}`}</TableCell>
+                  <TableCell
+                    sx={{ fontSize: "1.5rem" }}
+                    align="right"
+                  >{`${item.statusProject}`}</TableCell>
+                  <TableCell
+                    sx={{ fontSize: "1.5rem" }}
+                    align="right"
+                  >{`${item.amountOfUsers}`}</TableCell>
 
                   <TableCell align="right">
                     <Link to="/tasks">

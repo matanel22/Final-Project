@@ -1,8 +1,9 @@
-import { error } from "console";
+
 import { Request,Response } from "express";
-import { any } from "joi";
+
 import ProjectModel from "../model/ModalProjct";
 import MissionModel, { validTasks } from "../model/modelMission";
+import StatusModal from "../model/ModalStatus";
 
 
 export const specificMission =async (req:Request,res:Response)=>{
@@ -51,6 +52,17 @@ export const updateMission=async(req:Request,res:Response)=>{
       return res.json(error);
     }
     
+  }
+
+  export const allStatusMission=async(req:Request,res:Response)=>{
+    try {
+     const statusTask=await StatusModal.findOne({})
+     console.log(statusTask);
+     
+     res.send(statusTask)
+      } catch (error) {
+  res.status(404).send("somting is wrong");
+}
   }
 
   

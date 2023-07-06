@@ -5,6 +5,7 @@ import Joi, { date }  from "joi";
 const MissionScama=new mongoose.Schema({
     id:String,
     discrption:String,
+    statusId:String,
     missionStatus:String,
     projectId:String,
     date_created:{
@@ -21,7 +22,7 @@ const MissionScama=new mongoose.Schema({
         let joiSchema=Joi.object({
             _id:Joi.string().required(),
             discrption:Joi.string().min(2).max(99),
-            missionStatus:Joi.string().min(3).max(50).required(),
+            
             date_created:Joi.date().required(),
             projectId:Joi.string().required(),
             endDate:Joi.date().required(),

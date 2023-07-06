@@ -9,6 +9,7 @@ const joi_1 = __importDefault(require("joi"));
 const MissionScama = new mongoose_1.default.Schema({
     id: String,
     discrption: String,
+    statusId: String,
     missionStatus: String,
     projectId: String,
     date_created: {
@@ -23,7 +24,6 @@ const validTasks = (_validData) => {
     let joiSchema = joi_1.default.object({
         _id: joi_1.default.string().required(),
         discrption: joi_1.default.string().min(2).max(99),
-        missionStatus: joi_1.default.string().min(3).max(50).required(),
         date_created: joi_1.default.date().required(),
         projectId: joi_1.default.string().required(),
         endDate: joi_1.default.date().required(),

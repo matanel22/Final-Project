@@ -106,11 +106,7 @@ const AddNewProject: React.FC = (props) => {
       {errors.client && "חובה למלא שם לקוח"}
       <input type="hidden" value={useId} />
       <label>משתמשים </label>
-      <input
-        placeholder="משתמשים"
-        type="text"
-        {...register("amountOfUsers", { required: true })}
-      />
+      <input type="text" {...register("amountOfUsers", { required: true })} />
       {errors.amountOfUsers && " שדה חובה  "}
       <Label htmlFor="fruit-select">סטטוס פרוייקט </Label>
       <Select

@@ -4,7 +4,7 @@ import { createMission } from '../function/createMission';
 import {allUsers, login,signUp, usersSpecific} from '../function/fonctionUsers'
 import {  allMissionOfProject, allProject, projSpecific, specificProject, updateProject } from '../function/functionProject';
 import { addCreatProject } from '../function/addNewProject';
-import { deleteSpcificMission, specificMission, taskOne, updateMission } from '../function/fonctionMission';
+import { allStatusMission, deleteSpcificMission, specificMission, taskOne, updateMission } from '../function/fonctionMission';
 import { userInfo } from '../function/fonctionUsers';
 
 
@@ -30,6 +30,7 @@ router.post('/creatMission',createMission);
 router.get('/specificMission',specificMission);
 router.put('/updateMission',updateMission);
 router.delete('/deleteSpcificMission/:id',deleteSpcificMission);
+router.get('/status',allStatusMission)
 
  export default router;
 

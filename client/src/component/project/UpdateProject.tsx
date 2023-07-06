@@ -48,7 +48,7 @@ const UpdateProject: React.FC<{
   const [isUpdate, setIsUpdate] = useState(false);
   const [isUser, setIsUser] = useState(false);
   const [isClick, setIsClick] = useState(false);
-
+  const [validUser, setValidUser] = useState("");
   const [open, setOpen] = React.useState(true);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -76,7 +76,7 @@ const UpdateProject: React.FC<{
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-
+    height: "60%",
     bgcolor: "background.paper",
     border: "2px solid #000",
     boxShadow: 24,
@@ -138,6 +138,8 @@ const UpdateProject: React.FC<{
               });
             setIsUser(true);
             setOpen(false);
+          } else {
+            setValidUser("שם מפתח לא קיים");
           }
         });
       })
@@ -150,7 +152,7 @@ const UpdateProject: React.FC<{
   //     histury.push("/projects");
   //   }
   // }, [isSucceed]);
-  let valideDev = isClick && !isUser ? <p>שם המפתח לא נמצא</p> : "";
+
   return (
     <Modal
       open={open}
@@ -178,7 +180,8 @@ const UpdateProject: React.FC<{
               // value={props.onUpdate.staff}
               {...register("staff", { required: true })}
             />
-            {errors.staff && valideDev}
+            {!isUser && validUser}
+            {errors.staff && "שדה חובה"}
 
             <InputLabel htmlFor="my-input">לקוח מוביל </InputLabel>
             <Input
@@ -197,21 +200,30 @@ const UpdateProject: React.FC<{
               {...register("amountOfUsers", { required: true })}
             />
             {errors.amountOfUsers && "שדה חובה"}
+            <br />
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               label="סטטוס"
               type="text"
               // placeholder="סטטוס"
-              {...register("statusProject", { required: true })}
             >
-              <MenuItem value="פעיל">{"פעיל"}</MenuItem>
+              <MenuItem>{"פעיל"}</MenuItem>
 
-              <MenuItem value="לא פעיל">{"לא פעיל"}</MenuItem>
+              <MenuItem>{"לא פעיל"}</MenuItem>
             </Select>
             {errors.statusProject && "שדה חובה"}
+            <br />
             <Button variant="contained" type="submit" color="success">
               שמירה
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                setOpen(false);
+              }}
+            >
+              ביטול
             </Button>
           </form>
         </Typography>

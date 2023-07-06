@@ -35,9 +35,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteSpcificMission = exports.taskOne = exports.updateMission = exports.specificMission = void 0;
+exports.allStatusMission = exports.deleteSpcificMission = exports.taskOne = exports.updateMission = exports.specificMission = void 0;
 const ModalProjct_1 = __importDefault(require("../model/ModalProjct"));
 const modelMission_1 = __importStar(require("../model/modelMission"));
+const ModalStatus_1 = __importDefault(require("../model/ModalStatus"));
 const specificMission = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let task = yield modelMission_1.default.find({ id: req.body.id });
@@ -88,3 +89,14 @@ const deleteSpcificMission = (req, res) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.deleteSpcificMission = deleteSpcificMission;
+const allStatusMission = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const statusTask = yield ModalStatus_1.default.findOne({});
+        console.log(statusTask);
+        res.send(statusTask);
+    }
+    catch (error) {
+        res.status(404).send("somting is wrong");
+    }
+});
+exports.allStatusMission = allStatusMission;
