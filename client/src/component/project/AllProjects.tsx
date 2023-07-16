@@ -6,7 +6,7 @@ import ProjectList from "./ProjectList";
 import { useRecoilState } from "recoil";
 import { AllProjectData, userId, userName } from "../atom/Atom";
 import styled from "styled-components";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import OvalButton from "../UI/ButtonStyle";
 import { blueGrey, red } from "@mui/material/colors";
 import { display } from "@mui/system";
@@ -20,9 +20,13 @@ export interface IProps {
   statusProject: string;
   amountOfUsers: string;
 }
-
+export interface MyObject {
+  id: string;
+  // Other properties if needed
+}
 const AllProjects = () => {
   const [dataProject, setDataProject] = useRecoilState(AllProjectData);
+
   const [validata, setValidata] = useState(false);
   const [useId, setUseId] = useRecoilState<string>(userId);
   const [NY, setNameUser] = useRecoilState<string>(userName);
@@ -32,6 +36,8 @@ const AllProjects = () => {
   const handleClose = () => setOpen(false);
   const [openModal, setOpenModal] = useState(false);
   const histury = useHistory();
+  const articleId: MyObject = useParams();
+
   useEffect(() => {
     const fetch = async (id: string) => {
       try {
@@ -39,6 +45,7 @@ const AllProjects = () => {
         await axios.post(url, { id }).then((response) => {
           console.log(response.data);
           setValidata(true);
+
           setDataProject(response.data);
         });
       } catch (error) {
@@ -46,7 +53,7 @@ const AllProjects = () => {
       }
     };
 
-    fetch(useId);
+    fetch(articleId.id);
   }, []);
 
   // let quantityCheck =
@@ -70,7 +77,6 @@ const AllProjects = () => {
         .catch((err) => {
           console.log(err);
         });
-      console.log(validPremissionUsers);
     };
     userS(useId);
   }, []);
@@ -133,7 +139,7 @@ const AllProjects = () => {
           </OvalButton>
         </WidthTable>
       </AppBar>
-      <ProjectList onProps={dataProject} />;
+      <ProjectList dataProject={dataProject} valideRoleId={articleId} />;
     </StyleHome>
   );
 };

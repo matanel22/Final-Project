@@ -11,12 +11,13 @@ interface IProps {
 }
 export const createMission=async(req:Request,res:Response)=>{
     
-    // let validata=validTasks(req.body);
-    // if(validata.error){
-    //   return res.status(404).json(validata.error.details)
-    //  }
+   
      
         try {
+             let validata=validTasks(req.body);
+    if(validata.error){
+      return res.status(404).json(validata.error.details)
+     }
             let dataTask=await new MissionModel(req.body);
             dataTask.save();
             res.json(dataTask);

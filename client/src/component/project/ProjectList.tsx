@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { Avatar, Box, TextField } from "@mui/material";
+import React, { useEffect, useRef, useState } from "react";
+import { Avatar, Box, Input, TextField } from "@mui/material";
 import { useRecoilState, useRecoilValue } from "recoil";
 import axios from "axios";
 import { Link } from "react-router-dom";
 // import ButtonMission from "../UI/Button";
-import TasksData, { token, userId, userName } from "../atom/Atom";
+import TasksData, {
+  AllProjectData,
+  token,
+  userId,
+  userName,
+} from "../atom/Atom";
 import { idPrj } from "../atom/Atom";
 import classes from "./ProjectList.module.css";
 import { useHistory } from "react-router-dom";
@@ -32,6 +37,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import Tooltip from "@mui/material/Tooltip";
 import OvalButton from "../UI/ButtonStyle";
 import PageLoader from "../Loading/Loading";
+import { MyObject } from "./AllProjects";
 // const useStyles = makeStyles({
 //   table: {
 //     minWidth: 650,
@@ -53,8 +59,19 @@ export interface IProps {
   statusProject: string;
   amountOfUsers: string;
 }
+const TITALE_PROJECTS = [
+  "שם הפרוייקט",
+  "שם הצוות",
+  ">שם הלקוח",
+  ">סטטוס הפרוייקט",
+  "האם יש משתמשים",
+  ">למשימות הפרוייקט",
+];
 
-const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
+const ProjectList: React.FC<{
+  dataProject: IProps[];
+  valideRoleId: MyObject;
+}> = (props) => {
   const [loading, setLoading] = useState("");
   const [useId, setUseId] = useRecoilState<string>(userId);
   const [projId, setProjId] = useRecoilState(idPrj);
@@ -64,11 +81,19 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
   const [isOpenUpdate, setIsOpenUpdate] = useState(false);
   const [isUsersPrem, setIsUsersPrem] = useState<IUsers>();
   const [indexProjData, setIndexProjData] = useState(0);
-  const [isLogout, setIsLogout] = useState(false);
-  const [dataToken, setDataToken] = useRecoilState(token);
-  // const [open, setOpen] = React.useState(false);
+  const [isPro, setDataProject] = useRecoilState(AllProjectData);
+  const [editMode, setEditMode] = useState([
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ]);
   const [validPremissionUsers, setValidPremissionUsers] = useState(false);
   let histury = useHistory();
+  const editButtonRef = useRef(null);
+
   useEffect(() => {
     const userS = (_id: string) => {
       let url = "http://localhost:3001/api/routs/router/usersSpecific";
@@ -87,7 +112,7 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
         });
       console.log(validPremissionUsers);
     };
-    userS(useId);
+    userS(props.valideRoleId.id);
   }, []);
 
   const showFormOnEdit = async (id: string, index: number) => {
@@ -107,6 +132,47 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
   //     setValidPremissionUsers(true);
   //   }
   // }, [validPremissionUsers]);
+  const toggleEditMode = (index: number) => {
+    setEditMode((prevFormData) => {
+      const updatedEditTogle = [...prevFormData];
+      updatedEditTogle[index] = !updatedEditTogle[index];
+      // console.log(updatedEditTogle);
+      return updatedEditTogle;
+    });
+  };
+  const handleChange = (event: any, index: number) => {
+    if (editMode) {
+      const { value } = event.target;
+      setDataProject((prevFormData) => {
+        const updatedFormData = [...prevFormData];
+        updatedFormData[index] = value;
+        return updatedFormData;
+      });
+    }
+  };
+  const handleOutsideClick = (event: any) => {
+    // console.log(editButtonRef.current);
+
+    if (
+      editButtonRef.current
+      // !editButtonRef.current.contains(event.target)
+    ) {
+      setDataProject((prevFormData) =>
+        prevFormData.map((field) => ({
+          ...field,
+          editMode: false,
+        }))
+      );
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("click", handleOutsideClick);
+    };
+  }, []);
   const color = blue[100];
   return (
     <Container>
@@ -124,75 +190,110 @@ const ProjectList: React.FC<{ onProps: IProps[] }> = (props) => {
                 },
               }}
             >
-              <TableCell align="right">שם הפרוייקט</TableCell>
-              <TableCell align="right">שם הצוות</TableCell>
-              <TableCell align="right">שם הלקוח</TableCell>
-              <TableCell align="right">סטטוס הפרוייקט</TableCell>
-              <TableCell align="right"> האם יש משתמשים</TableCell>
-              <TableCell align="right">למשימות הפרוייקט</TableCell>
+              {TITALE_PROJECTS.map((item: string) => {
+                return <TableCell align="right">{item}</TableCell>;
+              })}
               {validPremissionUsers && (
                 <TableCell align="right">לעדכון הפרוייקט</TableCell>
               )}
             </TableRow>
           </TableHead>
-          <TableBody>
-            {props.onProps.length &&
-              props.onProps.map((item, index) => (
-                <TableRow>
-                  <TableCell
-                    sx={{ fontSize: "1.5rem" }}
-                    align="right"
-                  >{`${item.nameProject}`}</TableCell>
-                  <TableCell
-                    sx={{ fontSize: "1.5rem" }}
-                    align="right"
-                  >{`${item.staff}`}</TableCell>
-                  <TableCell
-                    sx={{ fontSize: "1.5rem" }}
-                    align="right"
-                  >{`${item.client}`}</TableCell>
-                  <TableCell
-                    sx={{ fontSize: "1.5rem" }}
-                    align="right"
-                  >{`${item.statusProject}`}</TableCell>
-                  <TableCell
-                    sx={{ fontSize: "1.5rem" }}
-                    align="right"
-                  >{`${item.amountOfUsers}`}</TableCell>
-
-                  <TableCell align="right">
-                    <Link to="/tasks">
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => {
-                          setProjId(item._id);
-                        }}
-                      >
-                        למשימות לחץ כאן
-                      </Button>
-                    </Link>
-                  </TableCell>
-                  <TableCell align="right">
-                    {" "}
-                    {validPremissionUsers && (
-                      <Button
-                        variant="contained"
-                        color="success"
-                        onClick={() => {
-                          showFormOnEdit(item._id, index);
-                        }}
-                      >
-                        לעדכון הפרוייקט
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
         </Table>
         {/* </div> */}
       </TableContainer>
+      <TableContaine>
+        <StyledTable>
+          <tbody>
+            {props.dataProject.length &&
+              props.dataProject.map((item, index) => (
+                <tr key={index}>
+                  <TableCe>
+                    <StyledInput
+                      // sx={{ fontSize: "1.5rem" }}
+                      id="my-input"
+                      // aria-describedby="my-helper-text"
+                      type="text"
+                      value={item.nameProject}
+                      onChange={(event) => handleChange(event, index)}
+                      disabled={!editMode[index]}
+                    />
+                    <StyledInput
+                      // sx={{ fontSize: "1.5rem" }}
+                      id="my-input"
+                      // aria-describedby="my-helper-text"
+                      type="text"
+                      value={item.staff}
+                      onChange={(event) => handleChange(event, index)}
+                      disabled={!editMode[index]}
+                    />
+                    <StyledInput
+                      // sx={{ fontSize: "1.5rem" }}
+                      id="my-input"
+                      aria-describedby="my-helper-text"
+                      type="text"
+                      value={item.client}
+                      onChange={(event) => handleChange(event, index)}
+                      disabled={!editMode[index]}
+                    />
+                    <StyledInput
+                      // sx={{ fontSize: "1.5rem" }}
+                      id="my-input"
+                      aria-describedby="my-helper-text"
+                      type="text"
+                      value={item.statusProject}
+                      onChange={(event) => handleChange(event, index)}
+                      disabled={!editMode[index]}
+                    />
+                    <StyledInput
+                      // sx={{ fontSize: "1.5rem" }}
+                      id="my-input"
+                      aria-describedby="my-helper-text"
+                      type="text"
+                      value={item.amountOfUsers}
+                      onChange={(event) => handleChange(event, index)}
+                      disabled={!editMode[index]}
+                    />
+                    {/* <button
+                      ref={editButtonRef}
+                      onClick={() => {
+                        toggleEditMode(index);
+                      }}
+                    >
+                      {editMode[index] ? "לעריכה" : "Enable Edit Mode"}
+                    </button> */}
+                    <TableCe align="right">
+                      <Link to={`/tasks/${item._id}`}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => {
+                            setProjId(item._id);
+                          }}
+                        >
+                          למשימות לחץ כאן
+                        </Button>
+                      </Link>
+                    </TableCe>
+                    <TableCe align="right">
+                      {" "}
+                      {validPremissionUsers && (
+                        <Button
+                          ref={editButtonRef}
+                          color="success"
+                          onClick={() => {
+                            toggleEditMode(index);
+                          }}
+                        >
+                          {editMode[index] ? "לעריכה" : "Enable Edit Mode"}
+                        </Button>
+                      )}
+                    </TableCe>
+                  </TableCe>
+                </tr>
+              ))}
+          </tbody>
+        </StyledTable>
+      </TableContaine>
 
       {isOpen && (
         <UpdateProject
@@ -221,4 +322,30 @@ const Container = styled.div`
 `;
 const WidthTable = styled.div`
   width: 20vw;
+`;
+const TableContaine = styled.div`
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const StyledTable = styled.table`
+  border-collapse: collapse;
+  // width: 100%;
+`;
+
+const TableCe = styled.td`
+  border: 1px solid black;
+  padding: 8px;
+`;
+
+const StyledInput = styled.input`
+  border: none;
+  // width: 20%;
+  background-color: transparent;
+`;
+
+const Butto = styled.button`
+  margin-top: 8px;
 `;

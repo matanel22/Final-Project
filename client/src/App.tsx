@@ -21,7 +21,7 @@ function App() {
         <Route path="/login" exact>
           <Home />
         </Route>
-        <Route path="/projects" exact>
+        <Route path="/projects/:id" exact>
           <AllProjects />
         </Route>
         <Route path="/createProject" exact>
@@ -30,7 +30,7 @@ function App() {
         <Route path="/signUp" exact>
           <SignUp />
         </Route>
-        <Route path="/tasks" exact>
+        <Route path="/tasks/:id" exact>
           <TasksList></TasksList>
         </Route>
         <Route path="/createTasks" exact>

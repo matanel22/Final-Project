@@ -17,7 +17,7 @@ import dayjs from "dayjs";
 import React, { useEffect } from "react";
 import axios from "axios";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import TasksData, { idPrj, userName } from "../atom/Atom";
 // import ButtonMisson from "../UI/Button";
@@ -25,11 +25,12 @@ import Card from "../UI/card";
 import CreateTasks from "./createTasks";
 import { Box } from "@mui/system";
 import UpdateTask from "./updateTask";
-import UrlTask from "./urlTask";
+import { UrlTask } from "./urlTask";
 import PageLoader from "../Loading/Loading";
 import styled, { css } from "styled-components";
 import { blue } from "@mui/material/colors";
 import { NavButton } from "../UI/NavButton";
+import { MyObject } from "../project/AllProjects";
 interface IFormMission {
   _id: String;
   discrption: String;
@@ -57,11 +58,10 @@ const TasksList = () => {
   const [taskOne, setTaskOne] = useState<IFormMission>(Object);
   const [isOpenEditTask, setIsOpenEditTask] = useState(false);
   const [isIndex, setIsIndex] = useState(0);
-
-  const [modalRemoveTask, setModalRemoveTask] = useState(false);
   const [open, setOpen] = React.useState(true);
   const handleClose = () => setOpen(false);
   const [openModal, setOpenModal] = useState(false);
+  const PID: MyObject = useParams();
   let flag = true;
   const sendingToTheCreation = () => {
     setIsOpen(!isOpen);
@@ -103,11 +103,9 @@ const TasksList = () => {
           console.log(res);
         });
     };
-    sendProjectID(ID);
+    sendProjectID(PID.id);
   }, []);
 
-  let validtasks =
-    mis.length === 0 ? <h1>אין משימות בפרוייקט זה</h1> : <h1>משימות</h1>;
   const color = blue[100];
   return (
     <>
@@ -255,7 +253,7 @@ const TasksList = () => {
             </TableBody>
           </Table>
         </TableContainer>
-
+        <UrlTask />
         {isOpen && <CreateTasks />}
 
         {isOpenEditTask && (

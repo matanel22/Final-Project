@@ -67,17 +67,6 @@ export default function Home() {
     setIsPass(event.target.value);
   };
 
-  // const onBlorPass = () => {
-  //   if (isPass.trim().length === 0) {
-  //     setValidPass(true);
-  //     return;
-  //   }
-  //   // if (isPass.includes("@")) {
-  //   //   setValidEmail(true);
-
-  //   //   return;
-  //   // }
-  // };
   const handleSubmit = async (event: any) => {
     event.preventDefault();
 
@@ -98,16 +87,12 @@ export default function Home() {
           .get(url, { headers: { "x-api-key": localStorage["tok"] } })
           .then((res) => {
             console.log(res.data);
-            // const storedData = localStorage.getItem("data");
-            // console.log(storedData);
-            // if (storedData) {
-            //   setData(JSON.parse(storedData));
-            // }
+
             setUseId(res.data[0]._id);
             setStateId(res.data[0]._id);
             setNameUser(res.data[0].name);
             setValidToken(true);
-            histury.push("/projects");
+            histury.push("/projects/" + res.data[0]._id);
           })
           .catch((err) => {
             console.log("err1");

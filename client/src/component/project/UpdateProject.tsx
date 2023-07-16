@@ -17,9 +17,9 @@ import React, { useState, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import { AllProjectData, idPrj } from "../atom/Atom";
-import Card from "../UI/card";
+
 import { useHistory } from "react-router-dom";
-import classes from "./update.module.css";
+
 export interface IProps {
   _id: string;
   nameProject: string;
@@ -30,15 +30,6 @@ export interface IProps {
   amountOfUsers: string;
 }
 
-// interface IFormInputs {
-//   _id: string;
-//   nameProject: string;
-//   client: string;
-//   staff: string;
-//   userId: string;
-//   statusProject: string;
-//   amountOfUsers: string;
-// }
 const UpdateProject: React.FC<{
   onUpdate: IProps;
   openUpdate: boolean;
@@ -53,7 +44,7 @@ const UpdateProject: React.FC<{
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [isSucceed, setIsSucced] = useState(false);
-  const [a, b] = useState<IProps[]>([]);
+
   const [dataProject, setDataProject] = useRecoilState(AllProjectData);
   // const [isClose, setIsOpen] = useState<boolean>(props.openUpdate);
 
@@ -83,17 +74,17 @@ const UpdateProject: React.FC<{
     p: 4,
   };
 
-  useEffect(() => {
-    reset({
-      _id: dataProject[props.projIndex]._id,
-      userId: dataProject[props.projIndex].userId,
-      staff: dataProject[props.projIndex].staff,
-      statusProject: dataProject[props.projIndex].statusProject,
-      amountOfUsers: dataProject[props.projIndex].amountOfUsers,
-      nameProject: dataProject[props.projIndex].nameProject,
-      client: dataProject[props.projIndex].client,
-    });
-  }, []);
+  // useEffect(() => {
+  //   reset({
+  //     _id: dataProject[props.projIndex]._id,
+  //     userId: dataProject[props.projIndex].userId,
+  //     staff: dataProject[props.projIndex].staff,
+  //     statusProject: dataProject[props.projIndex].statusProject,
+  //     amountOfUsers: dataProject[props.projIndex].amountOfUsers,
+  //     nameProject: dataProject[props.projIndex].nameProject,
+  //     client: dataProject[props.projIndex].client,
+  //   });
+  // }, []);
   const editRejister: SubmitHandler<IProps> = async (data) => {
     setIsClick(true);
     setIsUpdate(!isUpdate);
@@ -168,7 +159,7 @@ const UpdateProject: React.FC<{
               id="my-input"
               aria-describedby="my-helper-text"
               type="text"
-              // value={props.onUpdate.nameProject}
+              value={props.onUpdate.nameProject}
               {...register("nameProject", { required: true })}
             />
             {errors.nameProject && "שדה חובה"}
@@ -177,7 +168,7 @@ const UpdateProject: React.FC<{
               id="my-input"
               aria-describedby="my-helper-text"
               type="text"
-              // value={props.onUpdate.staff}
+              value={props.onUpdate.staff}
               {...register("staff", { required: true })}
             />
             {!isUser && validUser}
@@ -188,7 +179,7 @@ const UpdateProject: React.FC<{
               id="my-input"
               aria-describedby="my-helper-text"
               type="text"
-              // value={props.onUpdate.client}
+              value={props.onUpdate.client}
               {...register("client", { required: true })}
             />
             {errors.client && "שדה חובה"}
@@ -197,6 +188,7 @@ const UpdateProject: React.FC<{
               id="my-input"
               aria-describedby="my-helper-text"
               type="text"
+              value={props.onUpdate.amountOfUsers}
               {...register("amountOfUsers", { required: true })}
             />
             {errors.amountOfUsers && "שדה חובה"}
@@ -206,6 +198,7 @@ const UpdateProject: React.FC<{
               id="demo-simple-select"
               label="סטטוס"
               type="text"
+              value={props.onUpdate.statusProject}
               // placeholder="סטטוס"
             >
               <MenuItem>{"פעיל"}</MenuItem>
