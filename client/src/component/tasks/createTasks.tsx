@@ -20,6 +20,7 @@ import TasksData, { idPrj, missionProj, userName } from "../atom/Atom";
 // import ButtonMisson from "../UI/Button";
 import Card from "../UI/card";
 import classes from "./CreateTasks.module.css";
+import { log } from "util";
 
 interface IFormMission {
   _id: String;
@@ -35,8 +36,7 @@ const CreateTasks = () => {
   const [ID, setId] = useRecoilState(idPrj);
   const [dataMission, setDataMission] = useRecoilState(missionProj);
   const [isMission, setIsMission] = useRecoilState(TasksData);
-  const [isSucceed, setIsSucced] = useState(false);
-  const [NY, setNameUser] = useRecoilState<string>(userName);
+
   let histury = useHistory();
   const {
     register,
@@ -51,12 +51,14 @@ const CreateTasks = () => {
   const registerPrj: SubmitHandler<IFormMission> = async (data) => {
     data.projectId = ID;
     let url = "http://localhost:3001/api/routs/router/creatMission";
-    axios
+    await axios
       .post(url, data)
 
       .then((res) => {
         setDataMission(res.data);
-        histury.push("tasks");
+        console.log(res.data);
+
+        histury.push("tasks/" + data.projectId);
       })
       .catch((res) => {
         console.log("res", res);
