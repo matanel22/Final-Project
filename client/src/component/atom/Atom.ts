@@ -3,7 +3,7 @@ interface IFormMission {
    
     _id: String;
     discrption: String;
-    missionStatus: String;
+    statusId: String;
     projectId: String;
     date_created: Date;
     endDate:  Date ;

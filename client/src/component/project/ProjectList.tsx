@@ -62,10 +62,10 @@ export interface IProps {
 const TITALE_PROJECTS = [
   "שם הפרוייקט",
   "שם הצוות",
-  ">שם הלקוח",
-  ">סטטוס הפרוייקט",
+  "שם הלקוח",
+  "סטטוס הפרוייקט",
   "האם יש משתמשים",
-  ">למשימות הפרוייקט",
+  "למשימות הפרוייקט",
 ];
 
 const ProjectList: React.FC<{
@@ -73,7 +73,7 @@ const ProjectList: React.FC<{
   valideRoleId: MyObject;
 }> = (props) => {
   const [loading, setLoading] = useState("");
-  const [useId, setUseId] = useRecoilState<string>(userId);
+
   const [projId, setProjId] = useRecoilState(idPrj);
   const [updateProj, setUpdateProj] = useState<IProps>(Object);
   const [isopenUpdate, setIsUpdate] = useState(false);
@@ -91,7 +91,7 @@ const ProjectList: React.FC<{
     false,
   ]);
   const [validPremissionUsers, setValidPremissionUsers] = useState(false);
-  let histury = useHistory();
+
   const editButtonRef = useRef(null);
 
   useEffect(() => {
@@ -104,8 +104,6 @@ const ProjectList: React.FC<{
           if (res.data.permissions) {
             setValidPremissionUsers(true);
           }
-          // console.log("useId", useId);
-          // console.log("resData", res.data);
         })
         .catch((err) => {
           console.log(err);
@@ -127,11 +125,6 @@ const ProjectList: React.FC<{
     return setIsUpdate(true);
   };
 
-  // useEffect(() => {
-  //   if (isUsersPrem?.permissions) {
-  //     setValidPremissionUsers(true);
-  //   }
-  // }, [validPremissionUsers]);
   const toggleEditMode = (index: number) => {
     setEditMode((prevFormData) => {
       const updatedEditTogle = [...prevFormData];
@@ -218,9 +211,7 @@ const ProjectList: React.FC<{
                       disabled={!editMode[index]}
                     />
                     <StyledInput
-                      // sx={{ fontSize: "1.5rem" }}
                       id="my-input"
-                      // aria-describedby="my-helper-text"
                       type="text"
                       value={item.staff}
                       onChange={(event) => handleChange(event, index)}
@@ -344,6 +335,7 @@ const StyledInput = styled.input`
   border: none;
   // width: 20%;
   background-color: transparent;
+  fontsize: 1.5rem;
 `;
 
 const Butto = styled.button`

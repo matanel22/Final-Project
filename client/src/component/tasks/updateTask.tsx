@@ -8,24 +8,25 @@ import {
   InputLabel,
   MenuItem,
   Modal,
-  Select,
   Typography,
 } from "@mui/material";
+import styled from "styled-components";
 import axios from "axios";
 import dayjs from "dayjs";
 import React, { useState, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
-import TasksData, { idPrj } from "../atom/Atom";
-import Card from "../UI/card";
+import TasksData from "../atom/Atom";
+
+import { StatusMission } from "./StatusMission";
 interface IFormMission {
-  _id: String;
-  discrption: String;
-  missionStatus: String;
-  projectId: String;
+  id: any;
+  discrption: any;
+  statusId: any;
+  projectId: any;
   date_created: string;
   endDate: string;
-  remarks: String;
+  remarks: any;
 }
 // interface IFormInputs {
 //   _id: string;
@@ -46,7 +47,7 @@ const UpdateTask: React.FC<{
   const handleClose = () => setOpen(false);
   const {
     register,
-    formState,
+
     formState: { errors, isDirty, isValid },
     handleSubmit,
     reset,
@@ -58,7 +59,6 @@ const UpdateTask: React.FC<{
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-
     bgcolor: "background.paper",
     border: "2px solid #000",
     boxShadow: 24,
@@ -66,9 +66,9 @@ const UpdateTask: React.FC<{
   };
   useEffect(() => {
     reset({
-      _id: mis[props.indexMission]._id,
+      id: mis[props.indexMission]._id,
       discrption: mis[props.indexMission].discrption,
-      missionStatus: mis[props.indexMission].missionStatus,
+      statusId: mis[props.indexMission].statusId,
       projectId: mis[props.indexMission].projectId,
       date_created: dayjs(mis[props.indexMission].date_created)
         .format("DD/MM/YYYY")
@@ -78,10 +78,9 @@ const UpdateTask: React.FC<{
         .toString(),
       remarks: mis[props.indexMission].remarks,
     });
-    console.log(dayjs(mis[props.indexMission].endDate));
   }, []);
   const editRejister: SubmitHandler<IFormMission> = async (data) => {
-    data._id = mis[props.indexMission]._id;
+    data.id = mis[props.indexMission]._id;
     data.projectId = mis[props.indexMission].projectId;
 
     let url = `http://localhost:3001/api/routs/router/updateMission`;
@@ -90,12 +89,12 @@ const UpdateTask: React.FC<{
       .put(url, data)
       .then((res) => {
         console.log(res.data);
-        const index = mis.findIndex((obj) => obj._id === data._id);
+        const index = mis.findIndex((obj) => obj._id === data.id);
         const updatedObject = {
           ...mis[index],
           discrption: data.discrption,
-          missionStatus: data.missionStatus,
-          _id: data._id,
+          statusId: data.statusId,
+          _id: data.id,
           projectId: data.projectId,
           date_created: data.date_created,
           endDate: data.endDate,
@@ -125,7 +124,7 @@ const UpdateTask: React.FC<{
       <Box sx={style}>
         <Typography id="modal-modal-title" variant="h6" component="h2">
           <form onSubmit={handleSubmit(editRejister)}>
-            <InputLabel htmlFor="my-input"> תיאור המשימה </InputLabel>
+            <InputLabel htmlFor="my-input">תיאור המשימה </InputLabel>
             <Input
               id="my-input"
               aria-describedby="my-helper-text"
@@ -133,19 +132,27 @@ const UpdateTask: React.FC<{
               {...register("discrption", { required: true })}
             />
             {errors.discrption && "שדה חובה"}
-            <InputLabel htmlFor="my-input"> סטטוס משימה</InputLabel>
-            <Input
+            <InputLabel htmlFor="my-input">סטטוס משימה</InputLabel>
+            <Select
               id="my-input"
               aria-describedby="my-helper-text"
-              type="text"
-              {...register("missionStatus", { required: true })}
-            />
-            {errors.missionStatus && "שדה חובה"}
-            <InputLabel htmlFor="my-input">תאריך התחלה </InputLabel>
+              {...register("statusId", { required: true })}
+            >
+              {StatusMission.map((item, i) => {
+                return (
+                  <option key={i} value={props.onMission.statusId}>
+                    {item.name}
+                  </option>
+                );
+              })}
+            </Select>
+            {errors.statusId && "שדה חובה"}
+            <InputLabel htmlFor="my-input">תאריך התחלה</InputLabel>
             <Input
               id="my-input"
               aria-describedby="my-helper-text"
               type="date"
+              value={props.onMission.date_created}
               {...register("date_created", { required: true })}
             />
             {errors.date_created && "שדה חובה"}
@@ -154,12 +161,11 @@ const UpdateTask: React.FC<{
               id="my-input"
               aria-describedby="my-helper-text"
               type="date"
+              value={props.onMission.endDate}
               {...register("endDate", { required: true })}
             />
             {errors.endDate && "שדה חובה"}
-            {/* <FormHelperText id="my-helper-text">
-            We'll never share your client.
-          </FormHelperText> */}
+
             <InputLabel htmlFor="my-input"> הערות </InputLabel>
             <Input
               id="my-input"
@@ -179,3 +185,11 @@ const UpdateTask: React.FC<{
   );
 };
 export default UpdateTask;
+const Select = styled.select`
+  width: 75%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #e0e0e0;
+`;

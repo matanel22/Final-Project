@@ -1,47 +1,31 @@
-import {
-  AppBar,
-  Button,
-  Container,
-  CssBaseline,
-  IconButton,
-  TextareaAutosize,
-  TextField,
-  Toolbar,
-  Typography,
-} from "@mui/material";
 import styled from "styled-components";
-import { Box } from "@mui/system";
+
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useHistory } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import TasksData, { idPrj, missionProj, userName } from "../atom/Atom";
-// import ButtonMisson from "../UI/Button";
-import Card from "../UI/card";
-import classes from "./CreateTasks.module.css";
-import { log } from "util";
+import { idPrj, missionProj } from "../atom/Atom";
+import { StatusMission } from "./StatusMission";
 
 interface IFormMission {
   _id: String;
   discrption: String;
-  missionStatus: String;
+  // missionStatus: String;
   projectId: String;
   date_created: Date;
-
+  statusId: String;
   endDate: Date;
   remarks: String;
 }
 const CreateTasks = () => {
   const [ID, setId] = useRecoilState(idPrj);
   const [dataMission, setDataMission] = useRecoilState(missionProj);
-  const [isMission, setIsMission] = useRecoilState(TasksData);
-
+  const [selectedStatus, setSelectedStatus] = useState([]);
   let histury = useHistory();
   const {
     register,
-    formState,
-    formState: { errors, isDirty, isValid },
+    formState: { errors },
     handleSubmit,
   } = useForm<IFormMission>({
     mode: "onChange",
@@ -56,30 +40,26 @@ const CreateTasks = () => {
 
       .then((res) => {
         setDataMission(res.data);
-        console.log(res.data);
-
-        histury.push("tasks/" + data.projectId);
+        histury.push("tasks/" + ID);
       })
-      .catch((res) => {
-        console.log("res", res);
+      .catch((err) => {
+        console.log("res", err);
       });
   };
-  // useEffect(() => {
-  //   if (isSucceed) {
-  //     histury.push("tasks");
-  //   }
-  // }, [isSucceed]);
+  useEffect(() => {
+    console.log("ID", ID);
+  }, [ID]);
   return (
     <FormContainer onSubmit={handleSubmit(registerPrj)}>
       <label> תיאור המשימה </label>
       <input
         {...register("discrption", { required: true })}
-        placeholder="תיאור המשימה "
+        placeholder="תיאור המשימה"
         type="text"
         // style={{ width: 250, height: 100 }}
       />
 
-      {errors.discrption && " זהו שדה חובה  "}
+      {errors.discrption && "זהו שדה חובה"}
 
       <input
         {...(register("projectId"), { required: true })}
@@ -87,24 +67,29 @@ const CreateTasks = () => {
         value={ID}
       />
       <label> סטטוס משימה </label>
-      <input
-        {...register("missionStatus", { required: true })}
-        type="text"
-        placeholder="סטטוס משימה "
-      />
-
-      {errors.missionStatus && "זהו שדה חובה "}
+      <select name="statusId" id="statusId">
+        {StatusMission.map((item: any, i) => {
+          return (
+            <option
+              key={i}
+              value={item.name}
+              {...register("statusId", { required: true })}
+            >
+              {item.name}
+            </option>
+          );
+        })}
+      </select>
+      {errors.statusId && "זהו שדה חובה"}
 
       <label> תאריך התחלה </label>
       <input
         id="date_created"
         {...register("date_created", { required: true })}
         type="date"
-        placeholder="תאריך התחלה "
+        placeholder="תאריך התחלה"
       />
-
       {errors.date_created && "זהו שדה חובה "}
-
       <label>תאריך סיום </label>
       <input
         id="endDate"
@@ -122,7 +107,6 @@ const CreateTasks = () => {
         style={{ width: 250, height: 100 }}
         type="text"
       />
-
       <button type="submit">סיום </button>
     </FormContainer>
     //   </Box>
@@ -154,7 +138,14 @@ const FormContainer = styled.form`
   h2 {
     margin-bottom: 20px;
   }
-
+  select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #e0e0e0;
+  }
   label {
     display: block;
     font-weight: bold;
@@ -183,7 +174,7 @@ const FormContainer = styled.form`
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 20%;
+    // margin-top: 20%;
     &:hover {
       background-color: #449d44;
     }

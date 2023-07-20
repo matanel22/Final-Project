@@ -1,12 +1,11 @@
 import mongoose from "mongoose";
-import Joi, { date }  from "joi";
+import Joi  from "joi";
 
 
 const MissionScama=new mongoose.Schema({
-    id:String,
+    _id:String,
     discrption:String,
     statusId:String,
-    missionStatus:String,
     projectId:String,
     date_created:{
         type:Date
@@ -22,7 +21,7 @@ const MissionScama=new mongoose.Schema({
         let joiSchema=Joi.object({
             _id:Joi.string().required(),
             discrption:Joi.string().min(2).max(99),
-            
+            statusId:Joi.string(),
             date_created:Joi.date().required(),
             projectId:Joi.string().required(),
             endDate:Joi.date().required(),

@@ -1,7 +1,7 @@
 export interface ITasks{
     nameProject:string,
     discrption:string,
-    missionStatus:string,
+    statusid:string,
     projectId:string,
     remarks:string
 }

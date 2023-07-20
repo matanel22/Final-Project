@@ -39,9 +39,10 @@ exports.allStatusMission = exports.deleteSpcificMission = exports.taskOne = expo
 const ModalProjct_1 = __importDefault(require("../model/ModalProjct"));
 const modelMission_1 = __importStar(require("../model/modelMission"));
 const ModalStatus_1 = __importDefault(require("../model/ModalStatus"));
+const dayjs_1 = __importDefault(require("dayjs"));
 const specificMission = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let task = yield modelMission_1.default.find({ id: req.body.id });
+        let task = yield modelMission_1.default.find({ _id: req.body.id });
         return res.json(task);
     }
     catch (error) {
@@ -54,11 +55,19 @@ const updateMission = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const validTaskData = (0, modelMission_1.validTasks)(req.body);
         if (validTaskData.error) {
             console.log(validTaskData.error);
-            return res.send(validTaskData.error);
+            return res.sendStatus(404).send(validTaskData.error);
         }
         let validProId = yield ModalProjct_1.default.findOne({ _id: req.body.projectId });
         if (validProId) {
-            let updateMissionData = yield modelMission_1.default.updateOne({ _id: req.body._id }, req.body);
+            let updateMissionData = yield modelMission_1.default.updateOne({ _id: req.body.id }, {
+                _id: req.body.id,
+                discrption: req.body.discrption,
+                statusId: req.body.statusId,
+                projectId: req.body.projectId,
+                date_created: (0, dayjs_1.default)(req.body.date_created).format('MM-DD-YYYY').toString(),
+                endDate: (0, dayjs_1.default)(req.body.endDate).format('MM-DD-YYYY').toString(),
+                remarks: req.body.remarks
+            });
             return res.send(updateMissionData);
         }
         else
@@ -72,6 +81,15 @@ exports.updateMission = updateMission;
 const taskOne = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let task = yield modelMission_1.default.findOne({ _id: req.body._id });
+        // const sendTask={
+        //   discrption:  task.discrption,
+        //   statusId:req.body.statusId,
+        //   projectId:req.body.projectId,
+        //   date_created:dayjs(req.body.date_created).format('MM-DD-YYYY').toString(),
+        //   endDate: dayjs(req.body.endDate).format('MM-DD-YYYY').toString(),
+        //   remarks:req.body.remarks
+        // }
+        console.log("mlscmal", task);
         return res.send(task);
     }
     catch (error) {
@@ -81,7 +99,9 @@ const taskOne = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.taskOne = taskOne;
 const deleteSpcificMission = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let deleteMission = yield modelMission_1.default.deleteOne({ _id: req.params.id });
+        // console.log(req.params.id);
+        let deleteMission = yield modelMission_1.default.findOne({ _id: req.params.id });
+        // console.log("fine",deleteMission,"req",req.params.id);
         return res.json(deleteMission);
     }
     catch (error) {
@@ -91,8 +111,7 @@ const deleteSpcificMission = (req, res) => __awaiter(void 0, void 0, void 0, fun
 exports.deleteSpcificMission = deleteSpcificMission;
 const allStatusMission = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const statusTask = yield ModalStatus_1.default.findOne({});
-        console.log(statusTask);
+        const statusTask = yield ModalStatus_1.default.find({});
         res.send(statusTask);
     }
     catch (error) {

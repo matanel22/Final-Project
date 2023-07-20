@@ -17,6 +17,7 @@ const ModalProjct_1 = __importDefault(require("../model/ModalProjct"));
 const ModalProjct_2 = __importDefault(require("../model/ModalProjct"));
 const modelMission_1 = __importDefault(require("../model/modelMission"));
 const ModelUser_1 = __importDefault(require("../model/ModelUser"));
+const dayjs_1 = __importDefault(require("dayjs"));
 const allProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let user = yield ModelUser_1.default.findOne({ _id: req.body.id });
@@ -77,7 +78,18 @@ exports.updateProject = updateProject;
 const allMissionOfProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let mission = yield modelMission_1.default.find({ projectId: req.body.id }, { __v: 0 });
-        return res.json(mission);
+        const formattedData = mission.map(item => {
+            return {
+                _id: item.id,
+                discrption: item.discrption,
+                statusId: item.statusId,
+                projectId: item.projectId,
+                date_created: (0, dayjs_1.default)(item.date_created).format('MM-DD-YYYY').toString(),
+                endDate: (0, dayjs_1.default)(item.endDate).format('MM-DD-YYYY').toString(),
+                remarks: item.remarks
+            };
+        });
+        return res.json(formattedData);
     }
     catch (error) {
         return res.send(error);
