@@ -1,5 +1,5 @@
 import * as React from "react";
-import Avatar from "@mui/material/Avatar";
+
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -8,16 +8,17 @@ import { useHistory } from "react-router-dom";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
-import { IProps, token, userId, userName } from "../atom/Atom";
+import { token, userId, userName } from "../atom/Atom";
 import { useRecoilState } from "recoil";
 import { Alert } from "@mui/material";
 import hompage from "../image/homepage.png";
-import { log } from "console";
+import { ShellForForms } from "../shellForForms";
+
 interface IUsers {
   _id: string;
   permissions: String;
@@ -86,17 +87,15 @@ export default function Home() {
         await axios
           .get(url, { headers: { "x-api-key": localStorage["tok"] } })
           .then((res) => {
-            console.log(res.data);
+            console.log(res.data[0]);
 
             setUseId(res.data[0]._id);
-            setStateId(res.data[0]._id);
+
             setNameUser(res.data[0].name);
             setValidToken(true);
             histury.push("/projects/" + res.data[0]._id);
           })
           .catch((err) => {
-            console.log("err1");
-
             return console.log({ msg: err });
           });
       })
@@ -108,32 +107,11 @@ export default function Home() {
     setIsPass("");
   };
   // useEffect(() => {
-  //   const storedData = localStorage.getItem("data");
-  //   if (storedData) {
-  //     setData(JSON.parse(storedData));
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   localStorage.setItem("data", JSON.stringify(data));
-  // }, [data]);
-
-  // useEffect(() => {
-  //   if (validToken) {
-  //     histury.push("/projects");
-  //   }
-  // }, [validToken]);
+  //   console.log(useId);
+  // }, [useId]);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        backgroundImage: `url(${hompage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        height: "100vh",
-      }}
-    >
+    <ShellForForms>
       <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
           {/* <div>
@@ -216,6 +194,6 @@ export default function Home() {
           <Copyright sx={{ mt: 8, mb: 4 }} />
         </Container>
       </ThemeProvider>
-    </div>
+    </ShellForForms>
   );
 }

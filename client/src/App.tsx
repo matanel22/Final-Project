@@ -10,7 +10,7 @@ import TasksList from "./component/tasks/TasksList";
 import TasksData from "./component/atom/Atom";
 import { useRecoilState } from "recoil";
 import CreateTasks from "./component/tasks/createTasks";
-import SignUp from "./component/signUp/SignUp";
+import SignUp from "./component/signUp";
 function App() {
   return (
     <BrowserRouter>

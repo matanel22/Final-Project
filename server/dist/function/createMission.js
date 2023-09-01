@@ -23,7 +23,7 @@ const createMission = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         //  }
         let dataTask = yield new modelMission_1.default({
             discrption: req.body.discrption,
-            statusId: req.body.statusId,
+            statusId: "משימה חדשה",
             projectId: req.body.projectId,
             date_created: (0, dayjs_1.default)(req.body.date_created).format('MM-DD-YYYY').toString(),
             endDate: (0, dayjs_1.default)(req.body.endDate).format('MM-DD-YYYY').toString(),

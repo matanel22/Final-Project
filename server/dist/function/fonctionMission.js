@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,9 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.allStatusMission = exports.deleteSpcificMission = exports.taskOne = exports.updateMission = exports.specificMission = void 0;
+exports.accomplished = exports.allStatusMission = exports.deleteSpcificMission = exports.taskOne = exports.updateMission = exports.specificMission = void 0;
 const ModalProjct_1 = __importDefault(require("../model/ModalProjct"));
-const modelMission_1 = __importStar(require("../model/modelMission"));
+const modelMission_1 = __importDefault(require("../model/modelMission"));
 const ModalStatus_1 = __importDefault(require("../model/ModalStatus"));
 const dayjs_1 = __importDefault(require("dayjs"));
 const specificMission = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -52,15 +29,15 @@ const specificMission = (req, res) => __awaiter(void 0, void 0, void 0, function
 exports.specificMission = specificMission;
 const updateMission = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const validTaskData = (0, modelMission_1.validTasks)(req.body);
-        if (validTaskData.error) {
-            console.log(validTaskData.error);
-            return res.sendStatus(404).send(validTaskData.error);
-        }
+        // const validTaskData=validTasks(req.body)
+        // if(validTaskData.error){
+        // console.log(validTaskData.error);
+        //   return res.sendStatus(404).send(validTaskData.error)
+        // }
         let validProId = yield ModalProjct_1.default.findOne({ _id: req.body.projectId });
         if (validProId) {
             let updateMissionData = yield modelMission_1.default.updateOne({ _id: req.body.id }, {
-                _id: req.body.id,
+                // _id:req.body.id,
                 discrption: req.body.discrption,
                 statusId: req.body.statusId,
                 projectId: req.body.projectId,
@@ -70,8 +47,7 @@ const updateMission = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             });
             return res.send(updateMissionData);
         }
-        else
-            return res.send("not found");
+        // else return res.send("not found")
     }
     catch (error) {
         return res.status(404).send(error);
@@ -81,16 +57,22 @@ exports.updateMission = updateMission;
 const taskOne = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let task = yield modelMission_1.default.findOne({ _id: req.body._id });
-        // const sendTask={
-        //   discrption:  task.discrption,
-        //   statusId:req.body.statusId,
-        //   projectId:req.body.projectId,
-        //   date_created:dayjs(req.body.date_created).format('MM-DD-YYYY').toString(),
-        //   endDate: dayjs(req.body.endDate).format('MM-DD-YYYY').toString(),
-        //   remarks:req.body.remarks
-        // }
-        console.log("mlscmal", task);
-        return res.send(task);
+        if (task) {
+            const sendTask = {
+                id: task._id,
+                discrption: task.discrption,
+                statusId: task.statusId,
+                projectId: task.projectId,
+                date_created: (0, dayjs_1.default)(task.date_created).format("YYYY-MM-DD"),
+                endDate: (0, dayjs_1.default)(task.endDate).format("YYYY-MM-DD"),
+                remarks: task.remarks
+            };
+            // console.log(sendTask);
+            return res.send(sendTask);
+        }
+        else {
+            res.sendStatus(404);
+        }
     }
     catch (error) {
         return console.log(error);
@@ -99,9 +81,7 @@ const taskOne = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.taskOne = taskOne;
 const deleteSpcificMission = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // console.log(req.params.id);
-        let deleteMission = yield modelMission_1.default.findOne({ _id: req.params.id });
-        // console.log("fine",deleteMission,"req",req.params.id);
+        let deleteMission = yield modelMission_1.default.deleteOne({ _id: req.params.id });
         return res.json(deleteMission);
     }
     catch (error) {
@@ -119,3 +99,9 @@ const allStatusMission = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.allStatusMission = allStatusMission;
+const accomplished = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const allMission = yield modelMission_1.default.find({ missionAccoplished: true });
+    console.log(allMission);
+    res.send(allMission);
+});
+exports.accomplished = accomplished;

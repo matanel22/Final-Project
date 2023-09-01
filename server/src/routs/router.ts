@@ -1,10 +1,10 @@
 
 import express from 'express';
 import { createMission } from '../function/createMission';
-import {allUsers, login,signUp, usersSpecific} from '../function/fonctionUsers'
+import {allUsers, login,signUp, updatePermissionUser, userLogout, usersSpecific} from '../function/fonctionUsers'
 import {  allMissionOfProject, allProject, projSpecific, specificProject, updateProject } from '../function/functionProject';
 import { addCreatProject } from '../function/addNewProject';
-import { allStatusMission, deleteSpcificMission, specificMission, taskOne, updateMission } from '../function/fonctionMission';
+import { accomplished, allStatusMission, deleteSpcificMission, specificMission, taskOne, updateMission } from '../function/fonctionMission';
 import { userInfo } from '../function/fonctionUsers';
 
 
@@ -15,6 +15,9 @@ router.get("/userInfo",userInfo)
 router.get("/allUsers",allUsers);
 router.post('/signUp',signUp);
 router.post('/usersSpecific',usersSpecific)
+router.post('/logOutUser',userLogout)
+router.post('/updatePermissionUser',updatePermissionUser)
+
 
 //routers of project
 router.post('/allProjects',allProject)
@@ -31,6 +34,6 @@ router.get('/specificMission',specificMission);
 router.put('/updateMission',updateMission);
 router.delete('/deleteSpcificMission/:id',deleteSpcificMission);
 router.get('/status',allStatusMission)
-
+router.get('/accomplishedMission',accomplished)
  export default router;
 

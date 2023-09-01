@@ -1,28 +1,19 @@
 import {
   AppBar,
-  Button,
-  IconButton,
-  Modal,
-  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Toolbar,
-  Typography,
 } from "@mui/material";
-import dayjs from "dayjs";
-import React, { useEffect } from "react";
+
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+
+import { useParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import TasksData, { idPrj, userId, userName } from "../atom/Atom";
-// import ButtonMisson from "../UI/Button";
-
-import CreateTasks from "./createTasks";
 
 import UpdateTask from "./updateTask";
 import { UrlTask } from "./urlTask";
@@ -31,18 +22,22 @@ import styled, { css } from "styled-components";
 import { blue } from "@mui/material/colors";
 
 import duonArrow from "../../svg/downArrow.svg";
+import leftArrow from "../../svg/leftArrow.svg";
 import { MyObject } from "../project/AllProjects";
+import { DeleteTask } from "./DeleteTask";
+import { ButtonsPageTask } from "./ButtonsPageTask";
+import { ButtonsTable } from "../ButtonsTable";
 
-interface IFormMission {
-  id: String;
-  discrption: String;
-  statusId: String;
-  projectId: String;
-  date_created: string;
-  endDate: string;
-  remarks: String;
+export interface IFormMission {
+  id: string;
+  discrption: string;
+  statusId: string;
+  projectId: string;
+  date_created: Date;
+  endDate: Date;
+  remarks: string;
 }
-interface Open {
+export interface Open {
   stap: boolean;
   openIndex: number;
 }
@@ -64,46 +59,44 @@ const TasksList = () => {
   const [open, setOpen] = React.useState(true);
   const handleClose = () => setOpen(false);
   const [openModal, setOpenModal] = useState(false);
-  const [useId, setUseId] = useRecoilState<string>(userId);
-  const PID: MyObject = useParams();
 
+  const PID: MyObject = useParams();
+  const [totaleTasks, setTotaleTasks] = useState(0);
+  const [projId, setProjId] = useRecoilState(idPrj);
   const sendingToTheCreation = (index: number) => {
+    setIsIndex(index);
     setIsOpen({ ...isOpen, stap: !isOpen.stap, openIndex: index });
   };
   const showEditTask = async (_id: string, index: number) => {
     setIsIndex(index);
+
     let url = "http://localhost:3001/api/routs/router/taskOne";
     await axios.post(url, { _id }).then((res) => {
-      console.log(res.data);
       setTaskOne(res.data);
     });
     setIsOpenEditTask(!isOpenEditTask);
   };
+
   const removeMission = async (_id: string) => {
-    console.log(_id);
-
     let url = `http://localhost:3001/api/routs/router/deleteSpcificMission/${_id}`;
-
+    const missionDelete = mis.filter((item) => {
+      return item.id !== _id;
+    });
+    setMis(missionDelete);
     await axios
       .delete(url)
-      .then((response) => {
-        const missionDelete = mis.filter((item) => {
-          return item._id !== _id;
-        });
-        setMis(missionDelete);
-        console.log(response);
-      })
+      .then((response) => {})
       .catch((err) => {
         console.log(err);
       });
   };
+
   useEffect(() => {
-    const sendProjectID = async (id: string) => {
+    const sendProjectID = (id: string) => {
       let url = "http://localhost:3001/api/routs/router/allMissionOfProject";
-      await axios
+      axios
         .post(url, { id })
         .then((res) => {
-          console.log(res.data);
           setMis(res.data);
         })
         .catch((err) => {
@@ -123,32 +116,11 @@ const TasksList = () => {
         }}
         position="static"
       >
-        <ButoonNav>
-          <Link to={`/projects/${useId}`}>
-            <Button
-              color="success"
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              הפרוייקטים של המדור
-            </Button>
-          </Link>
-          <Link to="/createTasks">
-            <Button
-              variant="contained"
-              color="success"
-              sx={{ mt: 3, mb: 2 }}
-              // onClick={sendingToTheCreation}
-            >
-              ליצירת משימה חדשה
-            </Button>
-          </Link>
-        </ButoonNav>
+        <ButtonsPageTask />
       </AppBar>
-      <PageLoader>{}</PageLoader>
-      <WidthTable>
+      <Container>
+        <PageLoader>{}</PageLoader>
+
         <TableContainer>
           <Table aria-label="simple table">
             <TableHead>
@@ -160,6 +132,12 @@ const TasksList = () => {
                     </TableCell>
                   );
                 })}
+                {isOpen.stap && isOpen.openIndex === isIndex && (
+                  <TableCell align="right">
+                    <TableCell align="right">מחיקת משימה</TableCell>
+                    <TableCell align="right">עדכון משימה</TableCell>
+                  </TableCell>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -171,100 +149,65 @@ const TasksList = () => {
                     <TableCell align="right">{item.date_created}</TableCell>
                     <TableCell align="right">{item.endDate}</TableCell>
                     <TableCell align="right">{item.remarks}</TableCell>
-                    <TableCell align="right">
-                      <img
-                        src={duonArrow}
-                        width={"20px"}
-                        onClick={() => {
-                          sendingToTheCreation(index);
-                        }}
-                      />
-                    </TableCell>
+
                     {isOpen.stap && isOpen.openIndex === index && (
-                      <ButtonsWrapper>
-                        <>
-                          {" "}
-                          <Button
-                            variant="outlined"
-                            color="error"
-                            onClick={() => {
-                              setOpenModal(true);
-                            }}
-                          >
-                            מחיקת משימה
-                          </Button>{" "}
-                          {openModal && (
-                            <Modal
-                              open={openModal}
-                              aria-labelledby="modal-modal-title"
-                              aria-describedby="modal-modal-description"
-                              onClose={handleClose}
-                            >
-                              <div>
-                                <p> ברצונך להתנתק</p>
-                                <Button
-                                  variant="outlined"
-                                  color="success"
-                                  onClick={() => {
-                                    removeMission(item._id);
-                                    setOpenModal(false);
-                                  }}
-                                >
-                                  כן
-                                </Button>
-                                <Button
-                                  variant="outlined"
-                                  color="error"
-                                  onClick={() => {
-                                    setOpenModal(false);
-                                  }}
-                                >
-                                  לא
-                                </Button>
-                              </div>
-                            </Modal>
-                          )}
-                        </>
-                        <Button
-                          variant="outlined"
-                          color="success"
-                          onClick={() => {
-                            showEditTask(item._id, index);
-                          }}
-                        >
-                          עדכון משימה
-                        </Button>
-                      </ButtonsWrapper>
+                      <ButtonsTable
+                        setOpenModal={setOpenModal}
+                        openModal={openModal}
+                        showEditTask={showEditTask}
+                        itemId={item.id}
+                        index={index}
+                        buttonDel={"מחיקת משימה"}
+                        buttonUpdate={"עדכון משימה"}
+                      />
                     )}
+                    <DeleteTask
+                      openModal={openModal}
+                      setOpenModal={setOpenModal}
+                      removeMission={removeMission}
+                      sendingId={item.id}
+                    />
+                    <ButtonArrow
+                      src={isOpen.stap ? duonArrow : leftArrow}
+                      width={"20px"}
+                      onClick={() => {
+                        sendingToTheCreation(index);
+                      }}
+                    />
                   </TableRow>
                 ))}
             </TableBody>
           </Table>
         </TableContainer>
-        <UrlTask />
+        <UrlTask totaleTasks={totaleTasks} />
 
         {isOpenEditTask && (
           <UpdateTask onMission={taskOne} indexMission={isIndex}></UpdateTask>
         )}
-      </WidthTable>
+      </Container>
     </>
   );
 };
 export default TasksList;
 
-export const ButoonNav = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-`;
-
 const WidthTable = styled.div`
   margin: 0 auto;
   margin-top: 1%;
-  width: 90vw;
+  width: 80vw;
 `;
 const ButtonsWrapper = styled.div`
   display: flex;
   justify-content: center;
 `;
+const Container = styled.div`
+  padding: 10px;
+  width: 100vw;
+  ${css`
+    @media (max-width: 768px) {
+      padding: 5px;
+
+      overflow: hidden;
+    }
+  `}
+`;
+const ButtonArrow = styled.img``;

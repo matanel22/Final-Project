@@ -7,21 +7,23 @@ import { Link, useHistory } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { idPrj, missionProj } from "../atom/Atom";
 import { StatusMission } from "./StatusMission";
+import { MISSION_UPDATE } from "./updateTask";
+import { ShellForForms } from "../shellForForms";
 
 interface IFormMission {
-  _id: String;
-  discrption: String;
+  // _id: String;
+  discrption: string;
   // missionStatus: String;
-  projectId: String;
+  projectId: string;
   date_created: Date;
-  statusId: String;
+  statusId: string;
   endDate: Date;
-  remarks: String;
+  remarks: string;
 }
 const CreateTasks = () => {
   const [ID, setId] = useRecoilState(idPrj);
   const [dataMission, setDataMission] = useRecoilState(missionProj);
-  const [selectedStatus, setSelectedStatus] = useState([]);
+  // const [selectedStatus, setSelectedStatus] = useState([]);
   let histury = useHistory();
   const {
     register,
@@ -31,6 +33,9 @@ const CreateTasks = () => {
     mode: "onChange",
     defaultValues: {},
   });
+  useEffect(() => {
+    console.log(ID);
+  }, []);
 
   const registerPrj: SubmitHandler<IFormMission> = async (data) => {
     data.projectId = ID;
@@ -46,71 +51,24 @@ const CreateTasks = () => {
         console.log("res", err);
       });
   };
-  useEffect(() => {
-    console.log("ID", ID);
-  }, [ID]);
+
   return (
-    <FormContainer onSubmit={handleSubmit(registerPrj)}>
-      <label> תיאור המשימה </label>
-      <input
-        {...register("discrption", { required: true })}
-        placeholder="תיאור המשימה"
-        type="text"
-        // style={{ width: 250, height: 100 }}
-      />
+    <ShellForForms>
+      <FormContainer onSubmit={handleSubmit(registerPrj)}>
+        {MISSION_UPDATE.map((item: any) => (
+          <>
+            <label> {item.name}</label>
+            <input
+              {...register(item.register, { required: true })}
+              placeholder={item.name}
+              type={item.type}
+            />
+          </>
+        ))}
 
-      {errors.discrption && "זהו שדה חובה"}
-
-      <input
-        {...(register("projectId"), { required: true })}
-        type="hidden"
-        value={ID}
-      />
-      <label> סטטוס משימה </label>
-      <select name="statusId" id="statusId">
-        {StatusMission.map((item: any, i) => {
-          return (
-            <option
-              key={i}
-              value={item.name}
-              {...register("statusId", { required: true })}
-            >
-              {item.name}
-            </option>
-          );
-        })}
-      </select>
-      {errors.statusId && "זהו שדה חובה"}
-
-      <label> תאריך התחלה </label>
-      <input
-        id="date_created"
-        {...register("date_created", { required: true })}
-        type="date"
-        placeholder="תאריך התחלה"
-      />
-      {errors.date_created && "זהו שדה חובה "}
-      <label>תאריך סיום </label>
-      <input
-        id="endDate"
-        {...register("endDate", { required: true })}
-        type="date"
-        placeholder="תאריך סיום "
-      />
-
-      {errors.endDate && "זהו שדה חובה "}
-
-      <label> הערות </label>
-      <input
-        {...register("remarks")}
-        placeholder="תיאור המשימה "
-        style={{ width: 250, height: 100 }}
-        type="text"
-      />
-      <button type="submit">סיום </button>
-    </FormContainer>
-    //   </Box>
-    // </div>
+        <button type="submit">סיום </button>
+      </FormContainer>
+    </ShellForForms>
   );
 };
 export default CreateTasks;
@@ -129,7 +87,7 @@ const FormContainer = styled.form`
   justify-content: center;
   // margin: 20px;
   padding: 40px;
-  background-color: #f2f2f2;
+  // background-color: #f2f2f2;
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   margin: 0 auto;

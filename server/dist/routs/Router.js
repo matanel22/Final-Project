@@ -17,6 +17,8 @@ router.get("/userInfo", fonctionUsers_2.userInfo);
 router.get("/allUsers", fonctionUsers_1.allUsers);
 router.post('/signUp', fonctionUsers_1.signUp);
 router.post('/usersSpecific', fonctionUsers_1.usersSpecific);
+router.post('/logOutUser', fonctionUsers_1.userLogout);
+router.post('/updatePermissionUser', fonctionUsers_1.updatePermissionUser);
 //routers of project
 router.post('/allProjects', functionProject_1.allProject);
 router.post("/addCreatProject", addNewProject_1.addCreatProject);
@@ -32,4 +34,5 @@ router.get('/specificMission', fonctionMission_1.specificMission);
 router.put('/updateMission', fonctionMission_1.updateMission);
 router.delete('/deleteSpcificMission/:id', fonctionMission_1.deleteSpcificMission);
 router.get('/status', fonctionMission_1.allStatusMission);
+router.get('/accomplishedMission', fonctionMission_1.accomplished);
 exports.default = router;

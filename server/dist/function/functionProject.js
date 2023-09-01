@@ -78,9 +78,10 @@ exports.updateProject = updateProject;
 const allMissionOfProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let mission = yield modelMission_1.default.find({ projectId: req.body.id }, { __v: 0 });
+        // console.log(mission);
         const formattedData = mission.map(item => {
             return {
-                _id: item.id,
+                id: item._id,
                 discrption: item.discrption,
                 statusId: item.statusId,
                 projectId: item.projectId,

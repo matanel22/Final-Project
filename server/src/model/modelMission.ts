@@ -3,7 +3,7 @@ import Joi  from "joi";
 
 
 const MissionScama=new mongoose.Schema({
-    _id:String,
+    id:String,
     discrption:String,
     statusId:String,
     projectId:String,
@@ -11,7 +11,8 @@ const MissionScama=new mongoose.Schema({
         type:Date
     },
     endDate:{type:Date},
-    remarks:String
+    remarks:String,
+    missionAccoplished:Boolean
     })
     const MissionModel=mongoose.model('tesks',MissionScama)
     export default MissionModel

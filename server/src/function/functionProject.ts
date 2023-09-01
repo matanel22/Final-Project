@@ -76,9 +76,11 @@ export const updateProject=async(req:Request,res:Response)=>{
 export const allMissionOfProject=async(req:Request,res:Response)=>{
 try {
   let mission = await MissionModel.find({projectId:req.body.id},{__v:0});
+  // console.log(mission);
+  
   const formattedData = mission.map(item => {
     return {
-      _id:item.id,
+      id:item._id,
       discrption:item.discrption,
       statusId:item.statusId,
       projectId:item.projectId,

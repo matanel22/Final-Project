@@ -7,7 +7,7 @@ exports.validTasks = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const joi_1 = __importDefault(require("joi"));
 const MissionScama = new mongoose_1.default.Schema({
-    _id: String,
+    id: String,
     discrption: String,
     statusId: String,
     projectId: String,
@@ -15,7 +15,8 @@ const MissionScama = new mongoose_1.default.Schema({
         type: Date
     },
     endDate: { type: Date },
-    remarks: String
+    remarks: String,
+    missionAccoplished: Boolean
 });
 const MissionModel = mongoose_1.default.model('tesks', MissionScama);
 exports.default = MissionModel;

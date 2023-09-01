@@ -29,7 +29,7 @@ const validUser = (_validData) => {
         permissions: joi_1.default.string(),
         name: joi_1.default.string().min(2).max(99).required(),
         email: joi_1.default.string().min(2).max(99).required().email(),
-        pass: joi_1.default.string().min(3).max(50).required(),
+        pass: joi_1.default.string().min(4).max(50).required(),
     });
     return joiSchema.validate(_validData);
 };
