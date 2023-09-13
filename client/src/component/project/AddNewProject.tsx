@@ -1,18 +1,16 @@
 //
 import styled from "styled-components";
 
-import React, { useState, useRef, useEffect, FormEvent } from "react";
-import classes from "./AddNewProject.module.css";
-import Card from "../UI/card";
+import React from "react";
+
 import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
 
 import { Link, useHistory } from "react-router-dom";
 
 import { useRecoilState } from "recoil";
-import { userId, userName } from "../atom/Atom";
-import { AppBar, Button, Toolbar } from "@mui/material";
-import { NavButton } from "../UI/NavButton";
+import { allUsers, userId, userName } from "../atom/Atom";
+import { ShellForForms } from "../shellForForms";
 
 export interface IUsers {
   _id: string;
@@ -30,17 +28,14 @@ interface IFormInputs {
 }
 
 const AddNewProject: React.FC = (props) => {
-  const [useId, setUseId] = useRecoilState<string>(userId);
-  const [usersData, setUsersData] = useState<IUsers[]>([]);
-  const [validata, setValidata] = useState("");
-  const [NY, setNameUser] = useRecoilState<string>(userName);
-  const [isSucceed, setIsSucced] = useState(false);
-  const [iseCreatProject, setIsCreateProject] = useState<string>("");
+  const [useId, setUseId] = useRecoilState(userId);
+
+  const [listUsers, setListUsers] = useRecoilState(allUsers);
 
   let histury = useHistory();
   const {
     register,
-    formState,
+
     formState: { errors, isDirty, isValid },
     handleSubmit,
   } = useForm<IFormInputs>({
@@ -54,72 +49,62 @@ const AddNewProject: React.FC = (props) => {
       amountOfUsers: "",
     },
   });
-  console.log("isValid", isValid);
 
   const registerPrj: SubmitHandler<IFormInputs> = async (data) => {
-    let url = "http://localhost:3001/api/routs/router/allUsers";
-    await axios
-      .get(url)
-      .then((res) => {
-        console.log(res.data);
-        res.data.map((item: any, index: any) => {
-          if (item.name.trim() === data.staff.trim()) {
-            data.userId = item._id;
-            try {
-              let url =
-                "http://localhost:3001/api/routs/router/addCreatProject";
-              axios.post(url, data).then(({ data }) => {
-                setIsSucced(true);
-                console.log(data);
-              });
-            } catch (error) {
-              console.log(error);
-            }
-          }
-        });
-        setUsersData(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    console.log(listUsers);
+    listUsers.map((item: any, index: any) => {
+      if (item.name.trim() === data.staff.trim()) {
+        data.userId = item._id;
+        try {
+          let url = "http://localhost:3001/api/routs/router/addCreatProject";
+          axios.post(url, data).then(({ data }) => {
+            console.log(useId);
+
+            histury.push("/projects/" + data.userId);
+            console.log(data);
+          });
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    });
+    // setUsersData(res.data);
   };
-  useEffect(() => {
-    if (isSucceed) {
-      histury.push("/projects");
-    }
-  }, [isSucceed]);
+
   return (
-    <FormContainer onSubmit={handleSubmit(registerPrj)}>
-      <h2> יצירת פרוייקט</h2>
-      <label htmlFor="name">שם פרוייקט</label>
-      <input
-        type="text"
-        id="name"
-        {...register("nameProject", { required: true })}
-      />
-      {errors.nameProject && "חובה למלא שם פרוייקט"}
-      <label htmlFor="name">שם הצוות</label>
-      <input type="text" {...register("staff", { required: true })} />
-      {errors.staff && "חובה למלא שם הצוות"}
-      <label>שם הלקוח</label>
-      <input type="text" {...register("client", { required: true })} />
-      {errors.client && "חובה למלא שם לקוח"}
-      <input type="hidden" value={useId} />
-      <label>משתמשים </label>
-      <input type="text" {...register("amountOfUsers", { required: true })} />
-      {errors.amountOfUsers && " שדה חובה  "}
-      <Label htmlFor="fruit-select">סטטוס פרוייקט </Label>
-      <Select
-        placeholder="סטטוס פרוייקט"
-        id="select"
-        {...register("statusProject", { required: true })}
-      >
-        <Option>פעיל</Option>
-        <Option>לא פעיל</Option>
-      </Select>
-      {errors.statusProject && "  שדה חובה "}
-      <button type="submit">יצירת פרוייקט </button>
-    </FormContainer>
+    <ShellForForms>
+      <FormContainer onSubmit={handleSubmit(registerPrj)}>
+        <h2> יצירת פרוייקט</h2>
+        <label htmlFor="name">שם פרוייקט</label>
+        <input
+          type="text"
+          id="name"
+          {...register("nameProject", { required: true })}
+        />
+        {errors.nameProject && "חובה למלא שם פרוייקט"}
+        <label htmlFor="name">שם הצוות</label>
+        <input type="text" {...register("staff", { required: true })} />
+        {errors.staff && "חובה למלא שם הצוות"}
+        <label>שם הלקוח</label>
+        <input type="text" {...register("client", { required: true })} />
+        {errors.client && "חובה למלא שם לקוח"}
+        {/* <input type="hidden" value={useId?._id} /> */}
+        <label>משתמשים </label>
+        <input type="text" {...register("amountOfUsers", { required: true })} />
+        {errors.amountOfUsers && " שדה חובה  "}
+        <Label htmlFor="fruit-select">סטטוס פרוייקט </Label>
+        <Select
+          placeholder="סטטוס פרוייקט"
+          id="select"
+          {...register("statusProject", { required: true })}
+        >
+          <Option>פעיל</Option>
+          <Option>לא פעיל</Option>
+        </Select>
+        {errors.statusProject && "שדה חובה"}
+        <button type="submit">יצירת פרוייקט </button>
+      </FormContainer>
+    </ShellForForms>
   );
 };
 export default AddNewProject;
@@ -144,12 +129,13 @@ const FormContainer = styled.form`
   justify-content: center;
   // margin: 20px;
   padding: 40px;
-  background-color: #f2f2f2;
+  // background-color: #f2f2f2;
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   margin: 0 auto;
   margin-top: 20px;
-  max-width: 50%;
+  height: 60vh;
+  width: 35%;
   h2 {
     margin-bottom: 20px;
   }

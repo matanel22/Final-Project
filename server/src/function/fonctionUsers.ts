@@ -26,20 +26,22 @@ export const usersSpecific=async(req:Request,res:Response)=>{
 
 
 export const signUp=async(req:Request,res:Response)=>{
-    // let validata=validUser(req.body);
-    // if(validata.error){
-    //  return res.status(404).json(validata.error.details)
-    // }
-    // else{
+    let validata=validUser(req.body);
+    if(validata.error){
+     return res.status(404).json(validata.error.details)
+    }
+    else{
       try {
          let user: any=await new UsersModel(req.body);
          user.pass=await bcrypt.hash(user.pass,10);
+         user.permissions=false;
           user.save();
           res.json(user);
          } catch (err) {
           console.log(err);
           res.status(400).json({err:"email Illegal"})
          }
+        }
     }
   
     
@@ -58,7 +60,11 @@ export const signUp=async(req:Request,res:Response)=>{
     return  res.status(404).json({msg:"user not found"})
     }
    
+   
+   
    let passValid=await bcrypt.compare(req.body.pass, user.pass);
+   console.log(passValid);
+   
    if(!passValid){
       return res.status(404).json({msg:"Incorrect password"})
    }
@@ -88,7 +94,41 @@ try {
 
   }
 
+  export const userLogout=async(req:Request,res:Response)=>{
+try {
+  const deleteUser=await UsersModel.deleteOne({_id:req.body.id})
+console.log(deleteUser);
+res.send(deleteUser)
+} catch (error) {
+  console.log(error);
+ return res.status(404).send("somting is wrong")
+}
+  }
 
+export const updatePermissionUser=async (req:Request,res:Response)=>{
+try {
+  console.log(req.body);
+  
+  const nameUserUpdate=await UsersModel.updateOne({_id:req.body.updateUserById},
+    { $set: { permissions:req.body.namePermission.trim()==="מנהל"?true:false  }});
+// nameUserUpdate?.permissions=req.body.nameUserUpdate==="מנהל"?true:false;
+// if(nameUserUpdate){
+//   nameUserUpdate.permissions=req.body.namePermission.trim()==="מנהל"?true:false;
+// }
+
+console.log(nameUserUpdate);
+
+res.send("smkmkmv")
+} catch (error) {
+  console.log(error);
+  res.status(400).send("sumting is worng")
+}
+
+
+
+
+
+}
 
   
 

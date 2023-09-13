@@ -3,6 +3,7 @@ import ProjectModel from "../model/ModalProjct";
 import ModalProject, { validProject } from "../model/ModalProjct";
 import MissionModel from "../model/modelMission";
 import UsersModel from "../model/ModelUser";
+import dayjs from "dayjs";
 
 export interface IProps {
   _id: string;
@@ -63,8 +64,8 @@ export const updateProject=async(req:Request,res:Response)=>{
         return res.send(updateData)
       }
     })
-    console.log(proj);
-
+    // console.log(proj);
+// res.send(proj)
   } catch (error) {
     console.log(error);
     
@@ -72,11 +73,27 @@ export const updateProject=async(req:Request,res:Response)=>{
   }
 }
 
-
 export const allMissionOfProject=async(req:Request,res:Response)=>{
 try {
   let mission = await MissionModel.find({projectId:req.body.id},{__v:0});
-return res.json(mission);
+  // console.log(mission);
+  
+  const formattedData = mission.map(item => {
+    return {
+      id:item._id,
+      discrption:item.discrption,
+      statusId:item.statusId,
+      projectId:item.projectId,
+      date_created: dayjs(item.date_created).format('MM-DD-YYYY').toString(),
+      endDate: dayjs(item.endDate).format('MM-DD-YYYY').toString(),
+      remarks:item.remarks,
+      
+taskType:item.taskType
+    };
+  });
+  
+  
+return res.json(formattedData);
 } catch (error) {
   return res.send(error);
 }

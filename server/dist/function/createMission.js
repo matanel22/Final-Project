@@ -14,13 +14,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createMission = void 0;
 const modelMission_1 = __importDefault(require("../model/modelMission"));
+const dayjs_1 = __importDefault(require("dayjs"));
 const createMission = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // let validata=validTasks(req.body);
-    // if(validata.error){
-    //   return res.status(404).json(validata.error.details)
-    //  }
     try {
-        let dataTask = yield new modelMission_1.default(req.body);
+        //          let validata=validTasks(req.body);
+        // if(validata.error){
+        //   return res.status(404).json(validata.error.details)
+        //  }
+        console.log(req.body);
+        let dataTask = yield new modelMission_1.default({
+            discrption: req.body.discrption,
+            statusId: "משימה חדשה",
+            projectId: req.body.projectId,
+            date_created: (0, dayjs_1.default)(req.body.date_created).format('MM-DD-YYYY').toString(),
+            endDate: (0, dayjs_1.default)(req.body.endDate).format('MM-DD-YYYY').toString(),
+            remarks: req.body.remarks,
+            taskType: req.body.taskType
+        });
         dataTask.save();
         res.json(dataTask);
     }

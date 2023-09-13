@@ -1,13 +1,14 @@
 import { atom } from "recoil";
+// import { IFormMission } from "../tasks/TasksList";
 interface IFormMission {
-   
-    _id: String;
-    discrption: String;
-    missionStatus: String;
-    projectId: String;
+    id: string;
+    discrption: string;
+    statusId: string;
+    projectId: string;
     date_created: Date;
     endDate:  Date ;
-    remarks: String;
+    remarks: string;
+    taskType:string;
   }
   export interface IProps {
     _id: string;
@@ -17,6 +18,16 @@ interface IFormMission {
     client: string;
     statusProject: string;
     amountOfUsers: string;
+  }
+
+  interface IUsers{
+    _id: string,
+    name: string,
+    email:string,
+    pass:string,
+    role: string,
+    data_created:Date,
+    permissions: boolean
   }
 
  const TasksData= atom<IFormMission[]>({
@@ -55,5 +66,8 @@ export const userName=atom<string>({
     key:"token"
 
   })
-  
+  export const allUsers=atom<IUsers[]>({
+    default:[],
+    key:""
+  })
 

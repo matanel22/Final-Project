@@ -10,7 +10,7 @@ import TasksList from "./component/tasks/TasksList";
 import TasksData from "./component/atom/Atom";
 import { useRecoilState } from "recoil";
 import CreateTasks from "./component/tasks/createTasks";
-import SignUp from "./component/signUp/SignUp";
+import SignUp from "./component/signUp";
 function App() {
   return (
     <BrowserRouter>
@@ -21,7 +21,7 @@ function App() {
         <Route path="/login" exact>
           <Home />
         </Route>
-        <Route path="/projects" exact>
+        <Route path="/projects/:id" exact>
           <AllProjects />
         </Route>
         <Route path="/createProject" exact>
@@ -30,7 +30,7 @@ function App() {
         <Route path="/signUp" exact>
           <SignUp />
         </Route>
-        <Route path="/tasks" exact>
+        <Route path="/tasks/:id" exact>
           <TasksList></TasksList>
         </Route>
         <Route path="/createTasks" exact>

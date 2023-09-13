@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userInfo = exports.login = exports.signUp = exports.usersSpecific = exports.allUsers = void 0;
+exports.updatePermissionUser = exports.userLogout = exports.userInfo = exports.login = exports.signUp = exports.usersSpecific = exports.allUsers = void 0;
 const ModelUser_1 = __importStar(require("../model/ModelUser"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -60,20 +60,22 @@ const usersSpecific = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.usersSpecific = usersSpecific;
 const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // let validata=validUser(req.body);
-    // if(validata.error){
-    //  return res.status(404).json(validata.error.details)
-    // }
-    // else{
-    try {
-        let user = yield new ModelUser_1.default(req.body);
-        user.pass = yield bcrypt_1.default.hash(user.pass, 10);
-        user.save();
-        res.json(user);
+    let validata = (0, ModelUser_1.validUser)(req.body);
+    if (validata.error) {
+        return res.status(404).json(validata.error.details);
     }
-    catch (err) {
-        console.log(err);
-        res.status(400).json({ err: "email Illegal" });
+    else {
+        try {
+            let user = yield new ModelUser_1.default(req.body);
+            user.pass = yield bcrypt_1.default.hash(user.pass, 10);
+            user.permissions = false;
+            user.save();
+            res.json(user);
+        }
+        catch (err) {
+            console.log(err);
+            res.status(400).json({ err: "email Illegal" });
+        }
     }
 });
 exports.signUp = signUp;
@@ -87,6 +89,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return res.status(404).json({ msg: "user not found" });
     }
     let passValid = yield bcrypt_1.default.compare(req.body.pass, user.pass);
+    console.log(passValid);
     if (!passValid) {
         return res.status(404).json({ msg: "Incorrect password" });
     }
@@ -111,3 +114,32 @@ const userInfo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.userInfo = userInfo;
+const userLogout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const deleteUser = yield ModelUser_1.default.deleteOne({ _id: req.body.id });
+        console.log(deleteUser);
+        res.send(deleteUser);
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(404).send("somting is wrong");
+    }
+});
+exports.userLogout = userLogout;
+const updatePermissionUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        console.log(req.body);
+        const nameUserUpdate = yield ModelUser_1.default.updateOne({ _id: req.body.updateUserById }, { $set: { permissions: req.body.namePermission.trim() === "מנהל" ? true : false } });
+        // nameUserUpdate?.permissions=req.body.nameUserUpdate==="מנהל"?true:false;
+        // if(nameUserUpdate){
+        //   nameUserUpdate.permissions=req.body.namePermission.trim()==="מנהל"?true:false;
+        // }
+        console.log(nameUserUpdate);
+        res.send("smkmkmv");
+    }
+    catch (error) {
+        console.log(error);
+        res.status(400).send("sumting is worng");
+    }
+});
+exports.updatePermissionUser = updatePermissionUser;
