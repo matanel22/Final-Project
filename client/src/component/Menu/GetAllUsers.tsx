@@ -77,9 +77,14 @@ const Container = styled.div`
   left: 50%;
   width: 40vw;
   height: 50vh;
+  background: linear-gradient(
+    0deg,
+    rgba(45, 91, 253, 1) 0%,
+    rgba(240, 240, 240, 0.9725140056022409) 100%
+  );
   overflow-y: auto;
   transform: translate(-50%, -50%);
-  background-color: #fff;
+  // background-color: #fff;
   // padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 `;

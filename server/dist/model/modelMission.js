@@ -16,7 +16,8 @@ const MissionScama = new mongoose_1.default.Schema({
     },
     endDate: { type: Date },
     remarks: String,
-    missionAccoplished: Boolean
+    missionAccoplished: Boolean,
+    taskType: String
 });
 const MissionModel = mongoose_1.default.model('tesks', MissionScama);
 exports.default = MissionModel;

@@ -8,7 +8,7 @@ import { AllProjectData, allUsers, userId, userName } from "../atom/Atom";
 import styled from "styled-components";
 import { useHistory, useParams } from "react-router-dom";
 import OvalButton from "../UI/ButtonStyle";
-import { Menu } from "../Menu";
+import { ButtonUi, Menu } from "../Menu";
 import menu from "../../svg/menu.svg";
 import { LogOutUser } from "./LogOutUser";
 export interface IProps {
@@ -28,7 +28,7 @@ const AllProjects = () => {
   const [dataProject, setDataProject] = useRecoilState(AllProjectData);
 
   const [validata, setValidata] = useState(false);
-  const [useId, setUseId] = useRecoilState<string>(userId);
+  // const [useId, setUseId] = useRecoilState<string>(userId);
   const [NY, setNameUser] = useRecoilState<string>(userName);
   const [validPremissionUsers, setValidPremissionUsers] = useState(false);
   const [open, setOpen] = React.useState(true);
@@ -105,14 +105,15 @@ const AllProjects = () => {
         position="static"
       >
         <WidthTable>
-          <MenuBar
+          <Menu />
+          {/* <MenuBar
             src={menu}
             onClick={() => {
               setOpenMenu(true);
               // setOpenModal(true);
             }}
-          />
-          {openMenu && <Menu />}
+          /> */}
+
           <LogOutUser
             removeUser={removeUser}
             openModal={openModal}
@@ -120,13 +121,13 @@ const AllProjects = () => {
           ></LogOutUser>
 
           <UserWelcome> {`ברוך הבא ${NY}`}</UserWelcome>
-          <OvalButton
+          <ButtonUi
             onClick={() => {
               histury.push("/createProject");
             }}
           >
             צור פרויקט
-          </OvalButton>
+          </ButtonUi>
         </WidthTable>
       </AppBar>
       <ProjectList dataProject={dataProject} valideRoleId={articleId} />;

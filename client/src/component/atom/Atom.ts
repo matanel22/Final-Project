@@ -8,6 +8,7 @@ interface IFormMission {
     date_created: Date;
     endDate:  Date ;
     remarks: string;
+    taskType:string;
   }
   export interface IProps {
     _id: string;
@@ -26,7 +27,6 @@ interface IFormMission {
     pass:string,
     role: string,
     data_created:Date,
-  
     permissions: boolean
   }
 

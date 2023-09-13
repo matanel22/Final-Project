@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.accomplished = exports.allStatusMission = exports.deleteSpcificMission = exports.taskOne = exports.updateMission = exports.specificMission = void 0;
-const ModalProjct_1 = __importDefault(require("../model/ModalProjct"));
 const modelMission_1 = __importDefault(require("../model/modelMission"));
 const ModalStatus_1 = __importDefault(require("../model/ModalStatus"));
 const dayjs_1 = __importDefault(require("dayjs"));
@@ -34,19 +33,20 @@ const updateMission = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         // console.log(validTaskData.error);
         //   return res.sendStatus(404).send(validTaskData.error)
         // }
-        let validProId = yield ModalProjct_1.default.findOne({ _id: req.body.projectId });
-        if (validProId) {
-            let updateMissionData = yield modelMission_1.default.updateOne({ _id: req.body.id }, {
-                // _id:req.body.id,
-                discrption: req.body.discrption,
-                statusId: req.body.statusId,
-                projectId: req.body.projectId,
-                date_created: (0, dayjs_1.default)(req.body.date_created).format('MM-DD-YYYY').toString(),
-                endDate: (0, dayjs_1.default)(req.body.endDate).format('MM-DD-YYYY').toString(),
-                remarks: req.body.remarks
-            });
-            return res.send(updateMissionData);
-        }
+        // let validProId=await MissionModel.findOne({_id:req.body.projectId})
+        // if(validProId){
+        let updateMissionData = yield modelMission_1.default.updateOne({ _id: req.body.id }, {
+            // _id:req.body.id,
+            discrption: req.body.discrption,
+            statusId: req.body.statusId,
+            projectId: req.body.projectId,
+            date_created: (0, dayjs_1.default)(req.body.date_created).format('MM-DD-YYYY').toString(),
+            endDate: (0, dayjs_1.default)(req.body.endDate).format('MM-DD-YYYY').toString(),
+            remarks: req.body.remarks,
+            // taskType:req.body.taskType
+        });
+        return res.send(updateMissionData);
+        // }
         // else return res.send("not found")
     }
     catch (error) {
@@ -65,7 +65,8 @@ const taskOne = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 projectId: task.projectId,
                 date_created: (0, dayjs_1.default)(task.date_created).format("YYYY-MM-DD"),
                 endDate: (0, dayjs_1.default)(task.endDate).format("YYYY-MM-DD"),
-                remarks: task.remarks
+                remarks: task.remarks,
+                taskType: req.body.taskType
             };
             // console.log(sendTask);
             return res.send(sendTask);

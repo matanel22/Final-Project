@@ -23,8 +23,8 @@ export const updateMission=async(req:Request,res:Response)=>{
       // console.log(validTaskData.error);
       //   return res.sendStatus(404).send(validTaskData.error)
       // }
-      let validProId=await ProjectModel.findOne({_id:req.body.projectId})
-      if(validProId){
+      // let validProId=await MissionModel.findOne({_id:req.body.projectId})
+      // if(validProId){
         let updateMissionData=await MissionModel.updateOne({_id:req.body.id},{
           // _id:req.body.id,
           discrption:  req.body.discrption,
@@ -32,11 +32,12 @@ export const updateMission=async(req:Request,res:Response)=>{
           projectId:req.body.projectId,
           date_created:dayjs(req.body.date_created).format('MM-DD-YYYY').toString(),
           endDate: dayjs(req.body.endDate).format('MM-DD-YYYY').toString(),
-          remarks:req.body.remarks
+          remarks:req.body.remarks,
+          // taskType:req.body.taskType
 
         });
         return res.send(updateMissionData);
-      }
+      // }
       // else return res.send("not found")
     } catch (error) {
       return res.status(404).send(error);
@@ -54,8 +55,8 @@ export const updateMission=async(req:Request,res:Response)=>{
         projectId:task.projectId,
         date_created:dayjs(task.date_created).format("YYYY-MM-DD"),
         endDate:dayjs(task.endDate).format("YYYY-MM-DD"),
-        remarks:task.remarks
-
+        remarks:task.remarks,
+        taskType:req.body.taskType
       }
       // console.log(sendTask);
       

@@ -67,7 +67,8 @@ const updateProject = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 return res.send(updateData);
             }
         }));
-        console.log(proj);
+        // console.log(proj);
+        // res.send(proj)
     }
     catch (error) {
         console.log(error);
@@ -87,7 +88,8 @@ const allMissionOfProject = (req, res) => __awaiter(void 0, void 0, void 0, func
                 projectId: item.projectId,
                 date_created: (0, dayjs_1.default)(item.date_created).format('MM-DD-YYYY').toString(),
                 endDate: (0, dayjs_1.default)(item.endDate).format('MM-DD-YYYY').toString(),
-                remarks: item.remarks
+                remarks: item.remarks,
+                taskType: item.taskType
             };
         });
         return res.json(formattedData);

@@ -7,10 +7,7 @@ import styled from "styled-components";
 import React, { useEffect, useState } from "react";
 
 export const ButtonsPageTask = () => {
-  const [useId, setUseId] = useRecoilState<string>(userId);
-  useEffect(() => {
-    console.log("11111", useId);
-  }, []);
+  const [useId, setUseId] = useRecoilState(userId);
 
   return (
     <ButoonNav>

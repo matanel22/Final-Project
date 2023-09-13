@@ -13,7 +13,7 @@ interface IProps {
 export const LogOutUser = (props: IProps) => {
   const [open, setOpen] = React.useState(true);
   const handleClose = () => setOpen(false);
-  const [useId, setUseId] = useRecoilState<string>(userId);
+  const [useId, setUseId] = useRecoilState(userId);
 
   return (
     <Modal
@@ -26,7 +26,7 @@ export const LogOutUser = (props: IProps) => {
         <p> ברצונך להתנתק</p>
         <NavButton
           onClick={() => {
-            props.removeUser(useId);
+            // props.removeUser(useId);
           }}
         >
           כן

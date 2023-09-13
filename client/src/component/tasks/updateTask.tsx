@@ -47,11 +47,11 @@ export const MISSION_UPDATE: TASK[] = [
     type: "date",
     register: "endDate",
   },
-  {
-    name: "הערות",
-    type: "text",
-    register: "remarks",
-  },
+  // {
+  //   name: "הערות",
+  //   type: "text",
+  //   register: "remarks",
+  // },
 ];
 
 const UpdateTask: React.FC<{

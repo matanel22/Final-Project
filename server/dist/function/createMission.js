@@ -21,13 +21,15 @@ const createMission = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         // if(validata.error){
         //   return res.status(404).json(validata.error.details)
         //  }
+        console.log(req.body);
         let dataTask = yield new modelMission_1.default({
             discrption: req.body.discrption,
             statusId: "משימה חדשה",
             projectId: req.body.projectId,
             date_created: (0, dayjs_1.default)(req.body.date_created).format('MM-DD-YYYY').toString(),
             endDate: (0, dayjs_1.default)(req.body.endDate).format('MM-DD-YYYY').toString(),
-            remarks: req.body.remarks
+            remarks: req.body.remarks,
+            taskType: req.body.taskType
         });
         dataTask.save();
         res.json(dataTask);

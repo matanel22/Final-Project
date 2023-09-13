@@ -27,11 +27,7 @@ import { Buttons } from "./Buttons";
 // import { Open } from "../tasks/TasksList";
 import duonArrow from "../../svg/downArrow.svg";
 import leftArrow from "../../svg/leftArrow.svg";
-// const useStyles = makeStyles({
-//   table: {
-//     minWidth: 650,
-//   },
-// });
+
 interface IUsers {
   _id: string;
   permissions: string;

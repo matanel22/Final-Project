@@ -6,25 +6,24 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useHistory } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { idPrj, missionProj } from "../atom/Atom";
-import { StatusMission } from "./StatusMission";
+
 import { MISSION_UPDATE } from "./updateTask";
 import { ShellForForms } from "../shellForForms";
+import SuccessMessage from "../MessegeToUser";
 
 interface IFormMission {
-  // _id: String;
   discrption: string;
-  // missionStatus: String;
   projectId: string;
   date_created: Date;
   statusId: string;
   endDate: Date;
   remarks: string;
+  taskType: string;
 }
 const CreateTasks = () => {
   const [ID, setId] = useRecoilState(idPrj);
-  const [dataMission, setDataMission] = useRecoilState(missionProj);
-  // const [selectedStatus, setSelectedStatus] = useState([]);
-  let histury = useHistory();
+  const [successCrationTask, setSuccessCrationTask] = useState(false);
+
   const {
     register,
     formState: { errors },
@@ -33,9 +32,6 @@ const CreateTasks = () => {
     mode: "onChange",
     defaultValues: {},
   });
-  useEffect(() => {
-    console.log(ID);
-  }, []);
 
   const registerPrj: SubmitHandler<IFormMission> = async (data) => {
     data.projectId = ID;
@@ -44,14 +40,15 @@ const CreateTasks = () => {
       .post(url, data)
 
       .then((res) => {
-        setDataMission(res.data);
-        histury.push("tasks/" + ID);
+        setSuccessCrationTask(true);
       })
       .catch((err) => {
         console.log("res", err);
       });
   };
-
+  useEffect(() => {
+    console.log(successCrationTask);
+  }, [successCrationTask]);
   return (
     <ShellForForms>
       <FormContainer onSubmit={handleSubmit(registerPrj)}>
@@ -65,9 +62,26 @@ const CreateTasks = () => {
             />
           </>
         ))}
-
+        <label>סוג משימה</label>
+        <select {...register("taskType", { required: true })}>
+          <option>Frontend</option>
+          <option>Design </option>
+          <option>React</option>
+          <option>DB</option>
+          <option>Design </option>
+        </select>
+        <label>הערות</label>
+        <InputRemarks {...register("remarks", { required: true })} />
         <button type="submit">סיום </button>
       </FormContainer>
+
+      {successCrationTask && (
+        <SuccessMessage
+          message="המשימה נוצרה בהצלחה"
+          setSuccessCrationTask={setSuccessCrationTask}
+          successCrationTask={successCrationTask}
+        />
+      )}
     </ShellForForms>
   );
 };
@@ -137,4 +151,10 @@ const FormContainer = styled.form`
       background-color: #449d44;
     }
   }
+`;
+const InputRemarks = styled.textarea`
+  width: 80%;
+  height: 20%;
+  padding: 10px;
+  font-size: 16px;
 `;

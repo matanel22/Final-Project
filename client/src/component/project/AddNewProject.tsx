@@ -28,7 +28,7 @@ interface IFormInputs {
 }
 
 const AddNewProject: React.FC = (props) => {
-  const [useId, setUseId] = useRecoilState<string>(userId);
+  const [useId, setUseId] = useRecoilState(userId);
 
   const [listUsers, setListUsers] = useRecoilState(allUsers);
 
@@ -88,7 +88,7 @@ const AddNewProject: React.FC = (props) => {
         <label>שם הלקוח</label>
         <input type="text" {...register("client", { required: true })} />
         {errors.client && "חובה למלא שם לקוח"}
-        <input type="hidden" value={useId} />
+        {/* <input type="hidden" value={useId?._id} /> */}
         <label>משתמשים </label>
         <input type="text" {...register("amountOfUsers", { required: true })} />
         {errors.amountOfUsers && " שדה חובה  "}

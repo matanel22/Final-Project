@@ -64,8 +64,8 @@ export const updateProject=async(req:Request,res:Response)=>{
         return res.send(updateData)
       }
     })
-    console.log(proj);
-
+    // console.log(proj);
+// res.send(proj)
   } catch (error) {
     console.log(error);
     
@@ -86,7 +86,9 @@ try {
       projectId:item.projectId,
       date_created: dayjs(item.date_created).format('MM-DD-YYYY').toString(),
       endDate: dayjs(item.endDate).format('MM-DD-YYYY').toString(),
-      remarks:item.remarks
+      remarks:item.remarks,
+      
+taskType:item.taskType
     };
   });
   

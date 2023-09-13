@@ -54,10 +54,10 @@ export default function Home() {
   const [validPass, setValidPass] = useState(false);
   const [validToken, setValidToken] = useState(false);
   const [useId, setUseId] = useRecoilState<string>(userId);
-  const [NY, setNameUser] = useRecoilState<string>(userName);
-  const [stateId, setStateId] = useState<string>("");
+  // const [NY, setNameUser] = useRecoilState<string>(userName);
+
   const [isNotUserFlag, setIsNotUserFlag] = useState(false);
-  const [data, setData] = useState<string>("");
+
   const [dataToken, setDataToken] = useRecoilState(token);
   let histury = useHistory();
 
@@ -87,11 +87,9 @@ export default function Home() {
         await axios
           .get(url, { headers: { "x-api-key": localStorage["tok"] } })
           .then((res) => {
-            console.log(res.data[0]);
-
             setUseId(res.data[0]._id);
 
-            setNameUser(res.data[0].name);
+            // setNameUser(res.data[0].name);
             setValidToken(true);
             histury.push("/projects/" + res.data[0]._id);
           })
@@ -167,7 +165,6 @@ export default function Home() {
                 id="password"
                 autoComplete="current-password"
               />
-              {validPass && <p>nkndsknkn</p>}
 
               <Button
                 type="submit"
@@ -180,13 +177,13 @@ export default function Home() {
               </Button>
 
               <Grid container>
-                <Grid item xs>
+                {/* <Grid item xs>
                   <Link href="#" variant="body2">
                     שכחת סיסמא
                   </Link>
-                </Grid>
+                </Grid> */}
                 <Grid item>
-                  <L to="/signUp">{"Don't have an account? Sign Up"}</L>
+                  <L to="/signUp">{"עוד לא התחברת? התחברות"}</L>
                 </Grid>
               </Grid>
             </Box>

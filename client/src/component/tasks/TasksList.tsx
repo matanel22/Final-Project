@@ -36,6 +36,7 @@ export interface IFormMission {
   date_created: Date;
   endDate: Date;
   remarks: string;
+  taskType: string;
 }
 export interface Open {
   stap: boolean;
@@ -47,6 +48,7 @@ const TITALE_MISSIONS = [
   { title: "תאריך התחלה" },
   { title: "עד תאריך" },
   { title: "הערות" },
+  { title: "סוג משימה" },
 ];
 
 const TasksList = () => {
@@ -105,7 +107,9 @@ const TasksList = () => {
     };
     sendProjectID(PID.id);
   }, []);
-
+  useEffect(() => {
+    console.log(mis);
+  }, [mis]);
   const color = blue[100];
   return (
     <>
@@ -148,7 +152,17 @@ const TasksList = () => {
                     <TableCell align="right">{`${item.statusId}`}</TableCell>
                     <TableCell align="right">{item.date_created}</TableCell>
                     <TableCell align="right">{item.endDate}</TableCell>
-                    <TableCell align="right">{item.remarks}</TableCell>
+                    <TableCell
+                      sx={{
+                        maxWidth: "200px",
+                        maxHeight: "100px",
+                        overflowY: "auto",
+                      }}
+                      align="right"
+                    >
+                      {item.remarks}
+                    </TableCell>
+                    <TableCell align="right">{item.taskType}</TableCell>
 
                     {isOpen.stap && isOpen.openIndex === index && (
                       <ButtonsTable
