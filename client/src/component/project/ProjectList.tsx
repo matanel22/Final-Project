@@ -27,6 +27,7 @@ import { Buttons } from "./Buttons";
 // import { Open } from "../tasks/TasksList";
 import duonArrow from "../../svg/downArrow.svg";
 import leftArrow from "../../svg/leftArrow.svg";
+import YourComponent from "../searchField";
 
 interface IUsers {
   _id: string;
@@ -112,7 +113,7 @@ const ProjectList: React.FC<{
   return (
     <Container>
       <PageLoader>{loading}</PageLoader>
-
+      <YourComponent />
       <TableContainer>
         <Table aria-label="simple table">
           <TableHead>
@@ -168,8 +169,12 @@ const ProjectList: React.FC<{
                       buttonUpdate="עדכון פרוייקט"
                     />
                   )}
-                  <img
-                    src={isOpenShow.stap ? duonArrow : leftArrow}
+                  <ArrowLeft
+                    src={
+                      isOpenShow.stap && isOpenShow.openIndex === index
+                        ? duonArrow
+                        : leftArrow
+                    }
                     width={"20px"}
                     onClick={() => {
                       sendingToTheCreation(index);
@@ -194,11 +199,14 @@ const ProjectList: React.FC<{
 export default ProjectList;
 // editProj={updateProj}
 
-const EditSvg = styled.img``;
+const ArrowLeft = styled.img`
+  cursor: pointer;
+`;
 
 export const Container = styled.div`
   padding: 10px;
-  width: 100vw;
+  width: 70vw;
+  margin: 0 auto;
   ${css`
     @media (max-width: 768px) {
       padding: 5px;

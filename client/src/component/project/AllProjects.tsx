@@ -3,14 +3,22 @@ import React from "react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import ProjectList from "./ProjectList";
-import { useRecoilState } from "recoil";
-import { AllProjectData, allUsers, userId, userName } from "../atom/Atom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  AllProjectData,
+  UserInfo,
+  allUsers,
+  searchPro,
+  userId,
+  userName,
+} from "../atom/Atom";
 import styled from "styled-components";
 import { useHistory, useParams } from "react-router-dom";
 import OvalButton from "../UI/ButtonStyle";
 import { ButtonUi, Menu } from "../Menu";
 import menu from "../../svg/menu.svg";
 import { LogOutUser } from "./LogOutUser";
+import YourComponent from "../searchField";
 export interface IProps {
   _id: string;
   readonly nameProject: string;
@@ -26,9 +34,9 @@ export interface MyObject {
 }
 const AllProjects = () => {
   const [dataProject, setDataProject] = useRecoilState(AllProjectData);
-
+  const findingSearch = useRecoilValue(searchPro);
   const [validata, setValidata] = useState(false);
-  // const [useId, setUseId] = useRecoilState<string>(userId);
+
   const [NY, setNameUser] = useRecoilState<string>(userName);
   const [validPremissionUsers, setValidPremissionUsers] = useState(false);
   const [open, setOpen] = React.useState(true);
@@ -38,7 +46,7 @@ const AllProjects = () => {
   const histury = useHistory();
   const [openMenu, setOpenMenu] = useState(false);
   const articleId: MyObject = useParams();
-
+  const userInfo = useRecoilValue(UserInfo);
   const [listUsers, setListUsers] = useRecoilState(allUsers);
 
   useEffect(() => {
@@ -63,6 +71,31 @@ const AllProjects = () => {
 
     fetch(articleId.id);
   }, []);
+  useEffect(() => {
+    console.log(findingSearch);
+    if (findingSearch) {
+      let url = "http://localhost:3001/api/routs/router/organizationFind";
+      axios.post(url, { findingSearch }).then((res) => {
+        setDataProject(res.data);
+      });
+    } else {
+      const fetch = async (id: string) => {
+        try {
+          let url = "http://localhost:3001/api/routs/router/allProjects";
+          await axios.post(url, { id }).then((response) => {
+            console.log(response.data);
+            setValidata(true);
+
+            setDataProject(response.data);
+          });
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+      fetch(articleId.id);
+    }
+  }, [findingSearch]);
 
   // let quantityCheck =
   //   dataProject.length === 0 ? <h1>לא נוצרו פרוייקטים </h1> : "";
@@ -106,13 +139,6 @@ const AllProjects = () => {
       >
         <WidthTable>
           <Menu />
-          {/* <MenuBar
-            src={menu}
-            onClick={() => {
-              setOpenMenu(true);
-              // setOpenModal(true);
-            }}
-          /> */}
 
           <LogOutUser
             removeUser={removeUser}
@@ -120,7 +146,7 @@ const AllProjects = () => {
             setOpenModal={setOpenModal}
           ></LogOutUser>
 
-          <UserWelcome> {`ברוך הבא ${NY}`}</UserWelcome>
+          <UserWelcome> {`ברוך הבא ${userInfo.name}`}</UserWelcome>
           <ButtonUi
             onClick={() => {
               histury.push("/createProject");
@@ -139,6 +165,7 @@ export default AllProjects;
 
 const WidthTable = styled.div`
   width: 100vw;
+  margin-top: 1rem;
   display: flex;
   justify-content: space-around;
   align-items: center;

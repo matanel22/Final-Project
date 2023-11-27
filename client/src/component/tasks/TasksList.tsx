@@ -215,7 +215,8 @@ const ButtonsWrapper = styled.div`
 `;
 const Container = styled.div`
   padding: 10px;
-  width: 100vw;
+  width: 80vw;
+  margin: 0 auto;
   ${css`
     @media (max-width: 768px) {
       padding: 5px;

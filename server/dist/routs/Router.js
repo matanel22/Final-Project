@@ -20,6 +20,7 @@ router.post('/usersSpecific', fonctionUsers_1.usersSpecific);
 router.post('/logOutUser', fonctionUsers_1.userLogout);
 router.post('/updatePermissionUser', fonctionUsers_1.updatePermissionUser);
 //routers of project
+router.post('/organizationFind', functionProject_1.organizationFind);
 router.post('/allProjects', functionProject_1.allProject);
 router.post("/addCreatProject", addNewProject_1.addCreatProject);
 router.post("/projSpecific", functionProject_1.projSpecific);

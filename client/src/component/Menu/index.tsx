@@ -1,6 +1,9 @@
 import styled from "styled-components";
 import React, { useState, useEffect } from "react";
 import { GetAllUsers } from "./GetAllUsers";
+import { PermissionScreen } from "../mengmentScreen/permissions/permissions";
+import { AllUsers } from "../mengmentScreen/permissions/permissions/AllUsers";
+import All from "../mengmentScreen/permissions/permissions/All";
 
 export const Menu = () => {
   const [openListUsers, setOpenListUsers] = useState(false);
@@ -13,7 +16,8 @@ export const Menu = () => {
       >
         ניהול משתמשים
       </ButtonUi>
-      <GetAllUsers openListUsers={openListUsers} />
+      <All openListUsers={openListUsers} />
+      {/* <GetAllUsers openListUsers={openListUsers} /> */}
     </WarpperMenu>
   );
 };

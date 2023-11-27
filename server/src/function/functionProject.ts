@@ -32,7 +32,25 @@ export const allProject=async(req:Request,res:Response)=>{
     }
  
 }
-
+// function searchByName(array:[], name:string) {
+//   return array.find(item => item.name === name);
+// }
+export const organizationFind=async(req:Request,res:Response)=>{
+  try {
+  
+    let nameSearch= req.body.findingSearch;
+    let projects=await ModalProject.find({});
+  let find= projects.filter(item => item.nameProject === nameSearch);
+if(find){
+  res.send(find)
+}
+else{res.send({mes:"dont find project"})}
+   
+   
+  } catch (error) {
+    res.status(404).send(error)
+  }
+}
 export const specificProject =async(req:Request,res:Response)=>{
   try {
     let project=await ModalProject.find({id:req.body.id})

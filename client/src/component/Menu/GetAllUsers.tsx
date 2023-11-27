@@ -17,7 +17,7 @@ export const GetAllUsers = (props: IProps) => {
     console.log(listUsers);
 
     setSelectedItem(selectedValue);
-    // Update the array of users based on the selected option
+
     const updatedUsers: any = listUsers.map((user, i) =>
       i === index ? { ...user, permissions: selectedValue === "מנהל" } : user
     );
@@ -26,7 +26,8 @@ export const GetAllUsers = (props: IProps) => {
 
   const handleUpdateClick = (
     updateUserById: string,
-    namePermission: string
+    namePermission: string,
+    index: number
   ) => {
     let url = `http://localhost:3001/api/routs/router/updatePermissionUser`;
     axios.post(url, { namePermission, updateUserById }).then((res) => {
@@ -40,7 +41,8 @@ export const GetAllUsers = (props: IProps) => {
           {listUsers.map((list: any, index) => (
             <WrapperListNameUsers>
               <RightColumn>שם מלא:</RightColumn>
-              <ListItem>{list.name}</ListItem>;
+              <ListItem>{list.name}</ListItem>
+              <ListItem>{list.permissions ? "מנהל" : "משתמש"}</ListItem>
               <SelectStyled
                 value={list.permissions ? "מנהל" : "משתמש"}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -52,7 +54,7 @@ export const GetAllUsers = (props: IProps) => {
               </SelectStyled>
               <BlueButton
                 onClick={() => {
-                  handleUpdateClick(list._id, selectedItem);
+                  handleUpdateClick(list._id, selectedItem, index);
                 }}
               >
                 עדכן

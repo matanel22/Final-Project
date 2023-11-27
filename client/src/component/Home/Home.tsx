@@ -13,8 +13,8 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
-import { token, userId, userName } from "../atom/Atom";
-import { useRecoilState } from "recoil";
+import { token, userId, UserInfo, userName } from "../atom/Atom";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { Alert } from "@mui/material";
 import hompage from "../image/homepage.png";
 import { ShellForForms } from "../shellForForms";
@@ -54,6 +54,7 @@ export default function Home() {
   const [validPass, setValidPass] = useState(false);
   const [validToken, setValidToken] = useState(false);
   const [useId, setUseId] = useRecoilState<string>(userId);
+  const userInfo = useSetRecoilState(UserInfo);
   // const [NY, setNameUser] = useRecoilState<string>(userName);
 
   const [isNotUserFlag, setIsNotUserFlag] = useState(false);
@@ -88,6 +89,8 @@ export default function Home() {
           .get(url, { headers: { "x-api-key": localStorage["tok"] } })
           .then((res) => {
             setUseId(res.data[0]._id);
+            userInfo(res.data[0]);
+            // console.log(res.data);
 
             // setNameUser(res.data[0].name);
             setValidToken(true);
