@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
 import Home from "./component/Home/Home";
 import NewTodo from "./component/practice/NewTodo";
 import AddNewProject from "./component/project/AddNewProject";
@@ -7,11 +8,23 @@ import Todos from "./component/practice/Todos";
 import AllProjects from "./component/project/AllProjects";
 import { Route, Switch, Redirect, BrowserRouter } from "react-router-dom";
 import TasksList from "./component/tasks/TasksList";
-import TasksData from "./component/atom/Atom";
+import TasksData, { allUsers } from "./component/atom/Atom";
 import { useRecoilState } from "recoil";
 import CreateTasks from "./component/tasks/createTasks";
 import SignUp from "./component/signUp";
+import axios from "axios";
+
 function App() {
+  const [listUsers, setListUsers] = useRecoilState(allUsers);
+
+  useEffect(() => {
+    let url = "http://localhost:3001/api/routs/router/allUsers";
+    axios.get(url).then((res) => {
+      console.log(res.data);
+
+      setListUsers(res.data);
+    });
+  });
   return (
     <BrowserRouter>
       <Switch>

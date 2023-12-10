@@ -10,6 +10,8 @@ import { idPrj, missionProj } from "../atom/Atom";
 import { MISSION_UPDATE } from "./updateTask";
 import { ShellForForms } from "../shellForForms";
 import SuccessMessage from "../MessegeToUser";
+import { AppBar } from "@mui/material";
+import { ButtonsPageTask } from "./ButtonsPageTask";
 
 interface IFormMission {
   discrption: string;
@@ -20,10 +22,24 @@ interface IFormMission {
   remarks: string;
   taskType: string;
 }
+
+const SELECTMISSION = [
+  { option: "Frontend" },
+  { option: "Design" },
+  { option: "React" },
+  { option: "DB" },
+  { option: "Design" },
+];
 const CreateTasks = () => {
   const [ID, setId] = useRecoilState(idPrj);
   const [successCrationTask, setSuccessCrationTask] = useState(false);
+  const isDateInRange = (startDate: any, endDate: any) => {
+    // const checkDate = new Date(dateToCheck);
+    const start = new Date(startDate);
+    const end = new Date(endDate);
 
+    return start >= end;
+  };
   const {
     register,
     formState: { errors },
@@ -34,6 +50,8 @@ const CreateTasks = () => {
   });
 
   const registerPrj: SubmitHandler<IFormMission> = async (data) => {
+    const result = isDateInRange(data.date_created, data.endDate);
+
     data.projectId = ID;
     let url = "http://localhost:3001/api/routs/router/creatMission";
     await axios
@@ -46,47 +64,77 @@ const CreateTasks = () => {
         console.log("res", err);
       });
   };
-  useEffect(() => {
-    console.log(successCrationTask);
-  }, [successCrationTask]);
+  // useEffect(() => {
+  //   console.log(successCrationTask);
+  // }, [successCrationTask]);
   return (
-    <ShellForForms>
-      <FormContainer onSubmit={handleSubmit(registerPrj)}>
-        {MISSION_UPDATE.map((item: any) => (
-          <>
-            <label> {item.name}</label>
-            <input
-              {...register(item.register, { required: true })}
-              placeholder={item.name}
-              type={item.type}
-            />
-          </>
-        ))}
-        <label>סוג משימה</label>
-        <select {...register("taskType", { required: true })}>
-          <option>Frontend</option>
-          <option>Design </option>
-          <option>React</option>
-          <option>DB</option>
-          <option>Design </option>
-        </select>
-        <label>הערות</label>
-        <InputRemarks {...register("remarks", { required: true })} />
-        <button type="submit">סיום </button>
-      </FormContainer>
+    <>
+      <AppBar
+        sx={{
+          flexGrow: 1,
+          minHeight: 100,
+        }}
+        position="static"
+      >
+        <ButtonsPageTask />
+      </AppBar>
+      <ShellForForms>
+        <FormContainer onSubmit={handleSubmit(registerPrj)}>
+          {MISSION_UPDATE.map((item: any) => (
+            <>
+              <label> {item.name}</label>
+              <input
+                {...register(item.register, { required: true })}
+                placeholder={item.name}
+                type={item.type}
+              />
+            </>
+          ))}
+          <label>סוג משימה</label>
+          <select
+            defaultValue={"יש לבחור"}
+            {...register("taskType", { required: true })}
+          >
+            {SELECTMISSION.map((opt) => (
+              <option>{opt.option}</option>
+            ))}
+          </select>
+          <label>Remarks</label>
+          <InputRemarks
+            textLength={0}
+            {...register("remarks", { required: true })}
+          />
+          <button type="submit">סיום </button>
+        </FormContainer>
 
-      {successCrationTask && (
-        <SuccessMessage
-          message="המשימה נוצרה בהצלחה"
-          setSuccessCrationTask={setSuccessCrationTask}
-          successCrationTask={successCrationTask}
-        />
-      )}
-    </ShellForForms>
+        {successCrationTask && (
+          <SuccessMessage
+            message="המשימה נוצרה בהצלחה"
+            setSuccessCrationTask={setSuccessCrationTask}
+            successCrationTask={successCrationTask}
+          />
+        )}
+      </ShellForForms>
+    </>
   );
 };
 export default CreateTasks;
+const InputRemarks = styled.input<{ textLength: number }>`
+  // width: 80%;
+  // height: 10%;
+  // padding: 10px;
+  // font-size: 16px;
 
+  padding: 8px;
+  min-width: 100%; /* Set a minimum width */
+  width: ${(props) => `${props.textLength * 8}px`};
+  box-sizing: border-box; /* Include padding and border in the width */
+  word-wrap: break-word;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #e0e0e0;
+`;
 const Label = styled.label`
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
@@ -101,12 +149,13 @@ const FormContainer = styled.form`
   justify-content: center;
   // margin: 20px;
   padding: 40px;
-  // background-color: #f2f2f2;
+  background-color: #f2f2f2;
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   margin: 0 auto;
-  margin-top: 50px;
-  max-width: 50%;
+  // margin-top: 50px;
+  height: min-content;
+  width: 30%;
   h2 {
     margin-bottom: 20px;
   }
@@ -151,10 +200,4 @@ const FormContainer = styled.form`
       background-color: #449d44;
     }
   }
-`;
-const InputRemarks = styled.textarea`
-  width: 80%;
-  height: 20%;
-  padding: 10px;
-  font-size: 16px;
 `;

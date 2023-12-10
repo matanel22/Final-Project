@@ -27,6 +27,7 @@ import { MyObject } from "../project/AllProjects";
 import { DeleteTask } from "./DeleteTask";
 import { ButtonsPageTask } from "./ButtonsPageTask";
 import { ButtonsTable } from "../ButtonsTable";
+import RemindUser from "./RemindUser";
 
 export interface IFormMission {
   id: string;
@@ -107,9 +108,7 @@ const TasksList = () => {
     };
     sendProjectID(PID.id);
   }, []);
-  useEffect(() => {
-    console.log(mis);
-  }, [mis]);
+
   const color = blue[100];
   return (
     <>
@@ -128,6 +127,7 @@ const TasksList = () => {
         <TableContainer>
           <Table aria-label="simple table">
             <TableHead>
+              <RemindUser dataMission={mis}></RemindUser>
               <TableRow sx={{ bgcolor: color }}>
                 {TITALE_MISSIONS.map((item, index) => {
                   return (
@@ -193,7 +193,7 @@ const TasksList = () => {
             </TableBody>
           </Table>
         </TableContainer>
-        <UrlTask totaleTasks={totaleTasks} />
+        {/* <UrlTask /> */}
 
         {isOpenEditTask && (
           <UpdateTask onMission={taskOne} indexMission={isIndex}></UpdateTask>

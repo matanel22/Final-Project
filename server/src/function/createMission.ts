@@ -12,7 +12,7 @@ export const createMission=async(req:Request,res:Response)=>{
     // if(validata.error){
     //   return res.status(404).json(validata.error.details)
     //  }
-    console.log(req.body);
+    
             let dataTask=await new MissionModel({
                 discrption:req.body.discrption,
                 statusId:"משימה חדשה",

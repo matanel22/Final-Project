@@ -1,12 +1,23 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import Joi from "joi";
+import { IUsers } from "./ModelUser";
+
 
 const ProjectScama=new mongoose.Schema({
 id:String,
-userId:String,
+staff:{type:[Schema.Types.ObjectId],ref:"IUsers",required:true},
 nameProject:String,
 client:String,
-staff:String,
+// staff:String,
+createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  projectNumber: {
+    type: String,
+    unique: true,
+    required: true,
+  },
 statusProject:String,
 amountOfUsers:String
 
@@ -17,7 +28,7 @@ export default ProjectModel
 
 export const validProject=(_validData:any)=>{
     let joiSchema=Joi.object({
-        userId:Joi.string(),
+        // userId:Joi.string(),
         nameProject:Joi.string().min(2).max(99).required(),
         staff:Joi.string().min(2).max(99).required(),
         client:Joi.string().min(3).max(50).required(),

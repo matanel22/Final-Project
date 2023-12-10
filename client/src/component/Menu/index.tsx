@@ -4,9 +4,12 @@ import { GetAllUsers } from "./GetAllUsers";
 import { PermissionScreen } from "../mengmentScreen/permissions/permissions";
 import { AllUsers } from "../mengmentScreen/permissions/permissions/AllUsers";
 import All from "../mengmentScreen/permissions/permissions/All";
+import { UserInfo } from "../atom/Atom";
+import { useRecoilValue } from "recoil";
 
 export const Menu = () => {
   const [openListUsers, setOpenListUsers] = useState(false);
+
   return (
     <WarpperMenu>
       <ButtonUi
@@ -16,7 +19,8 @@ export const Menu = () => {
       >
         ניהול משתמשים
       </ButtonUi>
-      <All openListUsers={openListUsers} />
+
+      <GetAllUsers openListUsers={openListUsers} />
       {/* <GetAllUsers openListUsers={openListUsers} /> */}
     </WarpperMenu>
   );
@@ -41,6 +45,7 @@ export const ButtonUi = styled(ButtonBsic)`
   color: #5b7fff;
   border: 1px solid #547fff;
   min-width: 11.5rem;
+  margin-top: 1.2rem;
   height: 2.625rem;
   transition: font-size 0.25s ease;
   &:hover {

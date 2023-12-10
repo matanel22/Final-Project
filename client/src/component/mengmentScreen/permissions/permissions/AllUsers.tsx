@@ -29,8 +29,6 @@ export const AllUsers = () => {
   const [editOption, setEditOption] = useState({ open: false, ind: 0 });
 
   const handleChange = (index: number, selectedValue: any) => {
-    console.log(selectedValue);
-
     setSelectedItem(selectedValue);
     const updatedUsers = listUsers.map((user: AllUsersPROPS, i: number) =>
       i === index ? { ...user, permission: selectedValue === "מנהל" } : user
@@ -95,6 +93,7 @@ export const AllUsers = () => {
     </>
   );
 };
+
 const WrapperListNameUsers = styled.div`
   display: flex;
   justify-content: space-between;
@@ -118,7 +117,7 @@ const Container = styled.div`
 `;
 
 const ListItem = styled.div`
-  color: black;
+  ishovercolor: black;
 `;
 const RightColumn = styled.div`
   color: black;
@@ -138,6 +137,7 @@ const Button = styled.button`
   //   background-color: #2980b9;
   // }
 `;
+
 export const SelectStyled = styled.select`
   // padding: 10px;
   font-size: 16px;

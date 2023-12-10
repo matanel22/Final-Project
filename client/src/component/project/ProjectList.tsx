@@ -1,17 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { useRecoilState, useRecoilValue } from "recoil";
 import axios from "axios";
-import { Link } from "react-router-dom";
-// import ButtonMission from "../UI/Button";
-import { AllProjectData } from "../atom/Atom";
-import { idPrj } from "../atom/Atom";
-import edit from "../../svg/editminor.svg";
+
 import styled, { css } from "styled-components";
 import { blue } from "@mui/material/colors";
 
 import {
   Button,
+  MenuItem,
+  Select,
   Table,
   TableBody,
   TableContainer,
@@ -28,6 +25,8 @@ import { Buttons } from "./Buttons";
 import duonArrow from "../../svg/downArrow.svg";
 import leftArrow from "../../svg/leftArrow.svg";
 import YourComponent from "../searchField";
+import { ListUsersOfProject } from "../ListUsersOfProject";
+import { UrlTask } from "../tasks/urlTask";
 
 interface IUsers {
   _id: string;
@@ -39,18 +38,22 @@ interface IUsers {
 export interface IProps {
   _id: string;
   nameProject: string;
-  staff: string;
+  staff: string[];
   client: string;
-  userId: string;
+  projectNumber: string;
+  // matchingUsers: string[];
+
   statusProject: string;
   amountOfUsers: string;
 }
 const TITALE_PROJECTS = [
-  { tytle: "שם הפרוייקט" },
-  { tytle: "שם הצוות" },
-  { tytle: "שם הלקוח" },
-  { tytle: "סטטוס הפרוייקט" },
-  { tytle: "האם יש משתמשים" },
+  { title: "שם הפרוייקט" },
+  { title: "מספר פרוייקט" },
+  { title: "שם הצוות" },
+  { title: "שם הלקוח" },
+  { title: "סטטוס הפרוייקט" },
+  { title: "סטטוס משימות" },
+  // { title: "האם יש משתמשים" },
 ];
 interface Open {
   stap: boolean;
@@ -70,22 +73,29 @@ const ProjectList: React.FC<{
     openIndex: 0,
   });
   const [isOpenUpdate, setIsOpenUpdate] = useState(false);
-  const [isUsersPrem, setIsUsersPrem] = useState<IUsers>();
+  const [isOpenUrl, setIsOpenUrl] = useState(false);
+  const [openUrlTask, setOpenUrlTask] = useState<Open>({
+    stap: false,
+    openIndex: 0,
+  });
   const [indexProjData, setIndexProjData] = useState(0);
   const [isIndex, setIsIndex] = useState(0);
+  const [isIndexOpenMission, setIsIndexOpenMission] = useState(0);
   // const [isPro, setDataProject] = useRecoilState(AllProjectData);
   const sendingToTheCreation = (index: number) => {
     setIsIndex(index);
     setIsOpenShow({ ...isOpenShow, stap: !isOpenShow.stap, openIndex: index });
   };
-  const [editMode, setEditMode] = useState([
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-  ]);
+  const sendingToStutus = (index: number) => {
+    setIsOpenUrl(true);
+    setIsIndexOpenMission(index);
+    setOpenUrlTask((prevOpenUrlTask) => ({
+      ...prevOpenUrlTask,
+      stap: !prevOpenUrlTask.stap,
+      openIndex: index,
+    }));
+  };
+
   const [validPremissionUsers, setValidPremissionUsers] = useState(false);
 
   const showFormOnEdit = async (id: string, index: number) => {
@@ -99,15 +109,15 @@ const ProjectList: React.FC<{
     return setIsUpdate(true);
   };
 
-  const toggleEditMode = (index: number) => {
-    const [isOpen, setIsOpen] = useState<Open>({ stap: false, openIndex: 0 });
-    setEditMode((prevFormData) => {
-      const updatedEditTogle = [...prevFormData];
-      updatedEditTogle[index] = !updatedEditTogle[index];
-      // console.log(updatedEditTogle);
-      return updatedEditTogle;
-    });
-  };
+  // const toggleEditMode = (index: number) => {
+  //   const [isOpen, setIsOpen] = useState<Open>({ stap: false, openIndex: 0 });
+  //   setEditMode((prevFormData) => {
+  //     const updatedEditTogle = [...prevFormData];
+  //     updatedEditTogle[index] = !updatedEditTogle[index];
+  //     // console.log(updatedEditTogle);
+  //     return updatedEditTogle;
+  //   });
+  // };
 
   const color = blue[100];
   return (
@@ -127,7 +137,7 @@ const ProjectList: React.FC<{
               }}
             >
               {TITALE_PROJECTS.map((item: any) => {
-                return <TableCell align="right">{item.tytle}</TableCell>;
+                return <TableCell align="right">{item.title}</TableCell>;
               })}
               {isOpenShow.stap && isOpenShow.openIndex === isIndex && (
                 <>
@@ -145,19 +155,39 @@ const ProjectList: React.FC<{
                   <TableCell align="right" sx={{ fontSize: "1.5rem" }}>
                     {item.nameProject}
                   </TableCell>
-                  <TableCell sx={{ fontSize: "1.5rem" }} align="right">
-                    {item.staff}
+                  <TableCell sx={{ fontSize: "1.2rem" }} align="right">
+                    {item.projectNumber}
                   </TableCell>
-                  <TableCell sx={{ fontSize: "1.5rem" }} align="right">
+                  <ListUsersOfProject staff={item.staff} />
+
+                  <TableCell sx={{ fontSize: "1.2rem" }} align="right">
                     {item.client}
                   </TableCell>
-                  <TableCell sx={{ fontSize: "1.5rem" }} align="right">
+                  <TableCell sx={{ fontSize: "1.2rem" }} align="right">
                     {item.statusProject}
                   </TableCell>
-                  <TableCell sx={{ fontSize: "1.5rem" }} align="right">
-                    {item.amountOfUsers}
+
+                  <TableCell sx={{ fontSize: "1.2rem" }} align="right">
+                    <button
+                      onClick={() => {
+                        // setOpenUrlTask({openIndex:true});
+                        sendingToStutus(index);
+                      }}
+                    >
+                      {" "}
+                      test
+                    </button>
                   </TableCell>
 
+                  {isOpenUrl && (
+                    <TableCell sx={{ fontSize: "1.2rem" }} align="right">
+                      <UrlTask
+                        projectId={item._id}
+                        isIndexOpenMission={index}
+                        openUrlTask={openUrlTask}
+                      ></UrlTask>
+                    </TableCell>
+                  )}
                   {isOpenShow.stap && isOpenShow.openIndex === index && (
                     <Buttons
                       projectId={item._id}

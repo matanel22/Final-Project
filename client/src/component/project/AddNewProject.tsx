@@ -1,16 +1,17 @@
 //
 import styled from "styled-components";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
 
 import { Link, useHistory } from "react-router-dom";
-
-import { useRecoilState } from "recoil";
-import { allUsers, userId, userName } from "../atom/Atom";
+// import MultySelect from "react-select";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { UserInfo, allUsers, userId, userName } from "../atom/Atom";
 import { ShellForForms } from "../shellForForms";
+import AnimatedMulti from "./MultySelect";
 
 export interface IUsers {
   _id: string;
@@ -21,16 +22,18 @@ export interface IUsers {
 interface IFormInputs {
   nameProject: string;
   client: string;
-  staff: string;
-  userId: string;
+
+  staff: [];
   statusProject: string;
   amountOfUsers: string;
 }
 
 const AddNewProject: React.FC = (props) => {
   const [useId, setUseId] = useRecoilState(userId);
-
+  // const [selectedItem, setSelectedItem] = useState("");
   const [listUsers, setListUsers] = useRecoilState(allUsers);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const userInfo = useRecoilValue(UserInfo);
 
   let histury = useHistory();
   const {
@@ -43,31 +46,23 @@ const AddNewProject: React.FC = (props) => {
     defaultValues: {
       nameProject: "",
       client: "",
-      staff: "",
-      userId: "",
+
+      staff: [],
       statusProject: "",
       amountOfUsers: "",
     },
   });
 
   const registerPrj: SubmitHandler<IFormInputs> = async (data) => {
-    console.log(listUsers);
-    listUsers.map((item: any, index: any) => {
-      if (item.name.trim() === data.staff.trim()) {
-        data.userId = item._id;
-        try {
-          let url = "http://localhost:3001/api/routs/router/addCreatProject";
-          axios.post(url, data).then(({ data }) => {
-            console.log(useId);
+    try {
+      let url = "http://localhost:3001/api/routs/router/addCreatProject";
+      axios.post(url, { data, selectedItems }).then(({ data }) => {
+        histury.push("/projects/" + userInfo._id);
+      });
+    } catch (error) {
+      console.log(error);
+    }
 
-            histury.push("/projects/" + data.userId);
-            console.log(data);
-          });
-        } catch (error) {
-          console.log(error);
-        }
-      }
-    });
     // setUsersData(res.data);
   };
 
@@ -83,24 +78,28 @@ const AddNewProject: React.FC = (props) => {
         />
         {errors.nameProject && "חובה למלא שם פרוייקט"}
         <label htmlFor="name">שם הצוות</label>
-        <input type="text" {...register("staff", { required: true })} />
-        {errors.staff && "חובה למלא שם הצוות"}
+
+        <AnimatedMulti
+          setSelectedItems={setSelectedItems}
+          selectedItems={selectedItems}
+        />
+
         <label>שם הלקוח</label>
         <input type="text" {...register("client", { required: true })} />
         {errors.client && "חובה למלא שם לקוח"}
-        {/* <input type="hidden" value={useId?._id} /> */}
+
         <label>משתמשים </label>
         <input type="text" {...register("amountOfUsers", { required: true })} />
         {errors.amountOfUsers && " שדה חובה  "}
         <Label htmlFor="fruit-select">סטטוס פרוייקט </Label>
-        <Select
+        <Selected
           placeholder="סטטוס פרוייקט"
           id="select"
           {...register("statusProject", { required: true })}
         >
           <Option>פעיל</Option>
           <Option>לא פעיל</Option>
-        </Select>
+        </Selected>
         {errors.statusProject && "שדה חובה"}
         <button type="submit">יצירת פרוייקט </button>
       </FormContainer>
@@ -109,7 +108,7 @@ const AddNewProject: React.FC = (props) => {
 };
 export default AddNewProject;
 
-const Select = styled.select`
+const Selected = styled.select`
   font-size: 1rem;
   padding: 0.5rem;
   border: 1px solid #ccc;
@@ -148,7 +147,7 @@ const FormContainer = styled.form`
 
   input[type="text"],
   input[type="email"],
-  input[type="password"] {
+  input[type="pass"] {
     width: 100%;
     padding: 10px;
     margin-bottom: 20px;

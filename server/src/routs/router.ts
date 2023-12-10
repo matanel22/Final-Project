@@ -3,7 +3,7 @@ import express from 'express';
 import { createMission } from '../function/createMission';
 import {allUsers, login,signUp, updatePermissionUser, userLogout, usersSpecific} from '../function/fonctionUsers'
 import {  allMissionOfProject, allProject, organizationFind, projSpecific, specificProject, updateProject } from '../function/functionProject';
-import { addCreatProject } from '../function/addNewProject';
+import { addCreatProject} from '../function/addNewProject';
 import { accomplished, allStatusMission, deleteSpcificMission, specificMission, taskOne, updateMission } from '../function/fonctionMission';
 import { userInfo } from '../function/fonctionUsers';
 
@@ -19,7 +19,7 @@ router.post('/logOutUser',userLogout)
 router.post('/updatePermissionUser',updatePermissionUser)
 
 
-//routers of project
+
 router.post('/organizationFind',organizationFind)
 router.post('/allProjects',allProject)
 router.post("/addCreatProject",addCreatProject)

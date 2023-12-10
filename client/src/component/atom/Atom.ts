@@ -13,10 +13,12 @@ interface IFormMission {
   export interface IProps {
     _id: string;
     nameProject: string;
-    userId:string
-    staff: string;
+    // userId:string
+    staff: string[];
     client: string;
     statusProject: string;
+  projectNumber: string;
+    
     amountOfUsers: string;
   }
 
@@ -27,6 +29,7 @@ interface IFormMission {
     pass:string,
     role: string,
     data_created:Date,
+
     permissions: boolean
   }
 

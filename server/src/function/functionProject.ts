@@ -8,9 +8,9 @@ import dayjs from "dayjs";
 export interface IProps {
   _id: string;
   nameProject: string;
-  staff: string;
+  staff: string[];
   client: string;
-  userId: string;
+  // userId: string;
   statusProject: string;
   amountOfUsers: string;
 }
@@ -18,12 +18,39 @@ export const allProject=async(req:Request,res:Response)=>{
  
 
     try {
+      console.log(req.body);
+      
      let user=await UsersModel.findOne({_id:req.body.id})
      if(user?.permissions){
+     
+      
       let projects=await ModalProject.find({});
+      for(const project of projects){
+        const users = await UsersModel.find({ _id: { $in: project.staff } });
+
+        // Extracting names from the retrieved users
+       users.map(user => user.name);
+       
+      }
+// console.log(projects);
+
       return res.json(projects);
      }else{
-      let projects=await ModalProject.find({userId:req.body.id});
+      
+      let projects=await ModalProject.find({staff:req.body.id});
+      for(const project of projects){
+        const users = await UsersModel.find({ _id: { $in: project.staff } });
+
+        
+        const userNames = users.map(user => user.name);
+        // project.staff = userNames;
+
+
+        
+       }
+      // console.log(projects);
+      
+      
       return res.json(projects);
      }
      
@@ -39,8 +66,12 @@ export const organizationFind=async(req:Request,res:Response)=>{
   try {
   
     let nameSearch= req.body.findingSearch;
+    console.log(nameSearch);
+    
     let projects=await ModalProject.find({});
   let find= projects.filter(item => item.nameProject === nameSearch);
+  console.log(find);
+  
 if(find){
   res.send(find)
 }

@@ -23,10 +23,23 @@ const allProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         let user = yield ModelUser_1.default.findOne({ _id: req.body.id });
         if (user === null || user === void 0 ? void 0 : user.permissions) {
             let projects = yield ModalProjct_2.default.find({});
+            for (const project of projects) {
+                const users = yield ModelUser_1.default.find({ _id: { $in: project.userId } });
+                // Extracting names from the retrieved users
+                users.map(user => user.name);
+            }
+            console.log(projects);
             return res.json(projects);
         }
         else {
             let projects = yield ModalProjct_2.default.find({ userId: req.body.id });
+            //       for(const project of projects){
+            //         const users = await UsersModel.find({ _id: { $in: project.userId } });
+            //         const userNames = users.map(user => user.name);
+            //         // project.userId = userNames;
+            // // console.log("-------------",project);
+            //        }
+            console.log(projects);
             return res.json(projects);
         }
     }

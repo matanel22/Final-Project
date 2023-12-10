@@ -38,7 +38,7 @@ const SearchButton = styled.button`
 const SearchBar: React.FC = () => {
   const filteredNames = useSetRecoilState(searchPro);
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value);
+    // console.log(event.target.value);
     filteredNames(event.target.value);
   };
   return (
