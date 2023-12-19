@@ -35,7 +35,7 @@ export const signUp=async(req:Request,res:Response)=>{
     // }
     // else{
       try {
-        console.log(req.body);
+        
         
          let user:any=await new UsersModel({
           _id:new mongoose.Types.ObjectId(),

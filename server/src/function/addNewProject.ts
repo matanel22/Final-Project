@@ -34,23 +34,23 @@ if (lastProjectInCurrentYear) {
 }
 
 
-const subject=`${data.nameProject} הצטרפות לפרוייקט`
-const text ="ברכות על הצטרפות להיות חלק מהפרוויקט שלנו"
+const subject=`${data.nameProject} הצטרפות לפרויקט`
+const text =" ברכות על הצטרפותך לפרויקט שלנו"
 const allUsers=await UsersModel.find({name:selectedItems})
         for(const user of allUsers){
             data.staff.push(user._id);
         }
         const userEmails = allUsers.map((user) => user.email);
-           const newProject= await new ProjectModel({
+            const newProject= await new ProjectModel({
             nameProject:data.nameProject,
             client:data.client,
-          projectNumber:newProjectNumber,
+            projectNumber:newProjectNumber,
             staff:data.staff,
             statusProject:data.statusProject,
             amountOfUsers:data.amountOfUsers,
 
            })
-           console.log(newProject);
+          
            newProject.save();
 
            

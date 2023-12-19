@@ -49,7 +49,7 @@ export interface IProps {
 const TITALE_PROJECTS = [
   { title: "שם הפרוייקט" },
   { title: "מספר פרוייקט" },
-  { title: "שם הצוות" },
+  { title: "אחראי פיתוח" },
   { title: "שם הלקוח" },
   { title: "סטטוס הפרוייקט" },
   { title: "סטטוס משימות" },
@@ -73,27 +73,14 @@ const ProjectList: React.FC<{
     openIndex: 0,
   });
   const [isOpenUpdate, setIsOpenUpdate] = useState(false);
-  const [isOpenUrl, setIsOpenUrl] = useState(false);
-  const [openUrlTask, setOpenUrlTask] = useState<Open>({
-    stap: false,
-    openIndex: 0,
-  });
+
   const [indexProjData, setIndexProjData] = useState(0);
   const [isIndex, setIsIndex] = useState(0);
-  const [isIndexOpenMission, setIsIndexOpenMission] = useState(0);
+
   // const [isPro, setDataProject] = useRecoilState(AllProjectData);
   const sendingToTheCreation = (index: number) => {
     setIsIndex(index);
     setIsOpenShow({ ...isOpenShow, stap: !isOpenShow.stap, openIndex: index });
-  };
-  const sendingToStutus = (index: number) => {
-    setIsOpenUrl(true);
-    setIsIndexOpenMission(index);
-    setOpenUrlTask((prevOpenUrlTask) => ({
-      ...prevOpenUrlTask,
-      stap: !prevOpenUrlTask.stap,
-      openIndex: index,
-    }));
   };
 
   const [validPremissionUsers, setValidPremissionUsers] = useState(false);
@@ -109,16 +96,6 @@ const ProjectList: React.FC<{
     return setIsUpdate(true);
   };
 
-  // const toggleEditMode = (index: number) => {
-  //   const [isOpen, setIsOpen] = useState<Open>({ stap: false, openIndex: 0 });
-  //   setEditMode((prevFormData) => {
-  //     const updatedEditTogle = [...prevFormData];
-  //     updatedEditTogle[index] = !updatedEditTogle[index];
-  //     // console.log(updatedEditTogle);
-  //     return updatedEditTogle;
-  //   });
-  // };
-
   const color = blue[100];
   return (
     <Container>
@@ -132,18 +109,21 @@ const ProjectList: React.FC<{
                 bgcolor: color,
                 "& th": {
                   fontSize: "1.25rem",
-                  // color: "rgba(96, 96, 96)",
                 },
               }}
             >
-              {TITALE_PROJECTS.map((item: any) => {
-                return <TableCell align="right">{item.title}</TableCell>;
+              {TITALE_PROJECTS.map((item, index) => {
+                return (
+                  <TableCell align="right" key={index}>
+                    {item.title}
+                  </TableCell>
+                );
               })}
               {isOpenShow.stap && isOpenShow.openIndex === isIndex && (
-                <>
+                <TableCell align="right">
                   <TableCell align="right">לעדכון הפרוייקט</TableCell>
                   <TableCell align="right">למשימות הפרוייקט</TableCell>
-                </>
+                </TableCell>
               )}
             </TableRow>
           </TableHead>
@@ -152,64 +132,44 @@ const ProjectList: React.FC<{
             {props.dataProject.length &&
               props.dataProject.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell align="right" sx={{ fontSize: "1.5rem" }}>
-                    {item.nameProject}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: "1.2rem" }} align="right">
-                    {item.projectNumber}
-                  </TableCell>
-                  <ListUsersOfProject staff={item.staff} />
-
-                  <TableCell sx={{ fontSize: "1.2rem" }} align="right">
-                    {item.client}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: "1.2rem" }} align="right">
-                    {item.statusProject}
+                  <TableCell align="right">{item.nameProject}</TableCell>
+                  <TableCell align="right">{item.projectNumber}</TableCell>
+                  <TableCell align="right">
+                    <ListUsersOfProject staff={item.staff} />
                   </TableCell>
 
-                  <TableCell sx={{ fontSize: "1.2rem" }} align="right">
-                    <button
-                      onClick={() => {
-                        // setOpenUrlTask({openIndex:true});
-                        sendingToStutus(index);
-                      }}
-                    >
-                      {" "}
-                      test
-                    </button>
-                  </TableCell>
+                  <TableCell align="right">{item.client}</TableCell>
+                  <TableCell align="right">{item.statusProject}</TableCell>
 
-                  {isOpenUrl && (
-                    <TableCell sx={{ fontSize: "1.2rem" }} align="right">
-                      <UrlTask
-                        projectId={item._id}
-                        isIndexOpenMission={index}
-                        openUrlTask={openUrlTask}
-                      ></UrlTask>
-                    </TableCell>
-                  )}
+                  <TableCell align="right">
+                    <UrlTask projectId={item._id}></UrlTask>
+                  </TableCell>
+                  {/* )} */}
+
                   {isOpenShow.stap && isOpenShow.openIndex === index && (
                     <Buttons
                       projectId={item._id}
-                      // onClickMission={setProjId}
                       validPremissionUsers={validPremissionUsers}
                       onClickShowModal={showFormOnEdit}
                       index={index}
                       buttonDel="משימות"
-                      buttonUpdate="עדכון פרוייקט"
+                      buttonUpdate="עדכון"
                     />
                   )}
-                  <ArrowLeft
-                    src={
-                      isOpenShow.stap && isOpenShow.openIndex === index
-                        ? duonArrow
-                        : leftArrow
-                    }
-                    width={"20px"}
-                    onClick={() => {
-                      sendingToTheCreation(index);
-                    }}
-                  />
+
+                  <TableCell align="right">
+                    <ArrowLeft
+                      src={
+                        isOpenShow.stap && isOpenShow.openIndex === index
+                          ? duonArrow
+                          : leftArrow
+                      }
+                      width={"20px"}
+                      onClick={() => {
+                        sendingToTheCreation(index);
+                      }}
+                    />
+                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>
@@ -235,7 +195,7 @@ const ArrowLeft = styled.img`
 
 export const Container = styled.div`
   padding: 10px;
-  width: 70vw;
+  width: 80vw;
   margin: 0 auto;
   ${css`
     @media (max-width: 768px) {
@@ -245,92 +205,8 @@ export const Container = styled.div`
     }
   `}
 `;
-const WidthTable = styled.div`
-  width: 20vw;
-`;
-const TableContaine = styled.div`
-  width: 100vw;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const StyledTable = styled.table`
-  border-collapse: collapse;
-  // width: 100%;
-`;
 
 export const TableCe = styled.td`
   border: 1px solid black;
   padding: 8px;
 `;
-
-const StyledInput = styled.input`
-  border: none;
-  // width: 20%;
-  background-color: transparent;
-  fontsize: 1.5rem;
-`;
-
-const Butto = styled.button`
-  margin-top: 8px;
-`;
-
-// import * as React from 'react';
-// import { styled } from '@mui/material/styles';
-// import Table from '@mui/material/Table';
-// import TableBody from '@mui/material/TableBody';
-// import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-// import TableContainer from '@mui/material/TableContainer';
-// import TableHead from '@mui/material/TableHead';
-// import TableRow from '@mui/material/TableRow';
-// import Paper from '@mui/material/Paper';
-
-// function createData(
-//   name: string,
-//   calories: number,
-//   fat: number,
-//   carbs: number,
-//   protein: number,
-// ) {
-//   return { name, calories, fat, carbs, protein };
-// }
-
-// const rows = [
-//   createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-//   createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-//   createData('Eclair', 262, 16.0, 24, 6.0),
-//   createData('Cupcake', 305, 3.7, 67, 4.3),
-//   createData('Gingerbread', 356, 16.0, 49, 3.9),
-// ];
-
-// export default function CustomizedTables() {
-//   return (
-//     <TableContainer component={Paper}>
-//       <Table sx={{ minWidth: 700 }} aria-label="customized table">
-//         <TableHead>
-//           <TableRow>
-//             <StyledTableCell>Dessert (100g serving)</StyledTableCell>
-//             <StyledTableCell align="right">Calories</StyledTableCell>
-//             <StyledTableCell align="right">Fat&nbsp;(g)</StyledTableCell>
-//             <StyledTableCell align="right">Carbs&nbsp;(g)</StyledTableCell>
-//             <StyledTableCell align="right">Protein&nbsp;(g)</StyledTableCell>
-//           </TableRow>
-//         </TableHead>
-//         <TableBody>
-//           {rows.map((row) => (
-//             <StyledTableRow key={row.name}>
-//               <StyledTableCell component="th" scope="row">
-//                 {row.name}
-//               </StyledTableCell>
-//               <StyledTableCell align="right">{row.calories}</StyledTableCell>
-//               <StyledTableCell align="right">{row.fat}</StyledTableCell>
-//               <StyledTableCell align="right">{row.carbs}</StyledTableCell>
-//               <StyledTableCell align="right">{row.protein}</StyledTableCell>
-//             </StyledTableRow>
-//           ))}
-//         </TableBody>
-//       </Table>
-//     </TableContainer>
-//   );
-// }

@@ -122,13 +122,20 @@ const TasksList = () => {
         <ButtonsPageTask />
       </AppBar>
       <Container>
-        <PageLoader>{}</PageLoader>
+        <PageLoader>{""}</PageLoader>
 
         <TableContainer>
           <Table aria-label="simple table">
             <TableHead>
               <RemindUser dataMission={mis}></RemindUser>
-              <TableRow sx={{ bgcolor: color }}>
+              <TableRow
+                sx={{
+                  bgcolor: color,
+                  "& th": {
+                    fontSize: "1.25rem",
+                  },
+                }}
+              >
                 {TITALE_MISSIONS.map((item, index) => {
                   return (
                     <TableCell align="right" key={index}>
