@@ -74,7 +74,7 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         catch (err) {
             console.log(err);
-            res.status(400).json({ err: "email Illegal" });
+            res.status(400).json({ err: "email llegal" });
         }
     }
 });
@@ -98,15 +98,13 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.login = login;
 const userInfo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let token = req.header("x-api-key");
-    if (!token) {
-        return res.status(404).json("your most connect");
-    }
     try {
+        let token = req.header("x-api-key");
+        if (!token) {
+            return res.status(404).json("your most connect");
+        }
         let docoToken = jsonwebtoken_1.default.verify(token, "matanel");
-        console.log(docoToken);
         let user = yield ModelUser_1.default.find({ _id: docoToken });
-        console.log(user);
         return res.json(user);
     }
     catch (error) {
@@ -116,9 +114,8 @@ const userInfo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.userInfo = userInfo;
 const userLogout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const deleteUser = yield ModelUser_1.default.deleteOne({ _id: req.body.id });
-        console.log(deleteUser);
-        res.send(deleteUser);
+        // const deleteUser=await UsersModel.deleteOne({_id:req.body.id})
+        // res.send(deleteUser)
     }
     catch (error) {
         console.log(error);
@@ -128,14 +125,8 @@ const userLogout = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 exports.userLogout = userLogout;
 const updatePermissionUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log(req.body);
         const nameUserUpdate = yield ModelUser_1.default.updateOne({ _id: req.body.updateUserById }, { $set: { permissions: req.body.namePermission.trim() === "מנהל" ? true : false } });
-        // nameUserUpdate?.permissions=req.body.nameUserUpdate==="מנהל"?true:false;
-        // if(nameUserUpdate){
-        //   nameUserUpdate.permissions=req.body.namePermission.trim()==="מנהל"?true:false;
-        // }
-        console.log(nameUserUpdate);
-        res.send("smkmkmv");
+        res.send(nameUserUpdate);
     }
     catch (error) {
         console.log(error);

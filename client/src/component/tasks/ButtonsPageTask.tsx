@@ -1,37 +1,36 @@
 import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useRecoilState } from "recoil";
-
-import { userId } from "../atom/Atom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { useHistory } from "react-router-dom";
+import { UserInfo, userId } from "../atom/Atom";
 import styled from "styled-components";
 import React, { useEffect, useState } from "react";
+import { ButtonUi } from "../Menu";
 
 export const ButtonsPageTask = () => {
   const [useId, setUseId] = useRecoilState(userId);
-
+  const useInfo = useRecoilValue(UserInfo);
+  const history = useHistory();
   return (
     <ButoonNav>
-      <Link to={`/projects/${useId}`}>
-        <Button
-          color="success"
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          הפרוייקטים של המדור
-        </Button>
-      </Link>
-      <Link to="/createTasks">
-        <Button
-          variant="contained"
-          color="success"
-          sx={{ mt: 3, mb: 2 }}
-          // onClick={sendingToTheCreation}
-        >
-          ליצירת משימה חדשה
-        </Button>
-      </Link>
+      {/* <Link to={`/projects/${useInfo._id}`}> */}
+      <ButtonUi
+        onClick={() => {
+          history.push(`/projects/${useInfo._id}`);
+        }}
+      >
+        הפרוייקטים של המדור
+      </ButtonUi>
+      {/* </Link> */}
+      {/* <Link to="/createTasks"> */}
+      <ButtonUi
+        onClick={() => {
+          history.push(`/createTasks`);
+        }}
+      >
+        ליצירת משימה חדשה
+      </ButtonUi>
+      {/* </Link> */}
     </ButoonNav>
   );
 };

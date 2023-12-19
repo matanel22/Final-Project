@@ -7,9 +7,8 @@ exports.validMustUser = exports.genToken = exports.validUser = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const joi_1 = __importDefault(require("joi"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-// import authToken from "../auto/autoToken";
 const UserSchema = new mongoose_1.default.Schema({
-    // _id: mongoose.Schema.Types.ObjectId,
+    _id: mongoose_1.default.Schema.Types.ObjectId,
     permissions: Boolean,
     name: String,
     email: String,

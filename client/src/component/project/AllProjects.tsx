@@ -3,19 +3,30 @@ import React from "react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import ProjectList from "./ProjectList";
-import { useRecoilState } from "recoil";
-import { AllProjectData, allUsers, userId, userName } from "../atom/Atom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  AllProjectData,
+  UserInfo,
+  allUsers,
+  searchPro,
+  userId,
+  userName,
+} from "../atom/Atom";
 import styled from "styled-components";
 import { useHistory, useParams } from "react-router-dom";
-import OvalButton from "../UI/ButtonStyle";
+
 import { ButtonUi, Menu } from "../Menu";
-import menu from "../../svg/menu.svg";
+
+import UserSvg from "../../svg/user.svg";
+import UserProf from "../../svg/userProfile.svg";
 import { LogOutUser } from "./LogOutUser";
+
 export interface IProps {
   _id: string;
   readonly nameProject: string;
-  staff: string;
-  userId: string;
+  // staff: string;
+  staff: string[];
+  projectNumber: string;
   readonly client: string;
   statusProject: string;
   amountOfUsers: string;
@@ -26,74 +37,65 @@ export interface MyObject {
 }
 const AllProjects = () => {
   const [dataProject, setDataProject] = useRecoilState(AllProjectData);
-
-  const [validata, setValidata] = useState(false);
-  // const [useId, setUseId] = useRecoilState<string>(userId);
-  const [NY, setNameUser] = useRecoilState<string>(userName);
-  const [validPremissionUsers, setValidPremissionUsers] = useState(false);
-  const [open, setOpen] = React.useState(true);
-  const handleOpen = () => setOpen(true);
-  const [userDelete, setUserDelete] = useState("");
+  const filteredNames = useRecoilValue(searchPro);
   const [openModal, setOpenModal] = useState(false);
   const histury = useHistory();
-  const [openMenu, setOpenMenu] = useState(false);
+
   const articleId: MyObject = useParams();
-
+  const userInfo = useRecoilValue(UserInfo);
   const [listUsers, setListUsers] = useRecoilState(allUsers);
-
+  // const userInfo = useRecoilValue(UserInfo);
   useEffect(() => {
-    let url = "http://localhost:3001/api/routs/router/allUsers";
-    axios.get(url).then((res) => {
-      setListUsers(res.data);
-    });
-
-    const fetch = async (id: string) => {
-      try {
-        let url = "http://localhost:3001/api/routs/router/allProjects";
-        await axios.post(url, { id }).then((response) => {
-          console.log(response.data);
-          setValidata(true);
-
-          setDataProject(response.data);
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetch(articleId.id);
-  }, []);
-
-  // let quantityCheck =
-  //   dataProject.length === 0 ? <h1>לא נוצרו פרוייקטים </h1> : "";
-  const removeUser = (id: string) => {
-    let url = "http://localhost:3001/api/routs/router/logOutUser";
-    axios
-      .post(url, { id })
-      .then((response) => {
-        setUserDelete("ההתנתקות בוצעה בהצלחה");
-        histury.push("/login");
-      })
-      .catch((err) => {
-        console.log(err);
+    if (filteredNames) {
+      let url = "http://localhost:3001/api/routs/router/organizationFind";
+      axios.post(url, { filteredNames }).then((res) => {
+        setDataProject(res.data);
       });
-  };
-  // useEffect(() => {
-  //   const userS = (_id: string) => {
-  //     let url = "http://localhost:3001/api/routs/router/usersSpecific";
-  //     axios
-  //       .post(url, { _id })
-  //       .then((res) => {
-  //         if (res.data.permissions) {
-  //           setValidPremissionUsers(true);
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //       });
-  //   };
-  //   userS(useId);
-  // }, []);
+    } else {
+      const fetch = async (id: string) => {
+        try {
+          let url = "http://localhost:3001/api/routs/router/allProjects";
+          await axios.post(url, { id }).then((response) => {
+            const updatedData = response.data.map(
+              (proj: any, index: number) => {
+                const userIdToName = new Map(
+                  listUsers.map((user) => [user._id, user.name])
+                );
+
+                const staff = proj.staff
+                  .map((userId: any) => userIdToName.get(userId))
+                  .filter(Boolean);
+
+                return {
+                  ...proj,
+                  staff,
+                };
+              }
+            );
+
+            setDataProject(updatedData);
+          });
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+      fetch(articleId.id);
+    }
+  }, [filteredNames]);
+
+  // const removeUser = (id: string) => {
+  //   let url = "http://localhost:3001/api/routs/router/logOutUser";
+  //   axios
+  //     .post(url, { id })
+  //     .then((response) => {
+  //       // setUserDelete("ההתנתקות בוצעה בהצלחה");
+  //       histury.push("/login");
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
 
   return (
     <StyleHome>
@@ -105,22 +107,27 @@ const AllProjects = () => {
         position="static"
       >
         <WidthTable>
-          <Menu />
-          {/* <MenuBar
-            src={menu}
+          {userInfo.permissions && <Menu />}
+          <User
+            src={UserProf}
             onClick={() => {
-              setOpenMenu(true);
-              // setOpenModal(true);
+              setOpenModal(true);
             }}
-          /> */}
-
+          />
+          {/* <ButtonUi
+            onClick={() => {
+              setOpenModal(true);
+            }}
+          >
+            ההתנתקות
+          </ButtonUi> */}
           <LogOutUser
-            removeUser={removeUser}
+            // removeUser={removeUser}
             openModal={openModal}
             setOpenModal={setOpenModal}
           ></LogOutUser>
 
-          <UserWelcome> {`ברוך הבא ${NY}`}</UserWelcome>
+          <UserWelcome> {`ברוך הבא ${userInfo.name}`}</UserWelcome>
           <ButtonUi
             onClick={() => {
               histury.push("/createProject");
@@ -139,6 +146,7 @@ export default AllProjects;
 
 const WidthTable = styled.div`
   width: 100vw;
+  margin-top: 0.5rem;
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -147,7 +155,10 @@ const WidthTable = styled.div`
 const StyleHome = styled.div`
   // background-color: blue;
 `;
-
+const User = styled.img`
+  width: 80px;
+  height: 80px;
+`;
 const UserWelcome = styled.div`
   font-size: 2rem;
 `;

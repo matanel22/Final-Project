@@ -13,10 +13,12 @@ interface IFormMission {
   export interface IProps {
     _id: string;
     nameProject: string;
-    userId:string
-    staff: string;
+    // userId:string
+    staff: string[];
     client: string;
     statusProject: string;
+  projectNumber: string;
+    
     amountOfUsers: string;
   }
 
@@ -27,6 +29,7 @@ interface IFormMission {
     pass:string,
     role: string,
     data_created:Date,
+
     permissions: boolean
   }
 
@@ -56,6 +59,10 @@ export const userName=atom<string>({
     key:"projectData"
 
   })
+  export const searchPro=atom({
+    default:"",
+    key:"serach"
+  })
   export const userId=atom<string>({
     default:"",
     key:"_id"
@@ -69,5 +76,16 @@ export const userName=atom<string>({
   export const allUsers=atom<IUsers[]>({
     default:[],
     key:""
+  })
+  export const UserInfo=atom<IUsers>({
+    default:{ 
+      _id: "",
+      name: "",
+      email:"",
+      pass:"",
+      role: "",
+      data_created:new Date,
+      permissions: false},
+      key:"userInfo"
   })
 

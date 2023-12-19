@@ -14,9 +14,9 @@ import styled from "styled-components";
 export interface IProps {
   _id: string;
   nameProject: string;
-  staff: string;
+  staff: string[];
   client: string;
-  userId: string;
+  // matchingUsers: string[];
   statusProject: string;
   amountOfUsers: string;
 }
@@ -71,8 +71,8 @@ const UpdateProject: React.FC<{
   useEffect(() => {
     reset({
       _id: props.onUpdate._id,
-      userId: props.onUpdate.userId,
-      staff: props.onUpdate.staff,
+      // userId: props.onUpdate.userId,
+      // staff: props.onUpdate.staff,
       statusProject: props.onUpdate.statusProject,
       amountOfUsers: props.onUpdate.amountOfUsers,
       nameProject: props.onUpdate.nameProject,
@@ -84,42 +84,42 @@ const UpdateProject: React.FC<{
     setIsUpdate(!isUpdate);
 
     listUsers.map(async (item: any) => {
-      if (item.name === data.staff) {
-        data.userId = item._id;
-        let url = `http://localhost:3001/api/routs/router/updateProject`;
-        await axios
-          .put(url, data)
-          .then((res) => {
-            console.log(res.data);
-            const index = dataProject.findIndex((obj) => obj._id === data._id);
-            const updatedObject = {
-              ...dataProject[index],
-              amountOfUsers: data.amountOfUsers,
-              client: data.client,
-              _id: data._id,
-              nameProject: data.nameProject,
-              staff: data.staff,
-              statusProject: data.statusProject,
-              userId: data.userId,
-            };
+      // if (item.name === data.staff) {
+      //   data.userId = item._id;
+      let url = `http://localhost:3001/api/routs/router/updateProject`;
+      await axios
+        .put(url, data)
+        .then((res) => {
+          console.log(res.data);
+          const index = dataProject.findIndex((obj) => obj._id === data._id);
+          const updatedObject = {
+            ...dataProject[index],
+            amountOfUsers: data.amountOfUsers,
+            client: data.client,
+            _id: data._id,
+            nameProject: data.nameProject,
+            // staff: data.staff,
+            statusProject: data.statusProject,
+            // userId: data.userId,
+          };
 
-            const newArray: any = [
-              ...dataProject.slice(0, index),
-              updatedObject,
-              ...dataProject.slice(index + 1),
-            ];
+          const newArray: any = [
+            ...dataProject.slice(0, index),
+            updatedObject,
+            ...dataProject.slice(index + 1),
+          ];
 
-            setDataProject(newArray);
-            setIsSucced(true);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-        setIsUser(true);
-        setOpen(false);
-      } else {
-        setValidUser("שם מפתח לא קיים");
-      }
+          setDataProject(newArray);
+          setIsSucced(true);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      setIsUser(true);
+      setOpen(false);
+      // } else {
+      //   setValidUser("שם מפתח לא קיים");
+      // }
     });
   };
 

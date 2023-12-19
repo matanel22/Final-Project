@@ -131,7 +131,7 @@ export default function SignUp() {
 
   const handleSubmit = (event: any) => {
     event.preventDefault();
-    console.log(state.userName);
+    console.log(state);
 
     if (!isFormValid) {
       dispatch({ type: "FATCH_ERROR" });
@@ -142,7 +142,8 @@ export default function SignUp() {
         .post(url, {
           name: state.userName,
           email: state.email,
-          pass: state.passWord,
+
+          password: state.password,
         })
         .then((res) => {
           dispatch({ type: "FATCH_SUCCESS" });

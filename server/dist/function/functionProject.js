@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.allMissionOfProject = exports.updateProject = exports.projSpecific = exports.specificProject = exports.allProject = void 0;
+exports.allMissionOfProject = exports.updateProject = exports.projSpecific = exports.specificProject = exports.organizationFind = exports.allProject = void 0;
 const ModalProjct_1 = __importDefault(require("../model/ModalProjct"));
 const ModalProjct_2 = __importDefault(require("../model/ModalProjct"));
 const modelMission_1 = __importDefault(require("../model/modelMission"));
@@ -23,10 +23,23 @@ const allProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         let user = yield ModelUser_1.default.findOne({ _id: req.body.id });
         if (user === null || user === void 0 ? void 0 : user.permissions) {
             let projects = yield ModalProjct_2.default.find({});
+            for (const project of projects) {
+                const users = yield ModelUser_1.default.find({ _id: { $in: project.userId } });
+                // Extracting names from the retrieved users
+                users.map(user => user.name);
+            }
+            console.log(projects);
             return res.json(projects);
         }
         else {
             let projects = yield ModalProjct_2.default.find({ userId: req.body.id });
+            //       for(const project of projects){
+            //         const users = await UsersModel.find({ _id: { $in: project.userId } });
+            //         const userNames = users.map(user => user.name);
+            //         // project.userId = userNames;
+            // // console.log("-------------",project);
+            //        }
+            console.log(projects);
             return res.json(projects);
         }
     }
@@ -35,6 +48,26 @@ const allProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.allProject = allProject;
+// function searchByName(array:[], name:string) {
+//   return array.find(item => item.name === name);
+// }
+const organizationFind = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let nameSearch = req.body.findingSearch;
+        let projects = yield ModalProjct_2.default.find({});
+        let find = projects.filter(item => item.nameProject === nameSearch);
+        if (find) {
+            res.send(find);
+        }
+        else {
+            res.send({ mes: "dont find project" });
+        }
+    }
+    catch (error) {
+        res.status(404).send(error);
+    }
+});
+exports.organizationFind = organizationFind;
 const specificProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let project = yield ModalProjct_2.default.find({ id: req.body.id });

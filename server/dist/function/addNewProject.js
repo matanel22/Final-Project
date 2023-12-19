@@ -14,38 +14,54 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addCreatProject = void 0;
 const ModalProjct_1 = __importDefault(require("../model/ModalProjct"));
-const ModalProjct_2 = require("../model/ModalProjct");
 const ModelUser_1 = __importDefault(require("../model/ModelUser"));
+const nodemailer_1 = __importDefault(require("nodemailer"));
 const addCreatProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let flag = false;
-    let validata = (0, ModalProjct_2.validProject)(req.body);
-    if (validata.error) {
-        return res.status(404).json(validata.error.details);
+    try {
+        let { data, selectedItems } = req.body;
+        // console.log(data,selectedItems );
+        // const { to, subject, text } = req.body;
+        const subject = `${data.nameProject} הצטרפות לפרוייקט`;
+        const text = "ברכות על הצטרפות להיות חלק מהפרוויקט שלנו";
+        const allUsers = yield ModelUser_1.default.find({ name: selectedItems });
+        for (const user of allUsers) {
+            data.userId.push(user._id);
+        }
+        const newProject = yield new ModalProjct_1.default({
+            nameProject: data.nameProject,
+            client: data.client,
+            userId: data.userId,
+            statusProject: data.statusProject,
+            amountOfUsers: data.amountOfUsers,
+        });
+        console.log(newProject);
+        newProject.save();
+        const transporter = nodemailer_1.default.createTransport({
+            service: 'gmail',
+            auth: {
+                user: '49matanel@gmail.com',
+                pass: 'matanelHadad94',
+            },
+        });
+        const mailOptions = {
+            from: '49matanel@gmail.com',
+            to: '39teahila@gmail.com',
+            subject: subject,
+            text: text,
+        };
+        //  transporter.sendMail(mailOptions, (error, info) => {
+        //   if (error) {
+        //     console.error(error); // Log the error for debugging
+        //     return res.status(500).send(error.toString());
+        //   }
+        //   // Send the project details in the response
+        //   res.status(200).send('Email sent: ' + info.response);
+        // });
+        res.status(200).send(newProject);
     }
-    else {
-        try {
-            let project = yield new ModalProjct_1.default(req.body);
-            if (!project) {
-                return res.json({ msg: "please try again" });
-            }
-            let user = yield ModelUser_1.default.find({});
-            user.map((item, index) => {
-                var _a;
-                if (((_a = item.name) === null || _a === void 0 ? void 0 : _a.trim()) === project.staff) {
-                    project.userId = item._id.toString();
-                    project.save();
-                    console.log(project.userId);
-                    flag = true;
-                    return res.json(project);
-                }
-            });
-            if (!flag) {
-                return res.json("dont found is developer");
-            }
-        }
-        catch (error) {
-            return res.status(404).json({ msg: error });
-        }
+    catch (error) {
+        console.log(error);
+        return res.status(404).json(error);
     }
 });
 exports.addCreatProject = addCreatProject;

@@ -11,22 +11,23 @@ interface IProps {
 export const GetAllUsers = (props: IProps) => {
   const [listUsers, setListUsers] = useRecoilState(allUsers);
   const [selectedItem, setSelectedItem] = useState("");
+  const [editOption, setEditOption] = React.useState({ open: false, ind: 0 });
 
   const handleChange = (index: number, selectedValue: any) => {
-    console.log(selectedValue);
-    console.log(listUsers);
-
     setSelectedItem(selectedValue);
-    // Update the array of users based on the selected option
-    const updatedUsers: any = listUsers.map((user, i) =>
-      i === index ? { ...user, permissions: selectedValue === "מנהל" } : user
+    const updatedUsers = listUsers.map((user: any, i: number) =>
+      i === index ? { ...user, permission: selectedValue === "מנהל" } : user
     );
     setListUsers(updatedUsers);
+  };
+  const handelNameChenge = (index: number) => {
+    setEditOption({ ...editOption, open: !editOption.open, ind: index });
   };
 
   const handleUpdateClick = (
     updateUserById: string,
-    namePermission: string
+    namePermission: string,
+    index: number
   ) => {
     let url = `http://localhost:3001/api/routs/router/updatePermissionUser`;
     axios.post(url, { namePermission, updateUserById }).then((res) => {
@@ -40,19 +41,24 @@ export const GetAllUsers = (props: IProps) => {
           {listUsers.map((list: any, index) => (
             <WrapperListNameUsers>
               <RightColumn>שם מלא:</RightColumn>
-              <ListItem>{list.name}</ListItem>;
-              <SelectStyled
-                value={list.permissions ? "מנהל" : "משתמש"}
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                  handleChange(index, e.target.value);
-                }}
-              >
-                <OptionStyled>{"משתמש"}</OptionStyled>
-                <OptionStyled>{"מנהל"} </OptionStyled>
-              </SelectStyled>
+              <ListItem>{list.name}</ListItem>
+
+              {editOption.open && editOption.ind === index ? (
+                <SelectStyled
+                  value={list.permissions ? "מנהל" : "משתמש"}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                    handleChange(index, e.target.value);
+                  }}
+                >
+                  <OptionStyled>{"משתמש"}</OptionStyled>
+                  <OptionStyled>{"מנהל"} </OptionStyled>
+                </SelectStyled>
+              ) : (
+                <ListItem>{list.permissions ? "מנהל" : "משתמש"}</ListItem>
+              )}
               <BlueButton
                 onClick={() => {
-                  handleUpdateClick(list._id, selectedItem);
+                  handelNameChenge(index);
                 }}
               >
                 עדכן

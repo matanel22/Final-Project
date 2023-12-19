@@ -13,8 +13,8 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
-import { token, userId, userName } from "../atom/Atom";
-import { useRecoilState } from "recoil";
+import { token, userId, UserInfo, userName } from "../atom/Atom";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { Alert } from "@mui/material";
 import hompage from "../image/homepage.png";
 import { ShellForForms } from "../shellForForms";
@@ -49,11 +49,12 @@ const theme = createTheme();
 
 export default function Home() {
   const [email, setIsEmail] = useState("");
-  const [pass, setIsPass] = useState("");
+  const [password, setIsPass] = useState("");
   const [validEmail, setValidEmail] = useState(false);
   const [validPass, setValidPass] = useState(false);
   const [validToken, setValidToken] = useState(false);
   const [useId, setUseId] = useRecoilState<string>(userId);
+  const [userInfo, setUserInfo] = useRecoilState(UserInfo);
   // const [NY, setNameUser] = useRecoilState<string>(userName);
 
   const [isNotUserFlag, setIsNotUserFlag] = useState(false);
@@ -67,18 +68,21 @@ export default function Home() {
   const sendPass = (event: any) => {
     setIsPass(event.target.value);
   };
+  // React.useEffect(() => {
+  //   if (userInfo._id) histury.push("/projects/" + userInfo._id);
+  // }, [userInfo]);
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
 
-    if (pass.trim().length === 0) {
-      setValidPass(true);
-      return;
-    }
+    // if (password.trim().length === 0) {
+    //   setValidPass(true);
+    //   return;
+    // }
 
     let url = "http://localhost:3001/api/routs/router/login";
     axios
-      .post(url, { email, pass })
+      .post(url, { email, password })
       .then(async (res) => {
         console.log(res.data);
         localStorage.setItem("tok", res.data.token);
@@ -88,8 +92,8 @@ export default function Home() {
           .get(url, { headers: { "x-api-key": localStorage["tok"] } })
           .then((res) => {
             setUseId(res.data[0]._id);
+            setUserInfo(res.data[0]);
 
-            // setNameUser(res.data[0].name);
             setValidToken(true);
             histury.push("/projects/" + res.data[0]._id);
           })
@@ -155,7 +159,7 @@ export default function Home() {
               {validEmail && <p>nkndsknkn</p>}
               <TextField
                 onChange={sendPass}
-                value={pass}
+                value={password}
                 margin="normal"
                 required
                 fullWidth

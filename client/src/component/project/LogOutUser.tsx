@@ -2,18 +2,17 @@ import { Modal } from "@mui/material";
 import styled from "styled-components";
 import React, { Dispatch, useState } from "react";
 import { NavButton } from "../UI/NavButton";
-import { useRecoilState } from "recoil";
-import { userId } from "../atom/Atom";
+import { useHistory } from "react-router-dom";
 
 interface IProps {
-  removeUser(id: string): void;
+  // removeUser(id: string): void;
   openModal: boolean;
   setOpenModal: Dispatch<React.SetStateAction<boolean>>;
 }
 export const LogOutUser = (props: IProps) => {
   const [open, setOpen] = React.useState(true);
   const handleClose = () => setOpen(false);
-  const [useId, setUseId] = useRecoilState(userId);
+  const history = useHistory();
 
   return (
     <Modal
@@ -26,7 +25,8 @@ export const LogOutUser = (props: IProps) => {
         <p> ברצונך להתנתק</p>
         <NavButton
           onClick={() => {
-            // props.removeUser(useId);
+            localStorage.removeItem("tok");
+            history.push("/login");
           }}
         >
           כן
@@ -36,7 +36,7 @@ export const LogOutUser = (props: IProps) => {
             props.setOpenModal(false);
           }}
         >
-          לא
+          ביטול
         </NavButton>
       </WrapperModal>
     </Modal>
