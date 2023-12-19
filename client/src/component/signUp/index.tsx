@@ -210,14 +210,6 @@ export default function SignUp() {
               >
                 כניסה
               </Button>
-
-              {/* <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  שכחת סיסמא
-                </Link>
-              </Grid>
-            </Grid> */}
             </Box>
           </Box>
           <Copyright sx={{ mt: 8, mb: 4 }} />

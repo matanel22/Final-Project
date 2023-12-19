@@ -146,7 +146,7 @@ export default AllProjects;
 
 const WidthTable = styled.div`
   width: 100vw;
-  margin-top: 0.5rem;
+  margin-top: 0rem;
   display: flex;
   justify-content: space-around;
   align-items: center;

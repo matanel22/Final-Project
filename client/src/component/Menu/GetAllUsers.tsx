@@ -83,6 +83,7 @@ const Container = styled.div`
   left: 50%;
   width: 40vw;
   height: 50vh;
+  border-radius: 30px;
   background: linear-gradient(
     0deg,
     rgba(45, 91, 253, 1) 0%,

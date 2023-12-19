@@ -1,10 +1,11 @@
 // SearchBar.tsx
 import React, { useState } from "react";
 import styled from "styled-components";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { searchPro } from "../atom/Atom";
 const SearchContainer = styled.div`
   display: flex;
+  justify-content: center;
   align-items: center;
 `;
 

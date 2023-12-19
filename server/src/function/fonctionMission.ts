@@ -33,7 +33,7 @@ export const updateMission=async(req:Request,res:Response)=>{
           date_created:dayjs(req.body.date_created).format('MM-DD-YYYY').toString(),
           endDate: dayjs(req.body.endDate).format('MM-DD-YYYY').toString(),
           remarks:req.body.remarks,
-          // taskType:req.body.taskType
+          
 
         });
         return res.send(updateMissionData);

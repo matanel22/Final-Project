@@ -150,7 +150,7 @@ export default function Home() {
                 required
                 fullWidth
                 id="email"
-                label="אימייל "
+                label="אימייל"
                 name="email"
                 autoComplete="email"
                 autoFocus

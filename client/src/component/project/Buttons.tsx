@@ -35,7 +35,7 @@ export const Buttons = (props: IProps) => {
         {
           <Button
             variant="contained"
-            color="success"
+            color="primary"
             onClick={() => {
               props.onClickShowModal(props.projectId, props.index);
             }}

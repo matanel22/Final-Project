@@ -1,11 +1,6 @@
 import styled from "styled-components";
 import React, { useState, useEffect } from "react";
 import { GetAllUsers } from "./GetAllUsers";
-import { PermissionScreen } from "../mengmentScreen/permissions/permissions";
-import { AllUsers } from "../mengmentScreen/permissions/permissions/AllUsers";
-import All from "../mengmentScreen/permissions/permissions/All";
-import { UserInfo } from "../atom/Atom";
-import { useRecoilValue } from "recoil";
 
 export const Menu = () => {
   const [openListUsers, setOpenListUsers] = useState(false);
