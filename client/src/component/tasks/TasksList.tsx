@@ -12,8 +12,14 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 import { useParams } from "react-router-dom";
-import { useRecoilState } from "recoil";
-import TasksData, { idPrj, userId, userName } from "../atom/Atom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import TasksData, {
+  UserInfo,
+  idPrj,
+  searchTask,
+  userId,
+  userName,
+} from "../atom/Atom";
 
 import UpdateTask from "./updateTask";
 import { UrlTask } from "./urlTask";
@@ -23,11 +29,14 @@ import { blue } from "@mui/material/colors";
 
 import duonArrow from "../../svg/downArrow.svg";
 import leftArrow from "../../svg/leftArrow.svg";
+import Message from "../../svg/message.svg";
 import { MyObject } from "../project/AllProjects";
 import { DeleteTask } from "./DeleteTask";
 import { ButtonsPageTask } from "./ButtonsPageTask";
 import { ButtonsTable } from "../ButtonsTable";
 import RemindUser from "./RemindUser";
+
+import SearchTask from "../searchField/SearchTask";
 
 export interface IFormMission {
   id: string;
@@ -48,8 +57,10 @@ const TITALE_MISSIONS = [
   { title: "סטטוס משימה" },
   { title: "תאריך התחלה" },
   { title: "עד תאריך" },
-  { title: "הערות" },
+
   { title: "סוג משימה" },
+  { title: "הערות" },
+  // { title: "עוד..." },
 ];
 
 const TasksList = () => {
@@ -61,11 +72,16 @@ const TasksList = () => {
   const [isIndex, setIsIndex] = useState(0);
   const [open, setOpen] = React.useState(true);
   const handleClose = () => setOpen(false);
+  const [TasksCloseCompletion, setTasksCloseCompletion] = useState(0);
+  // const [searchTask,setSearchTask]=useState()
   const [openModal, setOpenModal] = useState(false);
-
+  const [openMessageModal, setOpenMessageModal] = useState({
+    stap: false,
+    openIndex: 0,
+  });
   const PID: MyObject = useParams();
-  const [totaleTasks, setTotaleTasks] = useState(0);
-  const [projId, setProjId] = useRecoilState(idPrj);
+  const filteredNames = useRecoilValue(searchTask);
+  const userInfo = useRecoilValue(UserInfo);
   const sendingToTheCreation = (index: number) => {
     setIsIndex(index);
     setIsOpen({ ...isOpen, stap: !isOpen.stap, openIndex: index });
@@ -95,23 +111,35 @@ const TasksList = () => {
   };
 
   useEffect(() => {
-    const sendProjectID = (id: string) => {
-      let url = "http://localhost:3001/api/routs/router/allMissionOfProject";
+    if (filteredNames) {
+      let url = "http://localhost:3001/api/routs/router/taskByDate";
       axios
-        .post(url, { id })
+        .post(url, { date: filteredNames, projectId: PID.id })
         .then((res) => {
           setMis(res.data);
         })
         .catch((err) => {
           console.log(err);
         });
-    };
-    sendProjectID(PID.id);
-  }, []);
+    } else {
+      const sendProjectID = (id: string) => {
+        let url = "http://localhost:3001/api/routs/router/allMissionOfProject";
+        axios
+          .post(url, { id })
+          .then((res) => {
+            setMis(res.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      };
+      sendProjectID(PID.id);
+    }
+  }, [filteredNames]);
 
   const color = blue[100];
   return (
-    <>
+    <StyleHome>
       <AppBar
         sx={{
           flexGrow: 1,
@@ -119,7 +147,11 @@ const TasksList = () => {
         }}
         position="static"
       >
-        <ButtonsPageTask />
+        <ButtonsPageTask
+          urlNav1={`/projects/${userInfo._id}`}
+          urlNav2={"/createTasks"}
+        />
+        <SearchTask />
       </AppBar>
       <Container>
         <PageLoader>{""}</PageLoader>
@@ -127,7 +159,7 @@ const TasksList = () => {
         <TableContainer>
           <Table aria-label="simple table">
             <TableHead>
-              <RemindUser dataMission={mis}></RemindUser>
+              {/* <RemindUser dataMission={mis} /> */}
               <TableRow
                 sx={{
                   bgcolor: color,
@@ -144,32 +176,58 @@ const TasksList = () => {
                   );
                 })}
                 {isOpen.stap && isOpen.openIndex === isIndex && (
-                  <TableCell align="right">
+                  <>
                     <TableCell align="right">מחיקת משימה</TableCell>
                     <TableCell align="right">עדכון משימה</TableCell>
-                  </TableCell>
+                  </>
                 )}
+                <TableCell align="right">{`עוד...`}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
+              {mis.length === 0 && <p>אין משימות בפרוייקט</p>}
               {mis.length > 0 &&
                 mis.map((item: any, index) => (
                   <TableRow key={index}>
-                    <TableCell align="right">{`${item.discrption}`}</TableCell>
-                    <TableCell align="right">{`${item.statusId}`}</TableCell>
-                    <TableCell align="right">{item.date_created}</TableCell>
-                    <TableCell align="right">{item.endDate}</TableCell>
                     <TableCell
-                      sx={{
-                        maxWidth: "200px",
-                        maxHeight: "100px",
-                        overflowY: "auto",
-                      }}
                       align="right"
-                    >
-                      {item.remarks}
+                      sx={{ fontSize: "1.25rem" }}
+                    >{`${item.discrption}`}</TableCell>
+                    <TableCell
+                      align="right"
+                      sx={{ fontSize: "1.25rem" }}
+                    >{`${item.statusId}`}</TableCell>
+                    <TableCell align="right" sx={{ fontSize: "1.25rem" }}>
+                      {item.date_created}
                     </TableCell>
-                    <TableCell align="right">{item.taskType}</TableCell>
+                    <TableCell
+                      align="right"
+                      sx={{
+                        fontSize: "1.25rem",
+                        // color: TasksCloseCompletion < 0 ? "red" : "black",
+                      }}
+                    >
+                      {item.endDate}
+                    </TableCell>
+                    <TableCell align="right" sx={{ fontSize: "1.25rem" }}>
+                      {item.taskType}
+                    </TableCell>
+                    <TableCell align="right">
+                      {
+                        <MessageImg
+                          src={Message}
+                          onClick={() => {
+                            setOpenMessageModal((prev) => {
+                              return {
+                                ...prev,
+                                stap: true,
+                                openIndex: index,
+                              };
+                            });
+                          }}
+                        />
+                      }
+                    </TableCell>
 
                     {isOpen.stap && isOpen.openIndex === index && (
                       <ButtonsTable
@@ -182,39 +240,65 @@ const TasksList = () => {
                         buttonUpdate={"עדכון משימה"}
                       />
                     )}
+
+                    {openMessageModal.stap &&
+                      openMessageModal.openIndex === index && (
+                        <RemindUser
+                          endDate={new Date(item.endDate)}
+                          remarks={item.remarks}
+                          openMessageModal={openMessageModal.stap}
+                          setOpenMessageModal={setOpenMessageModal}
+                          index={index}
+                          TasksCloseCompletion={TasksCloseCompletion}
+                          setTasksCloseCompletion={setTasksCloseCompletion}
+                        />
+                      )}
                     <DeleteTask
                       openModal={openModal}
                       setOpenModal={setOpenModal}
                       removeMission={removeMission}
                       sendingId={item.id}
                     />
-                    <ButtonArrow
-                      src={isOpen.stap ? duonArrow : leftArrow}
-                      width={"20px"}
-                      onClick={() => {
-                        sendingToTheCreation(index);
-                      }}
-                    />
+                    <TableCell align="right" sx={{ fontSize: "1.25rem" }}>
+                      <ButtonArrow
+                        src={isOpen.stap ? duonArrow : leftArrow}
+                        width={"20px"}
+                        onClick={() => {
+                          sendingToTheCreation(index);
+                        }}
+                      />
+                    </TableCell>
                   </TableRow>
                 ))}
             </TableBody>
           </Table>
         </TableContainer>
-        {/* <UrlTask /> */}
+        <UrlTask projectId={PID.id} />
 
         {isOpenEditTask && (
           <UpdateTask onMission={taskOne} indexMission={isIndex}></UpdateTask>
         )}
       </Container>
-    </>
+    </StyleHome>
   );
 };
 export default TasksList;
-
+const MessageImg = styled.img`
+  cursor: pointer;
+`;
 const WidthTable = styled.div`
   margin: 0 auto;
   margin-top: 1%;
   width: 80vw;
+`;
+const StyleHome = styled.div`
+  ${css`
+    @media (max-width: 768px) {
+      padding: 5px;
+
+      overflow: hidden;
+    }
+  `}
 `;
 const ButtonsWrapper = styled.div`
   display: flex;
@@ -232,4 +316,6 @@ const Container = styled.div`
     }
   `}
 `;
-const ButtonArrow = styled.img``;
+const ButtonArrow = styled.img`
+  cursor: pointer;
+`;

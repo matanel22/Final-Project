@@ -5,7 +5,7 @@ import { IUsers } from "./ModelUser";
 
 const ProjectScama=new mongoose.Schema({
 id:String,
-staff:{type:[Schema.Types.ObjectId],ref:"IUsers",required:true},
+staff:[{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 nameProject:String,
 client:String,
 // staff:String,

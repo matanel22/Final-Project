@@ -3,53 +3,48 @@ import { useHistory } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { idPrj } from "../atom/Atom";
+import SimpleAlert from "./MessMui";
 
 interface MessageBool {
   isVisible: boolean;
 }
 interface NotifictionMess {
   message: string;
-  setSuccessCrationTask: Dispatch<React.SetStateAction<boolean>>;
-  successCrationTask: boolean;
+  setSuccessCration: Dispatch<React.SetStateAction<boolean>>;
+  successCration: boolean;
+  url: string;
+  typeAlert: string;
 }
-
-const SuccessMessageWrapper = styled.div<MessageBool>`
-  background-color: #4caf50;
-  color: #fff;
-  padding: 10px;
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  border-radius: 5px;
-  display: ${({ isVisible }) => (isVisible ? "block" : "none")};
-`;
 
 const SuccessMessage = ({
   message,
-  setSuccessCrationTask,
-  successCrationTask,
+  setSuccessCration,
+  successCration,
+  url,
+  typeAlert,
 }: NotifictionMess) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [ID, setId] = useRecoilState(idPrj);
+  const [isVisible, setIsVisible] = useState(true);
 
   let histury = useHistory();
   useEffect(() => {
-    // Display the message for 3 seconds
     setIsVisible(true);
     const timer = setTimeout(() => {
       setIsVisible(false);
-      setSuccessCrationTask(false);
-      histury.push("tasks/" + ID);
+      setSuccessCration(false);
+      histury.push(url);
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [isVisible]);
 
   return (
     <>
-      {successCrationTask && (
+      {successCration && (
         <SuccessMessageWrapper isVisible={isVisible}>
-          {message}
+          <AlertMessage>
+            {" "}
+            <SimpleAlert message={message} typeAlert={typeAlert} />
+          </AlertMessage>
         </SuccessMessageWrapper>
       )}
     </>
@@ -57,3 +52,20 @@ const SuccessMessage = ({
 };
 
 export default SuccessMessage;
+
+const SuccessMessageWrapper = styled.div<MessageBool>`
+  // background-color: #71b7f0;
+  padding: 10px;
+  position: fixed;
+
+  width: 100%;
+
+  border-radius: 5px;
+  bottom: 1rem;
+  left: 1rem;
+  display: ${({ isVisible }) => (isVisible ? "block" : "none")};
+`;
+const AlertMessage = styled.div`
+  width: 20%;
+  background-color: #333;
+`;

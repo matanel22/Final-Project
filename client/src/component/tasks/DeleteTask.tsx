@@ -1,5 +1,6 @@
 import { Box, Button, Modal } from "@mui/material";
 import React, { Dispatch, useState } from "react";
+import styled from "styled-components";
 
 interface IProps {
   openModal: boolean;
@@ -9,7 +10,7 @@ interface IProps {
 }
 export const DeleteTask = (props: IProps) => {
   const [open, setOpen] = useState(true);
-  const [csajcn, setmlcsmlOpen] = useState(props.sendingId);
+
   const handleClose = () => setOpen(false);
   const style = {
     position: "absolute" as "absolute",
@@ -30,10 +31,10 @@ export const DeleteTask = (props: IProps) => {
         onClose={handleClose}
       >
         <Box sx={style}>
-          <p> ברצונך למחוק</p>
+          <Title> ברצונך למחוק</Title>
           <Button
             variant="outlined"
-            color="success"
+            // color="success"
             onClick={() => {
               props.removeMission(props.sendingId);
               props.setOpenModal(false);
@@ -55,3 +56,7 @@ export const DeleteTask = (props: IProps) => {
     </>
   );
 };
+
+const Title = styled.p`
+  margin-right: 10px;
+`;

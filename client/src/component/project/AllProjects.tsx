@@ -12,14 +12,16 @@ import {
   userId,
   userName,
 } from "../atom/Atom";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { useHistory, useParams } from "react-router-dom";
 
 import { ButtonUi, Menu } from "../Menu";
 
 import UserSvg from "../../svg/user.svg";
-import UserProf from "../../svg/userProfile.svg";
+import UserProf from "../../svg/user.svg";
 import { LogOutUser } from "./LogOutUser";
+import YourComponent from "../searchField";
+import SimpleAlert from "../MessegeToUser/MessMui";
 
 export interface IProps {
   _id: string;
@@ -42,9 +44,22 @@ const AllProjects = () => {
   const histury = useHistory();
 
   const articleId: MyObject = useParams();
-  const userInfo = useRecoilValue(UserInfo);
-  const [listUsers, setListUsers] = useRecoilState(allUsers);
   // const userInfo = useRecoilValue(UserInfo);
+  // const [listUsers, setListUsers] = useRecoilState(allUsers);
+  const [userInfo, setUserInfo] = useRecoilState(UserInfo);
+
+  const [listUsers, setListUsers] = useRecoilState(allUsers);
+
+  useEffect(() => {
+    let url = "http://localhost:3001/api/routs/router/userInfo";
+    console.log("1111111111");
+    axios
+      .get(url, { headers: { "x-api-key": localStorage["tok"] } })
+      .then((res) => {
+        setUserInfo(res.data[0]);
+      });
+  }, [!userInfo]);
+
   useEffect(() => {
     if (filteredNames) {
       let url = "http://localhost:3001/api/routs/router/organizationFind";
@@ -61,7 +76,6 @@ const AllProjects = () => {
                 const userIdToName = new Map(
                   listUsers.map((user) => [user._id, user.name])
                 );
-
                 const staff = proj.staff
                   .map((userId: any) => userIdToName.get(userId))
                   .filter(Boolean);
@@ -84,21 +98,9 @@ const AllProjects = () => {
     }
   }, [filteredNames]);
 
-  // const removeUser = (id: string) => {
-  //   let url = "http://localhost:3001/api/routs/router/logOutUser";
-  //   axios
-  //     .post(url, { id })
-  //     .then((response) => {
-  //       // setUserDelete("ההתנתקות בוצעה בהצלחה");
-  //       histury.push("/login");
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // };
-
   return (
     <StyleHome>
+      {/* <SimpleAlert /> */}
       <AppBar
         sx={{
           flexGrow: 1,
@@ -107,34 +109,35 @@ const AllProjects = () => {
         position="static"
       >
         <WidthTable>
-          {userInfo.permissions && <Menu />}
-          <User
-            src={UserProf}
-            onClick={() => {
-              setOpenModal(true);
-            }}
-          />
-          {/* <ButtonUi
-            onClick={() => {
-              setOpenModal(true);
-            }}
-          >
-            ההתנתקות
-          </ButtonUi> */}
-          <LogOutUser
-            // removeUser={removeUser}
-            openModal={openModal}
-            setOpenModal={setOpenModal}
-          ></LogOutUser>
+          <div>
+            {" "}
+            <UserWelcome> {`ברוך הבא ${userInfo.name}`}</UserWelcome>
+            <ButtonUi
+              onClick={() => {
+                setOpenModal(true);
+              }}
+            >
+              התנתקות
+            </ButtonUi>
+          </div>
+          <YourComponent />
+          <div>
+            {userInfo.permissions && <Menu />}
 
-          <UserWelcome> {`ברוך הבא ${userInfo.name}`}</UserWelcome>
-          <ButtonUi
-            onClick={() => {
-              histury.push("/createProject");
-            }}
-          >
-            צור פרויקט
-          </ButtonUi>
+            <LogOutUser
+              openModal={openModal}
+              setOpenModal={setOpenModal}
+            ></LogOutUser>
+            {userInfo.permissions && (
+              <ButtonUi
+                onClick={() => {
+                  histury.push("/createProject");
+                }}
+              >
+                צור פרויקט
+              </ButtonUi>
+            )}
+          </div>
         </WidthTable>
       </AppBar>
       <ProjectList dataProject={dataProject} valideRoleId={articleId} />;
@@ -153,14 +156,20 @@ const WidthTable = styled.div`
 `;
 
 const StyleHome = styled.div`
-  // background-color: blue;
+  ${css`
+    @media (max-width: 768px) {
+      padding: 5px;
+
+      overflow: hidden;
+    }
+  `} // background-color: blue;
 `;
 const User = styled.img`
   width: 80px;
   height: 80px;
 `;
 const UserWelcome = styled.div`
-  font-size: 2rem;
+  font-size: 1.5rem;
 `;
 
 const MenuBar = styled.img``;

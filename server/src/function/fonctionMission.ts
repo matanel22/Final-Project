@@ -68,6 +68,40 @@ export const updateMission=async(req:Request,res:Response)=>{
       
     }
   }
+  export const taskByDate= async(req:Request,res:Response)=>{
+    try {
+      // Extract date from request body
+      const { date } = req.body;
+  
+      const query = {
+        projectId: req.body.projectId,
+        date_created: { $lt: new Date(date) },
+        endDate: { $gt: new Date(date) }
+      };
+      
+      
+      
+      const tasks = await MissionModel.find(query);
+      const formattedTasks = tasks.map(task => ({
+        id:task._id,
+        discrption:task.discrption,
+        statusId:task.statusId,
+        projectId:task.projectId,
+        taskType:task.taskType,
+        date_created: dayjs(task.date_created).format('MM-DD-YYYY').toString(),
+        endDate: dayjs(task.endDate).format('MM-DD-YYYY').toString(),
+        remarks:task.remarks,
+      }));
+  // date_created: dayjs(item.date_created).format('MM-DD-YYYY').toString(),
+  //     endDate: dayjs(item.endDate).format('MM-DD-YYYY').toString(),
+      // Send tasks as response
+      res.json(formattedTasks);
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  }
+  
 
 
   export const deleteSpcificMission=async(req:Request,res:Response)=>{

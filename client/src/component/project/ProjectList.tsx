@@ -5,15 +5,7 @@ import axios from "axios";
 import styled, { css } from "styled-components";
 import { blue } from "@mui/material/colors";
 
-import {
-  Button,
-  MenuItem,
-  Select,
-  Table,
-  TableBody,
-  TableContainer,
-  TableHead,
-} from "@mui/material";
+import { Table, TableBody, TableContainer, TableHead } from "@mui/material";
 import TableRow from "@mui/material/TableRow";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import UpdateProject from "./UpdateProject";
@@ -24,17 +16,13 @@ import { Buttons } from "./Buttons";
 // import { Open } from "../tasks/TasksList";
 import duonArrow from "../../svg/downArrow.svg";
 import leftArrow from "../../svg/leftArrow.svg";
-import YourComponent from "../searchField";
+
 import { ListUsersOfProject } from "../ListUsersOfProject";
 import { UrlTask } from "../tasks/urlTask";
+import { useRecoilState } from "recoil";
+import { UserInfo, allUsers } from "../atom/Atom";
+import SimpleAlert from "../MessegeToUser/MessMui";
 
-interface IUsers {
-  _id: string;
-  permissions: string;
-  name: string;
-  email: string;
-  pass: string;
-}
 export interface IProps {
   _id: string;
   nameProject: string;
@@ -47,13 +35,11 @@ export interface IProps {
   amountOfUsers: string;
 }
 const TITALE_PROJECTS = [
+  { title: "סטטוס משימות" },
   { title: "שם הפרוייקט" },
   { title: "מספר פרוייקט" },
   { title: "אחראי פיתוח" },
-  { title: "שם הלקוח" },
   { title: "סטטוס הפרוייקט" },
-  { title: "סטטוס משימות" },
-  // { title: "האם יש משתמשים" },
 ];
 interface Open {
   stap: boolean;
@@ -73,9 +59,11 @@ const ProjectList: React.FC<{
     openIndex: 0,
   });
   const [isOpenUpdate, setIsOpenUpdate] = useState(false);
+  const [userInfo, setUserInfo] = useRecoilState(UserInfo);
 
   const [indexProjData, setIndexProjData] = useState(0);
   const [isIndex, setIsIndex] = useState(0);
+  const [listUsers, setListUsers] = useRecoilState(allUsers);
 
   // const [isPro, setDataProject] = useRecoilState(AllProjectData);
   const sendingToTheCreation = (index: number) => {
@@ -100,7 +88,7 @@ const ProjectList: React.FC<{
   return (
     <Container>
       <PageLoader>{loading}</PageLoader>
-      <YourComponent />
+
       <TableContainer>
         <Table aria-label="simple table">
           <TableHead>
@@ -120,31 +108,41 @@ const ProjectList: React.FC<{
                 );
               })}
               {isOpenShow.stap && isOpenShow.openIndex === isIndex && (
-                <TableCell align="right">
-                  <TableCell align="right">לעדכון הפרוייקט</TableCell>
+                <>
                   <TableCell align="right">למשימות הפרוייקט</TableCell>
-                </TableCell>
+                  {userInfo.permissions && (
+                    <TableCell align="right">לעדכון הפרוייקט</TableCell>
+                  )}
+                </>
               )}
+              <TableCell align="right">{`עוד...`}</TableCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
+            {props.dataProject.length === 0 && (
+              <p>עוד לר נוצרו פרוייקטים עבורך</p>
+            )}
             {props.dataProject.length &&
               props.dataProject.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell align="right">{item.nameProject}</TableCell>
-                  <TableCell align="right">{item.projectNumber}</TableCell>
+                  <TableCell align="right">
+                    <UrlTask projectId={item._id}></UrlTask>
+                  </TableCell>
+                  <TableCell align="right" sx={{ fontSize: "1.25rem" }}>
+                    {item.nameProject}
+                  </TableCell>
+                  <TableCell align="right" sx={{ fontSize: "1.25rem" }}>
+                    {item.projectNumber}
+                  </TableCell>
                   <TableCell align="right">
                     <ListUsersOfProject staff={item.staff} />
                   </TableCell>
 
-                  <TableCell align="right">{item.client}</TableCell>
-                  <TableCell align="right">{item.statusProject}</TableCell>
-
-                  <TableCell align="right">
-                    <UrlTask projectId={item._id}></UrlTask>
+                  {/* <TableCell align="right">{item.client}</TableCell> */}
+                  <TableCell align="right" sx={{ fontSize: "1.25rem" }}>
+                    {item.statusProject}
                   </TableCell>
-                  {/* )} */}
 
                   {isOpenShow.stap && isOpenShow.openIndex === index && (
                     <Buttons
@@ -197,13 +195,6 @@ export const Container = styled.div`
   padding: 10px;
   width: 80vw;
   margin: 0 auto;
-  ${css`
-    @media (max-width: 768px) {
-      padding: 5px;
-
-      overflow: hidden;
-    }
-  `}
 `;
 
 export const TableCe = styled.td`

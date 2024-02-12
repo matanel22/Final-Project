@@ -6,30 +6,50 @@ import { UserInfo, userId } from "../atom/Atom";
 import styled from "styled-components";
 import React, { useEffect, useState } from "react";
 import { ButtonUi } from "../Menu";
+import axios from "axios";
 
-export const ButtonsPageTask = () => {
+interface IProps {
+  urlNav1: string;
+  urlNav2: string;
+}
+
+export const ButtonsPageTask = ({ urlNav1, urlNav2 }: IProps) => {
   const [useId, setUseId] = useRecoilState(userId);
-  const useInfo = useRecoilValue(UserInfo);
+  const [userInfo, setUserInfo] = useRecoilState(UserInfo);
+
   const history = useHistory();
+  useEffect(() => {
+    let url = "http://localhost:3001/api/routs/router/userInfo";
+    console.log("1111111111");
+    axios
+      .get(url, { headers: { "x-api-key": localStorage["tok"] } })
+      .then((res) => {
+        setUserInfo(res.data[0]);
+      });
+  }, [!userInfo]);
   return (
     <ButoonNav>
-      {/* <Link to={`/projects/${useInfo._id}`}> */}
-      <ButtonUi
-        onClick={() => {
-          history.push(`/projects/${useInfo._id}`);
-        }}
-      >
-        הפרוייקטים של המדור
-      </ButtonUi>
+      {urlNav1 !== "" && (
+        <ButtonUi
+          onClick={() => {
+            history.push(urlNav1);
+          }}
+        >
+          הפרוייקטים של המדור
+        </ButtonUi>
+      )}
       {/* </Link> */}
       {/* <Link to="/createTasks"> */}
-      <ButtonUi
-        onClick={() => {
-          history.push(`/createTasks`);
-        }}
-      >
-        ליצירת משימה חדשה
-      </ButtonUi>
+
+      {urlNav2 !== "" && (
+        <ButtonUi
+          onClick={() => {
+            history.push(urlNav2);
+          }}
+        >
+          ליצירת משימה חדשה
+        </ButtonUi>
+      )}
       {/* </Link> */}
     </ButoonNav>
   );

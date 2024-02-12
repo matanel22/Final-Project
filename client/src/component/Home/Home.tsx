@@ -18,6 +18,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { Alert } from "@mui/material";
 import hompage from "../image/homepage.png";
 import { ShellForForms } from "../shellForForms";
+import styled from "styled-components";
 
 interface IUsers {
   _id: string;
@@ -68,17 +69,9 @@ export default function Home() {
   const sendPass = (event: any) => {
     setIsPass(event.target.value);
   };
-  // React.useEffect(() => {
-  //   if (userInfo._id) histury.push("/projects/" + userInfo._id);
-  // }, [userInfo]);
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
-
-    // if (password.trim().length === 0) {
-    //   setValidPass(true);
-    //   return;
-    // }
 
     let url = "http://localhost:3001/api/routs/router/login";
     axios
@@ -108,18 +101,11 @@ export default function Home() {
     setIsEmail("");
     setIsPass("");
   };
-  // useEffect(() => {
-  //   console.log(useId);
-  // }, [useId]);
 
   return (
-    <ShellForForms>
+    <ShellForForms urlNav1="" urlNav2="">
       <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
-          {/* <div>
-          {data && <p>Data from local storage: {data}</p>}
-          <button onClick={() => setData("example data")}>Save data</button>
-        </div> */}
           <CssBaseline />
           <Box
             sx={{
@@ -149,14 +135,16 @@ export default function Home() {
                 margin="normal"
                 required
                 fullWidth
-                id="email"
-                label="אימייל"
+                id="filled-basic"
+                label="email"
+                variant="filled"
                 name="email"
                 autoComplete="email"
                 autoFocus
                 // onBlur={onBlorPass}
               />
-              {validEmail && <p>nkndsknkn</p>}
+              {/* {validEmail && <p>nkndsknkn</p>} */}
+
               <TextField
                 onChange={sendPass}
                 value={password}
@@ -164,9 +152,10 @@ export default function Home() {
                 required
                 fullWidth
                 name="password"
-                label="סיסמא"
                 type="password"
-                id="password"
+                id="filled-basic"
+                label="password"
+                variant="filled"
                 autoComplete="current-password"
               />
 
@@ -198,3 +187,17 @@ export default function Home() {
     </ShellForForms>
   );
 }
+const Background = styled.div`
+  background: linear-gradient(to right, #0072ff, #00c6ff);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const LoginFormContainer = styled.div`
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+`;

@@ -12,6 +12,9 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { UserInfo, allUsers, userId, userName } from "../atom/Atom";
 import { ShellForForms } from "../shellForForms";
 import AnimatedMulti from "./MultySelect";
+import SuccessMessage from "../MessegeToUser";
+import SimpleAlert from "../MessegeToUser/MessMui";
+import ButtonLoading from "../UI/ButtonLoadung";
 
 export interface IUsers {
   _id: string;
@@ -29,13 +32,13 @@ interface IFormInputs {
 }
 
 const AddNewProject: React.FC = (props) => {
-  const [useId, setUseId] = useRecoilState(userId);
+  const [successCration, setSuccessCration] = useState(false);
+
   // const [selectedItem, setSelectedItem] = useState("");
-  const [listUsers, setListUsers] = useRecoilState(allUsers);
+  // const [listUsers, setListUsers] = useRecoilState(allUsers);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const userInfo = useRecoilValue(UserInfo);
 
-  let histury = useHistory();
   const {
     register,
 
@@ -46,7 +49,6 @@ const AddNewProject: React.FC = (props) => {
     defaultValues: {
       nameProject: "",
       client: "",
-
       staff: [],
       statusProject: "",
       amountOfUsers: "",
@@ -56,20 +58,22 @@ const AddNewProject: React.FC = (props) => {
   const registerPrj: SubmitHandler<IFormInputs> = async (data) => {
     try {
       let url = "http://localhost:3001/api/routs/router/addCreatProject";
-      axios.post(url, { data, selectedItems }).then(({ data }) => {
-        histury.push("/projects/" + userInfo._id);
+      await axios.post(url, { data, selectedItems }).then(({ data }) => {
+        setSuccessCration(true);
       });
     } catch (error) {
       console.log(error);
     }
-
-    // setUsersData(res.data);
   };
 
   return (
-    <ShellForForms>
+    <ShellForForms urlNav1={`/projects/${userInfo._id}`} urlNav2="">
       <FormContainer onSubmit={handleSubmit(registerPrj)}>
         <h2> יצירת פרוייקט</h2>
+        {(errors.amountOfUsers ||
+          errors.client ||
+          errors.nameProject ||
+          errors.staff) && <p style={{ color: "red" }}>{`שדה חובה חסר`}</p>}
         <label htmlFor="name">שם פרוייקט</label>
         <input
           type="text"
@@ -80,6 +84,7 @@ const AddNewProject: React.FC = (props) => {
         <label htmlFor="name">שם הצוות</label>
 
         <AnimatedMulti
+          staff={[]}
           setSelectedItems={setSelectedItems}
           selectedItems={selectedItems}
         />
@@ -101,8 +106,17 @@ const AddNewProject: React.FC = (props) => {
           <Option>לא פעיל</Option>
         </Selected>
         {errors.statusProject && "שדה חובה"}
-        <button type="submit">יצירת פרוייקט </button>
+        <ButtonLoading textButton="סיום" />
       </FormContainer>
+      {successCration && (
+        <SuccessMessage
+          message="הפרוייקט נוצר בהצלחה"
+          setSuccessCration={setSuccessCration}
+          successCration={successCration}
+          url={"/projects/" + userInfo._id}
+          typeAlert="success"
+        />
+      )}
     </ShellForForms>
   );
 };
@@ -113,6 +127,7 @@ const Selected = styled.select`
   padding: 0.5rem;
   border: 1px solid #ccc;
   border-radius: 4px;
+  width: 35vw;
 `;
 const Label = styled.label`
   font-size: 1.2rem;

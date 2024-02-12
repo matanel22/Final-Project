@@ -8,30 +8,42 @@ export function ListUsersOfProject({ staff }: IProps) {
   const [showArray, setShowArray] = useState(false);
 
   const handleMouseEnter = () => {
-    setShowArray(true);
+    setShowArray(!showArray);
   };
 
-  const handleMouseLeave = () => {
-    setShowArray(false);
-  };
-
+  // const handleMouseLeave = () => {
+  //   setShowArray(false);
+  // };
   return (
     <div>
-      <p onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-        <Mouse src={MouseClick}></Mouse>
-      </p>
       {showArray && (
-        <div>
-          {staff.map((item) => (
-            <ShowUser>{item}</ShowUser>
+        <WarpperUsers>
+          {staff.map((item, index) => (
+            <ShowUser>{`${item} `}</ShowUser>
           ))}
-        </div>
+        </WarpperUsers>
       )}
+      {/* <p onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}> */}
+      <Mouse onClick={handleMouseEnter} src={MouseClick}></Mouse>
+      {/* </p> */}
     </div>
   );
 }
 
-const Mouse = styled.img``;
+const Mouse = styled.img`
+  cursor: pointer;
+`;
+const WarpperUsers = styled.div`
+  // background-color: red;
+  // position: fixed;
+  // background: #fff;
+  // padding: 20px;
+  background: rgba(224, 224, 224, 1);
+  border-radius: 8px;
+  display: flex;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+`;
 const ShowUser = styled.p`
-  position: absolute;
+  z-index: auto;
+  margin-right: 8px;
 `;

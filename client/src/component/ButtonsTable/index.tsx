@@ -25,9 +25,10 @@ export const ButtonsTable = (props: ISbuttonsTable) => {
         >
           {props.buttonDel}
         </Button>{" "}
+      </TableCell>
+      <TableCell align="right">
         <Button
           variant="outlined"
-          color="success"
           onClick={() => {
             props.showEditTask(props.itemId, props.index);
           }}
