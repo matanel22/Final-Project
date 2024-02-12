@@ -10,6 +10,9 @@ import { AllProjectData, allUsers, idPrj } from "../atom/Atom";
 
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
+import AnimatedMulti from "./MultySelect";
+import { dropdown } from "./LogOutUser";
+import ButtonLoading from "../UI/ButtonLoadung";
 
 export interface IProps {
   _id: string;
@@ -22,8 +25,8 @@ export interface IProps {
 }
 
 const UPDATE_PROJECT = [
-  { name: ">שם פרוייקט ", type: "text", register: "nameProject" },
-  { name: "שם הצוות", type: "text", register: "staff" },
+  { name: "שם פרוייקט ", type: "text", register: "nameProject" },
+
   { name: "שם הלקוח", type: "text", register: "client" },
 
   { name: "האם יש משתמשים", type: "text", register: "amountOfUsers" },
@@ -43,14 +46,14 @@ const UpdateProject: React.FC<{
   const [isSucceed, setIsSucced] = useState(false);
   const [listUsers, setListUsers] = useRecoilState(allUsers);
   const [dataProject, setDataProject] = useRecoilState(AllProjectData);
-  // const [isClose, setIsOpen] = useState<boolean>(props.openUpdate);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
-  let histury = useHistory();
+  // const [isClose, setIsOpen] = useState<boolean>(props.openUpdate);
 
   const {
     register,
 
-    formState: { errors, isDirty, isValid },
+    formState: { errors },
     handleSubmit,
     reset,
   } = useForm<IProps>({
@@ -71,8 +74,7 @@ const UpdateProject: React.FC<{
   useEffect(() => {
     reset({
       _id: props.onUpdate._id,
-      // userId: props.onUpdate.userId,
-      // staff: props.onUpdate.staff,
+      staff: props.onUpdate.staff,
       statusProject: props.onUpdate.statusProject,
       amountOfUsers: props.onUpdate.amountOfUsers,
       nameProject: props.onUpdate.nameProject,
@@ -83,44 +85,44 @@ const UpdateProject: React.FC<{
     setIsClick(true);
     setIsUpdate(!isUpdate);
 
-    listUsers.map(async (item: any) => {
-      // if (item.name === data.staff) {
-      //   data.userId = item._id;
-      let url = `http://localhost:3001/api/routs/router/updateProject`;
-      await axios
-        .put(url, data)
-        .then((res) => {
-          console.log(res.data);
-          const index = dataProject.findIndex((obj) => obj._id === data._id);
-          const updatedObject = {
-            ...dataProject[index],
-            amountOfUsers: data.amountOfUsers,
-            client: data.client,
-            _id: data._id,
-            nameProject: data.nameProject,
-            // staff: data.staff,
-            statusProject: data.statusProject,
-            // userId: data.userId,
-          };
+    // listUsers.map(async (item: any) => {
+    let url = `http://localhost:3001/api/routs/router/updateProject`;
+    await axios
+      .put(url, data)
+      .then((res) => {
+        let k = 0;
+        for (let userMeng of listUsers) {
+          if (data.staff[k] === userMeng._id) {
+            data.staff[k++] = userMeng.name;
+          }
+          console.log(data.staff);
+        }
+        const index = dataProject.findIndex((obj) => obj._id === data._id);
+        const updatedObject = {
+          ...dataProject[index],
+          amountOfUsers: data.amountOfUsers,
+          client: data.client,
+          _id: data._id,
+          nameProject: data.nameProject,
+          staff: data.staff,
+          statusProject: data.statusProject,
+        };
 
-          const newArray: any = [
-            ...dataProject.slice(0, index),
-            updatedObject,
-            ...dataProject.slice(index + 1),
-          ];
+        const newArray: any = [
+          ...dataProject.slice(0, index),
+          updatedObject,
+          ...dataProject.slice(index + 1),
+        ];
 
-          setDataProject(newArray);
-          setIsSucced(true);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      setIsUser(true);
-      setOpen(false);
-      // } else {
-      //   setValidUser("שם מפתח לא קיים");
-      // }
-    });
+        setDataProject(newArray);
+        setIsSucced(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    setIsUser(true);
+    setOpen(false);
+    // });
   };
 
   return (
@@ -131,58 +133,68 @@ const UpdateProject: React.FC<{
       onClose={handleClose}
     >
       <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          <form onSubmit={handleSubmit(editRejister)}>
-            {UPDATE_PROJECT.map((item: any) => {
-              return (
-                <>
-                  <InputLabel htmlFor="my-input">{item.name} </InputLabel>
-                  <Input
-                    id="my-input"
-                    aria-describedby="my-helper-text"
-                    type={item.type}
-                    // value={props.onUpdate.nameProject}
-                    {...register(item.register, { required: true })}
-                  />
-                </>
-              );
-            })}
+        <Wrapper>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            <form onSubmit={handleSubmit(editRejister)}>
+              {UPDATE_PROJECT.map((item: any, index) => {
+                return (
+                  <div key={index}>
+                    <InputLabel htmlFor="my-input">{item.name} </InputLabel>
+                    <Input
+                      id="my-input"
+                      aria-describedby="my-helper-text"
+                      type={item.type}
+                      // value={props.onUpdate.nameProject}
+                      {...register(item.register, { required: true })}
+                    />
+                  </div>
+                );
+              })}
 
-            {errors.nameProject && "שדה חובה"}
+              {errors.nameProject && "שדה חובה"}
+              <InputLabel htmlFor="my-input">{"סטטוס פרוייקט"} </InputLabel>
 
-            <SelectProject
-              // labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              // label="סטטוס"
-              // type="text"
-              // value={props.onUpdate.statusProject}
-              // placeholder="סטטוס"
-              {...register("statusProject", { required: true })}
-            >
-              <option>{"פעיל"}</option>
+              <SelectProject
+                id="demo-simple-select"
+                {...register("statusProject", { required: true })}
+              >
+                <option>{"פעיל"}</option>
 
-              <option>{"לא פעיל"}</option>
-            </SelectProject>
-            {errors.statusProject && "שדה חובה"}
-            <br />
-            <Button variant="contained" type="submit" color="success">
-              שמירה
-            </Button>
-            <Button
-              variant="contained"
-              onClick={() => {
-                setOpen(false);
-              }}
-            >
-              ביטול
-            </Button>
-          </form>
-        </Typography>
+                <option>{"לא פעיל"}</option>
+              </SelectProject>
+              {errors.statusProject && "שדה חובה"}
+              <AnimatedMulti
+                staff={props.onUpdate.staff}
+                setSelectedItems={setSelectedItems}
+                selectedItems={selectedItems}
+              />
+              <br />
+              <ButtonDiv>
+                <ButtonLoading textButton="שמירה" />
+
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => {
+                    setOpen(false);
+                  }}
+                >
+                  ביטול
+                </Button>
+              </ButtonDiv>
+            </form>
+          </Typography>
+        </Wrapper>
       </Box>
     </Modal>
   );
 };
 export default UpdateProject;
+
+const ButtonDiv = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+`;
 export const SelectProject = styled.select`
   width: 75%;
   padding: 10px;
@@ -190,4 +202,7 @@ export const SelectProject = styled.select`
   border: none;
   border-radius: 5px;
   background-color: #e0e0e0;
+`;
+const Wrapper = styled.div`
+  animation: ${dropdown} 2s ease 0s 1 normal forwards;
 `;

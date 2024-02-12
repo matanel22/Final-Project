@@ -2,12 +2,11 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useSetRecoilState } from "recoil";
-import { searchPro } from "../atom/Atom";
+import { searchPro, searchTask } from "../atom/Atom";
 const SearchContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 50vw;
 `;
 
 const SearchInput = styled.input`
@@ -32,24 +31,25 @@ const SearchButton = styled.button`
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
-  width: 50vw;
+
   &:hover {
     background-color: #0056b3; /* Darker color on hover */
   }
 `;
 
-const SearchBar: React.FC = () => {
-  const filteredNames = useSetRecoilState(searchPro);
+const SearchTask: React.FC = () => {
+  const filteredTask = useSetRecoilState(searchTask);
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // console.log(event.target.value);
-    filteredNames(event.target.value);
+    console.log(event.target.value);
+    filteredTask(event.target.value);
   };
   return (
     <SearchContainer>
       <SearchInput
-        type="text"
-        placeholder=" חיפוש לפי שם , מספר פרוייקט , סטטוס"
-        // value={filteredNames}
+        type="date"
+        placeholder="חיפוש לפי תאריך התחלה..."
+        // value={filteredTask}
         onChange={handleInputChange}
       />
       {/* <SearchButton>חיפוש</SearchButton> */}
@@ -57,4 +57,4 @@ const SearchBar: React.FC = () => {
   );
 };
 
-export default SearchBar;
+export default SearchTask;

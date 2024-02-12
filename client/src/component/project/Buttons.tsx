@@ -2,7 +2,9 @@ import { Button, TableCell } from "@mui/material";
 import { Link } from "react-router-dom";
 import React from "react";
 import { useRecoilState } from "recoil";
-import { idPrj } from "../atom/Atom";
+import { UserInfo, idPrj } from "../atom/Atom";
+import { useHistory } from "react-router-dom";
+import { ButtonUi } from "../Menu";
 interface IProps {
   projectId: string;
 
@@ -15,35 +17,41 @@ interface IProps {
 
 export const Buttons = (props: IProps) => {
   const [projId, setProjId] = useRecoilState(idPrj);
+  const [userInfo, setUserInfo] = useRecoilState(UserInfo);
+
+  const history = useHistory();
   return (
     <>
       <TableCell align="right">
-        <Link to={`/tasks/${props.projectId}`}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              setProjId(props.projectId);
-            }}
-          >
-            {props.buttonDel}
-          </Button>
-        </Link>
+        {/* <Link to={`/tasks/${props.projectId}`}> */}
+
+        <Button
+          variant="outlined"
+          size="medium"
+          onClick={() => {
+            setProjId(props.projectId);
+            history.push(`/tasks/${props.projectId}`);
+          }}
+        >
+          {props.buttonDel}
+        </Button>
       </TableCell>
-      <TableCell align="right">
-        {" "}
-        {
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              props.onClickShowModal(props.projectId, props.index);
-            }}
-          >
-            {props.buttonUpdate}
-          </Button>
-        }
-      </TableCell>
+      {/* </Link> */}
+      {userInfo.permissions && (
+        <TableCell align="right">
+          {
+            <Button
+              variant="outlined"
+              size="medium"
+              onClick={() => {
+                props.onClickShowModal(props.projectId, props.index);
+              }}
+            >
+              {props.buttonUpdate}
+            </Button>
+          }
+        </TableCell>
+      )}
     </>
   );
 };

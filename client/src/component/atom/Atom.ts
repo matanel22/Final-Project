@@ -63,6 +63,11 @@ export const userName=atom<string>({
     default:"",
     key:"serach"
   })
+  export const searchTask=atom({
+    default:"",
+    key:"serachTask"
+  })
+  
   export const userId=atom<string>({
     default:"",
     key:"_id"

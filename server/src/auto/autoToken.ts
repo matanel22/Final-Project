@@ -11,6 +11,7 @@ if(!token){
 }
 try {
 let decoToken=jwt.verify(token,"matanel");
+
 // req.tokenData=decoToken
 next();
 } catch (error) {

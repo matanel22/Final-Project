@@ -160,7 +160,7 @@ export default function SignUp() {
     <div
       style={{
         display: "flex",
-        backgroundImage: `url(${hompage})`,
+        background: `url(${hompage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         height: "100vh",

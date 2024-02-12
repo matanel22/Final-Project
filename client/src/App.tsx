@@ -20,11 +20,9 @@ function App() {
   useEffect(() => {
     let url = "http://localhost:3001/api/routs/router/allUsers";
     axios.get(url).then((res) => {
-      console.log(res.data);
-
       setListUsers(res.data);
     });
-  });
+  }, []);
   return (
     <BrowserRouter>
       <Switch>

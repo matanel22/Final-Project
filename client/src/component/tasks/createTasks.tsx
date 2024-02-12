@@ -12,6 +12,7 @@ import { ShellForForms } from "../shellForForms";
 import SuccessMessage from "../MessegeToUser";
 import { AppBar } from "@mui/material";
 import { ButtonsPageTask } from "./ButtonsPageTask";
+import ButtonLoading from "../UI/ButtonLoadung";
 
 interface IFormMission {
   discrption: string;
@@ -26,13 +27,14 @@ interface IFormMission {
 const SELECTMISSION = [
   { option: "Frontend" },
   { option: "Design" },
-  { option: "React" },
+  { option: "backend" },
   { option: "DB" },
-  { option: "Design" },
+  // { option: "Design" },
 ];
 const CreateTasks = () => {
   const [ID, setId] = useRecoilState(idPrj);
-  const [successCrationTask, setSuccessCrationTask] = useState(false);
+  const [successCration, setSuccessCration] = useState(false);
+  const [errorDate, setErrorDate] = useState("");
   const isDateInRange = (startDate: any, endDate: any) => {
     // const checkDate = new Date(dateToCheck);
     const start = new Date(startDate);
@@ -40,6 +42,7 @@ const CreateTasks = () => {
 
     return start >= end;
   };
+
   const {
     register,
     formState: { errors },
@@ -50,26 +53,29 @@ const CreateTasks = () => {
   });
 
   const registerPrj: SubmitHandler<IFormMission> = async (data) => {
-    const result = isDateInRange(data.date_created, data.endDate);
-
+    // const result = isDateInRange(data.date_created, data.endDate);
+    if (new Date(data.endDate) < new Date(data.date_created)) {
+      setErrorDate("שדה סיום גדול מתאריך התחלה");
+      return;
+    } else {
+      setErrorDate("");
+    }
     data.projectId = ID;
     let url = "http://localhost:3001/api/routs/router/creatMission";
     await axios
       .post(url, data)
 
       .then((res) => {
-        setSuccessCrationTask(true);
+        setSuccessCration(true);
       })
       .catch((err) => {
         console.log("res", err);
       });
   };
-  // useEffect(() => {
-  //   console.log(successCrationTask);
-  // }, [successCrationTask]);
+
   return (
     <>
-      <AppBar
+      {/* <AppBar
         sx={{
           flexGrow: 1,
           minHeight: 100,
@@ -77,9 +83,15 @@ const CreateTasks = () => {
         position="static"
       >
         <ButtonsPageTask />
-      </AppBar>
-      <ShellForForms>
+      </AppBar> */}
+      <ShellForForms urlNav1={`/tasks/${idPrj}`} urlNav2="">
         <FormContainer onSubmit={handleSubmit(registerPrj)}>
+          {(errors.date_created ||
+            errors.discrption ||
+            errors.endDate ||
+            errors.statusId) && (
+            <p style={{ color: "red" }}>{`שדה חובה חסר`}</p>
+          )}
           {MISSION_UPDATE.map((item: any) => (
             <>
               <label> {item.name}</label>
@@ -90,28 +102,34 @@ const CreateTasks = () => {
               />
             </>
           ))}
+          <p style={{ color: "red" }}>{errorDate}</p>
           <label>סוג משימה</label>
           <select
-            defaultValue={"יש לבחור"}
+            placeholder={"יש לבחור"}
             {...register("taskType", { required: true })}
           >
             {SELECTMISSION.map((opt) => (
               <option>{opt.option}</option>
             ))}
           </select>
-          <label>Remarks</label>
+          <label>הערות</label>
           <InputRemarks
             textLength={0}
             {...register("remarks", { required: true })}
           />
-          <button type="submit">סיום </button>
+
+          <ButtonLoading textButton="סיום"></ButtonLoading>
+
+          {/* <button type="submit"> </button> */}
         </FormContainer>
 
-        {successCrationTask && (
+        {successCration && (
           <SuccessMessage
             message="המשימה נוצרה בהצלחה"
-            setSuccessCrationTask={setSuccessCrationTask}
-            successCrationTask={successCrationTask}
+            setSuccessCration={setSuccessCration}
+            successCration={successCration}
+            url={"tasks/" + ID}
+            typeAlert="success"
           />
         )}
       </ShellForForms>
@@ -120,19 +138,17 @@ const CreateTasks = () => {
 };
 export default CreateTasks;
 const InputRemarks = styled.input<{ textLength: number }>`
-  // width: 80%;
-  // height: 10%;
-  // padding: 10px;
-  // font-size: 16px;
+width: 31vw;
 
-  padding: 8px;
-  min-width: 100%; /* Set a minimum width */
-  width: ${(props) => `${props.textLength * 8}px`};
+
+
+padding: 10px;
+  // width: ${(props) => `${props.textLength * 8}px`};
   box-sizing: border-box; /* Include padding and border in the width */
   word-wrap: break-word;
   margin-bottom: 20px;
   border: none;
-  border-radius: 5px;
+  border-radius: 20px;
   background-color: #e0e0e0;
 `;
 const Label = styled.label`
@@ -149,7 +165,7 @@ const FormContainer = styled.form`
   justify-content: center;
   // margin: 20px;
   padding: 40px;
-  background-color: #f2f2f2;
+  // background-color: #f2f2f2;
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   margin: 0 auto;
@@ -160,11 +176,11 @@ const FormContainer = styled.form`
     margin-bottom: 20px;
   }
   select {
-    width: 100%;
+    width: 31vw;
     padding: 10px;
     margin-bottom: 20px;
     border: none;
-    border-radius: 5px;
+    border-radius: 20px;
     background-color: #e0e0e0;
   }
   label {
@@ -179,7 +195,7 @@ const FormContainer = styled.form`
     padding: 10px;
     margin-bottom: 20px;
     border: none;
-    border-radius: 5px;
+    border-radius: 20px;
     background-color: #e0e0e0;
 
     &:focus {
@@ -190,14 +206,15 @@ const FormContainer = styled.form`
 
   button[type="submit"] {
     padding: 10px 20px;
-    background-color: #5cb85c;
+    background-color: #1976d2;
     color: #fff;
     border: none;
+    width: 100px;
     border-radius: 5px;
     cursor: pointer;
     // margin-top: 20%;
     &:hover {
-      background-color: #449d44;
+      background-color: #04214f;
     }
   }
 `;

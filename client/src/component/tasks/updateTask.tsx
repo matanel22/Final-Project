@@ -20,6 +20,8 @@ import TasksData from "../atom/Atom";
 
 import { StatusMission } from "./StatusMission";
 import { IFormMission } from "./TasksList";
+import SuccessMessage from "../MessegeToUser";
+import ButtonLoading from "../UI/ButtonLoadung";
 interface TASK {
   name: string;
   type: any;
@@ -60,6 +62,8 @@ const UpdateTask: React.FC<{
 }> = (props) => {
   const [mis, setMis] = useRecoilState(TasksData);
   const [open, setOpen] = React.useState(true);
+  const [errorDate, setErrorDate] = useState("");
+  const [successCration, setSuccessCration] = useState(false);
 
   const handleClose = () => setOpen(false);
   const {
@@ -92,6 +96,12 @@ const UpdateTask: React.FC<{
     });
   }, []);
   const editRejister: SubmitHandler<IFormMission> = async (data) => {
+    if (new Date(data.endDate) < new Date(data.date_created)) {
+      setErrorDate("שדה סיום גדול מתאריך התחלה");
+      return;
+    } else {
+      setErrorDate("");
+    }
     data.id = mis[props.indexMission].id;
     data.projectId = props.onMission.projectId;
 
@@ -100,6 +110,7 @@ const UpdateTask: React.FC<{
     await axios
       .put(url, data)
       .then((res) => {
+        setSuccessCration(true);
         const index = mis.findIndex((obj) => obj.id === data.id);
         const updatedObject = {
           ...mis[index],
@@ -127,50 +138,63 @@ const UpdateTask: React.FC<{
   };
   //value={props.onMission.statusId}
   return (
-    <Modal
-      open={open}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-      onClose={handleClose}
-    >
-      <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          <form onSubmit={handleSubmit(editRejister)}>
-            {MISSION_UPDATE.map((item, index) => {
-              return (
-                <>
-                  <InputLabel htmlFor="my-input"> {item.name}</InputLabel>
-                  <Input
-                    id="my-input"
-                    aria-describedby="my-helper-text"
-                    type={item.type}
-                    // value={props.onMission.discrption}
-                    {...register(item.register, { required: true })}
-                  />
-                </>
-              );
-            })}
-            {errors.discrption && "שדה חובה"}
-            <InputLabel htmlFor="my-input">סטטוס משימה</InputLabel>
-            <Select
-              id="my-input"
-              aria-describedby="my-helper-text"
-              {...register("statusId", { required: true })}
-            >
-              {StatusMission.map((item, i) => {
-                return <option key={i}>{item.name}</option>;
+    <>
+      {successCration && (
+        <SuccessMessage
+          message="המשימה עודכנה בהצלחה"
+          setSuccessCration={setSuccessCration}
+          successCration={successCration}
+          url={`/tasks/${props.onMission.projectId}`}
+          typeAlert="success"
+        />
+      )}
+      <Modal
+        open={open}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        onClose={handleClose}
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            <form onSubmit={handleSubmit(editRejister)}>
+              {MISSION_UPDATE.map((item, index) => {
+                return (
+                  <>
+                    <InputLabel htmlFor="my-input"> {item.name}</InputLabel>
+                    <Input
+                      id="my-input"
+                      aria-describedby="my-helper-text"
+                      type={item.type}
+                      // value={props.onMission.discrption}
+                      {...register(item.register, { required: true })}
+                    />
+                    {(errors.discrption ||
+                      errors.date_created ||
+                      errors.endDate ||
+                      errors.taskType) &&
+                      "שדה חובה"}
+                  </>
+                );
               })}
-            </Select>
-            {errors.statusId && "שדה חובה"}
 
-            <Button variant="contained" type="submit" color="success">
-              {" "}
-              עדכן
-            </Button>
-          </form>
-        </Typography>
-      </Box>
-    </Modal>
+              <InputLabel htmlFor="my-input">סטטוס משימה</InputLabel>
+              <Select
+                id="my-input"
+                aria-describedby="my-helper-text"
+                {...register("statusId", { required: true })}
+              >
+                {StatusMission.map((item, i) => {
+                  return <option key={i}>{item.name}</option>;
+                })}
+              </Select>
+              {errors.statusId && "שדה חובה"}
+
+              <ButtonLoading textButton="עדכן" />
+            </form>
+          </Typography>
+        </Box>
+      </Modal>
+    </>
   );
 };
 export default UpdateTask;

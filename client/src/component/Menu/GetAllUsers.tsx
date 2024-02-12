@@ -13,14 +13,43 @@ export const GetAllUsers = (props: IProps) => {
   const [selectedItem, setSelectedItem] = useState("");
   const [editOption, setEditOption] = React.useState({ open: false, ind: 0 });
 
+  useEffect(() => {
+    let url = "http://localhost:3001/api/routs/router/allUsers";
+    axios.get(url).then((res) => {
+      setListUsers(res.data);
+    });
+  }, []);
+  const handelDeleteUser = async (id: string) => {
+    let url = `http://localhost:3001/api/routs/router/deletedUser`;
+    await axios
+      .post(url, { id })
+      .then((res) => {
+        setListUsers((prevUsers) => {
+          const updatedUsers = prevUsers.filter((user) => user._id !== id);
+          return updatedUsers;
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    console.log(listUsers);
+  }, [listUsers]);
+
   const handleChange = (index: number, selectedValue: any) => {
     setSelectedItem(selectedValue);
     const updatedUsers = listUsers.map((user: any, i: number) =>
-      i === index ? { ...user, permission: selectedValue === "מנהל" } : user
+      i === index ? { ...user, permissions: selectedValue === "מנהל" } : user
     );
     setListUsers(updatedUsers);
   };
   const handelNameChenge = (index: number) => {
+    setEditOption({ ...editOption, open: !editOption.open, ind: index });
+  };
+
+  const handelCancel = (index: number) => {
     setEditOption({ ...editOption, open: !editOption.open, ind: index });
   };
 
@@ -29,9 +58,17 @@ export const GetAllUsers = (props: IProps) => {
     namePermission: string,
     index: number
   ) => {
+    setSelectedItem(namePermission);
+
     let url = `http://localhost:3001/api/routs/router/updatePermissionUser`;
+    console.log(namePermission);
+
     axios.post(url, { namePermission, updateUserById }).then((res) => {
-      console.log(res.data);
+      const updatedUsers = listUsers.map((user: any, i: number) =>
+        i === index ? { ...user, permissions: namePermission === "מנהל" } : user
+      );
+      setListUsers(updatedUsers);
+      setEditOption({ ...editOption, open: !editOption.open });
     });
   };
   return (
@@ -40,9 +77,9 @@ export const GetAllUsers = (props: IProps) => {
         <Container>
           {listUsers.map((list: any, index) => (
             <WrapperListNameUsers>
+              {" "}
               <RightColumn>שם מלא:</RightColumn>
               <ListItem>{list.name}</ListItem>
-
               {editOption.open && editOption.ind === index ? (
                 <SelectStyled
                   value={list.permissions ? "מנהל" : "משתמש"}
@@ -56,14 +93,31 @@ export const GetAllUsers = (props: IProps) => {
               ) : (
                 <ListItem>{list.permissions ? "מנהל" : "משתמש"}</ListItem>
               )}
-              <BlueButton
-                onClick={() => {
-                  handelNameChenge(index);
-                }}
-              >
-                עדכן
-              </BlueButton>
-              <DelButton>מחק</DelButton>
+              <div>
+                <BlueButton
+                  onClick={() => {
+                    {
+                      editOption.open && editOption.ind === index
+                        ? handleUpdateClick(list._id, selectedItem, index)
+                        : handelNameChenge(index);
+                    }
+                  }}
+                >
+                  {editOption.open && editOption.ind === index
+                    ? "שמור"
+                    : "עדכן"}
+                </BlueButton>
+
+                {editOption.open && editOption.ind === index && (
+                  <DelButton
+                    onClick={() => {
+                      handelCancel(index);
+                    }}
+                  >
+                    ביטול
+                  </DelButton>
+                )}
+              </div>
             </WrapperListNameUsers>
           ))}
         </Container>
@@ -71,60 +125,51 @@ export const GetAllUsers = (props: IProps) => {
     </>
   );
 };
-const WrapperListNameUsers = styled.div`
-  display: flex;
-  justify-content: space-between; /* Align button to the right */
-  align-items: center;
-  margin: 10px;
-`;
 const Container = styled.div`
   position: fixed;
+  background-color: aliceblue;
   top: 50%;
   left: 50%;
   width: 40vw;
   height: 50vh;
   border-radius: 30px;
-  background: linear-gradient(
-    0deg,
-    rgba(45, 91, 253, 1) 0%,
-    rgba(240, 240, 240, 0.9725140056022409) 100%
-  );
   overflow-y: auto;
   transform: translate(-50%, -50%);
-  // background-color: #fff;
-  // padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+`;
+
+const WrapperListNameUsers = styled.div`
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const RightColumn = styled.div`
+  color: black;
 `;
 
 const ListItem = styled.div`
   color: black;
 `;
-const RightColumn = styled.div`
-  color: black;
-`;
+
 const Button = styled.button`
   padding: 10px 20px;
   font-size: 16px;
-  // background-color: #3498db;
-  // color: #fff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-
-  // &:hover {
-  //   background-color: #2980b9;
-  // }
 `;
-const SelectStyled = styled.select`
-  // padding: 10px;
-  font-size: 16px;
 
+const SelectStyled = styled.select`
+  font-size: 16px;
   border: 2px solid #3498db;
   border-radius: 5px;
   outline: none;
   background-color: #f1f1f1;
   color: #333;
-  // margin-bottom: 20px;
   padding: 10px 20px;
   width: 10rem;
 `;
@@ -132,6 +177,7 @@ const SelectStyled = styled.select`
 const OptionStyled = styled.option`
   background-color: #f1f1f1;
 `;
+
 const BlueButton = styled(Button)`
   background-color: #3498db;
   color: #fff;

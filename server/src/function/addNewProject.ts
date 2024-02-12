@@ -52,10 +52,6 @@ const allUsers=await UsersModel.find({name:selectedItems})
            })
           
            newProject.save();
-
-           
-
-         
            const transporter: Transporter = nodemailer.createTransport({
              service: 'gmail',
              auth: {
@@ -63,25 +59,20 @@ const allUsers=await UsersModel.find({name:selectedItems})
                pass: 'lrbz gcst wwgh lela',
              },
            });
-         
-        
            const mailOptions = {
              from: '49matanel@gmail.com',
              to: userEmails.join(', '), 
              subject: subject,
              text: text,
            };
+         transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.error(error); 
+            return res.status(500).send(error.toString());
+          }
+          res.status(200).send('Email sent: ' + info.response);
+        });
          
-         
-           transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-              console.error(error); 
-              return res.status(500).send(error.toString());
-            }
-      
-           
-            res.status(200).send('Email sent: ' + info.response);
-          });
           
           
         }

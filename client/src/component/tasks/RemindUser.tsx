@@ -1,54 +1,56 @@
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, useEffect, useState } from "react";
 import { IFormMission } from "./TasksList";
 import TaskModal from "./TaskModal";
+type MessageModalState = {
+  stap: boolean;
+  openIndex: number;
+};
+
 interface IProps {
-  dataMission: IFormMission[];
+  // dataMission: IFormMission[];
+  remarks: string;
+  endDate: Date;
+  openMessageModal: boolean;
+  setOpenMessageModal: Dispatch<React.SetStateAction<MessageModalState>>;
+  index: number;
+  TasksCloseCompletion: number;
+  setTasksCloseCompletion: Dispatch<React.SetStateAction<number>>;
 }
-const RemindUser: React.FC<IProps> = ({ dataMission }) => {
+
+const RemindUser: React.FC<IProps> = ({
+  remarks,
+  endDate,
+  openMessageModal,
+  setOpenMessageModal,
+  index,
+  TasksCloseCompletion,
+  setTasksCloseCompletion,
+}) => {
   // Assuming Task is the type of your task objects
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [TasksCloseCompletion, setTasksCloseCompletion] = useState<string[]>(
-    []
-  );
+  // const [TasksCloseCompletion, setTasksCloseCompletion] = useState(0);
   const closeModal = () => {
     setModalIsOpen(false);
+    setOpenMessageModal({ stap: false, openIndex: 0 });
   };
   useEffect(() => {
-    // Check tasks for approaching end dates
     const now = new Date();
 
-    const approachingTasks = dataMission.filter((task) => {
-      // Assuming endDate is a valid Date object in your task
-      const endDate = new Date(task.endDate);
-      const timeDifferenceInHours =
-        (endDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+    const timeDifferenceInHours =
+      (endDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+    setTasksCloseCompletion(timeDifferenceInHours);
 
-      // Adjust the threshold as needed (e.g., 24 for one day before)
-      return timeDifferenceInHours <= 24;
-    });
+    setOpenMessageModal({ stap: openMessageModal, openIndex: index });
+  }, [openMessageModal]);
 
-    // Display a message to the user if there are approaching tasks
-    console.log(approachingTasks);
-
-    if (approachingTasks.length > 0) {
-      const newApproaching = approachingTasks.map(
-        (approaching) => approaching.discrption
-      );
-      setTasksCloseCompletion(newApproaching);
-
-      setModalIsOpen(true);
-    }
-  }, [dataMission]);
-
-  // Render your component UI
-  useEffect(() => {
-    console.log(TasksCloseCompletion);
-  }, [TasksCloseCompletion]);
   return (
+    // <></>
     <TaskModal
-      modalIsOpen={modalIsOpen}
+      modalIsOpen={openMessageModal}
       closeModal={closeModal}
       TasksCloseCompletion={TasksCloseCompletion}
+      remarks={remarks}
+      endDate={endDate}
     ></TaskModal>
   );
 };

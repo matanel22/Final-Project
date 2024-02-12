@@ -8,7 +8,7 @@ import mongoose from "mongoose";
 export const allUsers=async(req:Request,res:Response)=>{
   try {
     const users=await UsersModel.find({})
-    console.log(users);
+    // console.log(users);
     
     return res.json(users)
   } catch (error) {
@@ -71,7 +71,7 @@ export const signUp=async(req:Request,res:Response)=>{
     
 
    let user: any=await UsersModel.findOne({email:req.body.email})
-   console.log(user);
+   
    
    if(!user){
     return  res.status(404).json({msg:"user not found"})
@@ -130,6 +130,7 @@ try {
 
 export const updatePermissionUser=async (req:Request,res:Response)=>{
 try {
+  console.log("name",req.body.namePermission);
   
   
   const nameUserUpdate=await UsersModel.updateOne({_id:req.body.updateUserById},
@@ -140,6 +141,17 @@ res.send(nameUserUpdate)
   res.status(400).send("sumting is worng")
 }
 
+}
+
+export const deletedUser=async (req:Request,res:Response)=>{
+
+  try {
+    const delUser= await UsersModel.deleteOne({_id:req.body.id})
+    console.log(delUser);
+    res.status(200).send(delUser)
+  } catch (error) {
+    res.status(404).send("somting is wrong")
+  }
 }
 
   
